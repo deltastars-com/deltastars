@@ -1,0 +1,83 @@
+{
+  "name": "نجوم دلتا للتجارة | Delta Stars Sovereign Hub",
+  "short_name": "نجوم دلتا",
+  "description": "deltastars.com - شريكك الأمثل للتوريد اللوجستي المتكامل والذكي للفنادق والشركات الكبرى بالمملكة العربية السعودية",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?pwa_launch=true",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a3a1a",
+  "orientation": "portrait",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "categories": [
+    "shopping",
+    "business",
+    "food"
+  ],
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "سوق المنتجات",
+      "url": "/products",
+      "icons": [
+        {
+          "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "تتبع الطلب",
+      "url": "/trackOrder",
+      "icons": [
+        {
+          "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/1wK2o57aJXCLzoZtLMzDME7BQbJm4-Z8e",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Delta Stars Sovereign Hub Desktop"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Delta Stars Sovereign Hub Mobile"
+    }
+  ]
+}
