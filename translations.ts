@@ -27,14 +27,22 @@ export const translations: { [key: string]: Translation } = {
       update: "تحديث المخزون",
       unit: "الوحدة",
       price: "السعر",
-      total: "الإجمالي"
+      total: "الإجمالي",
+      units: {
+        kg: "كيلو",
+        half_kg: "نصف كيلو (500 جرام)",
+        bundle: "حزمة",
+        packet: "باكت",
+        piece: "حبة",
+        box: "صندوق / كرتون"
+      }
     },
     header: {
-      storeName: "نجوم دلتا",
-      storeTitle: "نجوم دلتا | الجودة من المزرعة للمائدة",
+      storeName: "الأقمشة",
+      storeTitle: "الأقمشة | شريكك الامثل للخضروات والفواكة عالي الجودة",
       utility: {
         install: "تثبيت التطبيق",
-        version: "إصدار التوريد المتميز v31.0"
+        version: "إصدار التوريد المتميز v62.0"
       },
       navLinks: {
         home: "الرئيسية",
@@ -78,9 +86,11 @@ export const translations: { [key: string]: Translation } = {
     home: {
       hero: {
         quality_badge: "الجودة العالمية في متناول يدك",
+        headline: "مستقبل التوريد الطازج",
+        description: "الأقمشة هي وجهتك الأولى لتوريد الخضروات والفواكة والتمور بجودة مؤسسية. نحن نربط بين المزارع العالمية وعتبة دارك بجودة وموثوقية لا تضاهى.",
         button: "دخول المتجر",
         vipButton: "بوابة الشركات",
-        slogan: "شريكك الأمثل"
+        slogan: "شريكك الامثل للخضروات والفواكة عالية الجودة"
       },
       categories: {
         title: "أقسامنا المتخصصة",
@@ -92,7 +102,7 @@ export const translations: { [key: string]: Translation } = {
         subtitle: "نفخر بخدمة نخبة من كبرى المنشآت الوطنية والعالمية في المملكة"
       },
       lounges: {
-        title: "مجتمعات نجوم دلتا",
+        title: "مجتمعات الأقمشة",
         subtitle: "تواصل مباشر وحصري لأحدث العروض اليومية",
         whatsapp: {
           title: "مجتمع واتساب",
@@ -108,7 +118,7 @@ export const translations: { [key: string]: Translation } = {
     },
     dashboard: {
       title: "نظام التحكم القيادي",
-      subtitle: "شركة نجوم دلتا للتجارة",
+      subtitle: "شركة الأقمشة للتجارة",
       stats: {
         sales: "إجمالي المبيعات المحققة",
         lowStock: "أصناف تحتاج إعادة توريد",
@@ -160,7 +170,7 @@ export const translations: { [key: string]: Translation } = {
           orderId: "رقم طلبك المرجعي",
           whatsappConfirmation: "تأكيد عبر واتساب",
           backToStore: "العودة للمتجر",
-          whatsappConfirmationMessage: "مرحباً نجوم دلتا، أود تأكيد طلبي رقم {{orderId}} بقيمة {{formattedTotal}}."
+          whatsappConfirmationMessage: "مرحباً الأقمشة، أود تأكيد طلبي رقم {{orderId}} بقيمة {{formattedTotal}}."
       }
     },
     auth: {
@@ -206,14 +216,22 @@ export const translations: { [key: string]: Translation } = {
       update: "Update Inventory",
       unit: "Unit",
       price: "Price",
-      total: "Total"
+      total: "Total",
+      units: {
+        kg: "Kg",
+        half_kg: "0.5 Kg (500g)",
+        bundle: "Bundle",
+        packet: "Packet",
+        piece: "Piece",
+        box: "Box / Carton"
+      }
     },
     header: {
-      storeName: "Deltastars",
-      storeTitle: "Delta Stars | Quality from Farm to Table",
+      storeName: "Al-Aqmesha",
+      storeTitle: "Al-Aqmesha | Your Ideal Partner for High-Quality Vegetables & Fruits",
       utility: {
         install: "Install App",
-        version: "Elite Supply Node v31.0"
+        version: "Elite Supply Node v62.0"
       },
       navLinks: {
         home: "Home",
@@ -257,9 +275,11 @@ export const translations: { [key: string]: Translation } = {
     home: {
       hero: {
         quality_badge: "Global Quality at Your Fingertips",
+        headline: "The Future of Fresh Supply",
+        description: "Deltastars is your premier destination for institutional-grade vegetables, fruits, and dates. We bridge the gap between global farms and your doorstep with unmatched quality and reliability.",
         button: "Enter Market",
         vipButton: "Corporate Portal",
-        slogan: "Your Perfect Partner"
+        slogan: "Your Ideal Partner for High-Quality Vegetables & Fruits"
       },
       categories: {
         title: "Specialized Units",
@@ -271,7 +291,7 @@ export const translations: { [key: string]: Translation } = {
         subtitle: "Proudly serving elite national and international establishments in KSA"
       },
       lounges: {
-        title: "Delta Stars Communities",
+        title: "Al-Aqmesha Communities",
         subtitle: "Direct and Exclusive Access to Daily Offers",
         whatsapp: {
           title: "WhatsApp Community",
@@ -287,7 +307,7 @@ export const translations: { [key: string]: Translation } = {
     },
     dashboard: {
       title: "Command Center",
-      subtitle: "Delta Stars Trading Co.",
+      subtitle: "Al-Aqmesha Trading Co.",
       stats: {
         sales: "Total Realized Sales",
         lowStock: "Items Needing Restock",
@@ -339,7 +359,7 @@ export const translations: { [key: string]: Translation } = {
           orderId: "Your Order Reference",
           whatsappConfirmation: "Confirm via WhatsApp",
           backToStore: "Back to Market",
-          whatsappConfirmationMessage: "Hello Delta Stars, I want to confirm my order #{{orderId}} with total {{formattedTotal}}."
+          whatsappConfirmationMessage: "Hello Al-Aqmesha, I want to confirm my order #{{orderId}} with total {{formattedTotal}}."
       }
     },
     auth: {
