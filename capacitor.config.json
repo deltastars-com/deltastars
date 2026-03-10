@@ -1,6 +1,6 @@
 {
   "appId": "cc.deltastars.app",
-  "appName": "الأقمشة | Al-Aqmesha",
+  "appName": "نجوم دلتا | Delta Stars",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {
