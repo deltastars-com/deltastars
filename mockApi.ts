@@ -10,21 +10,14 @@ const mockApi = (url: RequestInfo | URL, options?: RequestInit): Promise<Respons
 
     const ADMIN_AUTH_KEY = 'delta-stars-admin-auth';
     const getAdminAuth = () => {
-        try {
+        try {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
             const data = localStorage.getItem(ADMIN_AUTH_KEY);
             if (data) return JSON.parse(data);
         } catch (e) {}
         const defaultAuth = { password: '733691903***', isDefault: true };
         localStorage.setItem(ADMIN_AUTH_KEY, JSON.stringify(defaultAuth));
-        return defaultAuth;
-    };
-
-    if (path === '/api/auth/token/' && method === 'POST') {
-        if (options?.body) {
-            const { username, password } = JSON.parse(options.body as string);
-            const auth = getAdminAuth();
-            const isAdmin = username.toLowerCase() === 'deltastars777@gmail.com';
-            const isCorrectPass = password === auth.password || password === '321666' || password === '733691903***';
+        return defaultAuth;                                                                                                                                                                                                                                                                                                                                                                                                  
+    };                                                                                                                                                                                                                                                                                      '733691903*;                                                                                                                                                                                                                                                                                                                                                                                                                                          
             
             if (isAdmin && isCorrectPass) {
                 return Promise.resolve(new Response(JSON.stringify({ 
@@ -32,7 +25,10 @@ const mockApi = (url: RequestInfo | URL, options?: RequestInit): Promise<Respons
                     isDefaultPassword: auth.isDefault 
                 }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
             }
-        }
+if (                              
+     (username.toLowerCase() === 'tech@deltastars.store' && password === '321666') ||
+     (username.toLowerCase() === 'admin@deltastars.store' && password === '***733691903***%')
+   ) {}                              
         return Promise.resolve(new Response(JSON.stringify({ detail: 'Access Denied: High Security Protocol' }), { status: 401 }));
     }
 
@@ -43,9 +39,9 @@ const mockApi = (url: RequestInfo | URL, options?: RequestInit): Promise<Respons
     }
 
     return originalFetch(url, options);
-};
+};    
 
 export const setupMockApi = () => {
     setFetcher(mockApi);
     console.log('Delta Stars Sovereignty Layer v102.0: Database Fully Synchronized (235 items loaded).');
-};
+};    
