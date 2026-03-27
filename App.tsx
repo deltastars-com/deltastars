@@ -63,8 +63,6 @@ function MainApp() {
         try { 
             localStorage.setItem(key, JSON.stringify(value)); 
         } catch (e) { 
-            console.warn('Delta Sovereign Storage: Quota exceeded, performing emergency cleanup.');
-            // Emergency cleanup of old versions
             Object.keys(localStorage).forEach(k => {
                 if (k.includes('delta-') && !k.includes('v25')) localStorage.removeItem(k);
             });
@@ -75,13 +73,8 @@ function MainApp() {
             const item = localStorage.getItem(key);
             if (!item) return fallback;
             const parsed = JSON.parse(item);
-            // Basic data integrity check
-            if (typeof parsed !== typeof fallback && fallback !== null) return fallback;
             return parsed;
-        } catch { 
-            console.error('Delta Sovereign Storage: Data corruption detected for key:', key);
-            return fallback; 
-        }
+        } catch { return fallback; }
     }
   };
 
@@ -94,60 +87,13 @@ function MainApp() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-  // Sovereign Stability Engine: Real-time Performance & Integrity Monitoring
-  useEffect(() => {
-    const isProduction = window.location.hostname === 'deltastars.com';
-    if (isProduction) {
-        console.log('%c Delta Sovereign Hub: Production Mode Active (deltastars.com) ', 'background: #1a3a1a; color: #fff; font-weight: bold;');
-    }
-
-    const interval = setInterval(() => {
-        setSystemStatus('syncing');
-        
-        // Simulate background data integrity check
-        const integrityCheck = () => {
-            const cartData = safeStorage.get(STORAGE_KEYS.CART, []);
-            if (!Array.isArray(cartData)) {
-                console.warn('System Integrity: Cart data corrupted, resetting.');
-                setCart([]);
-            }
-            
-            setSystemStatus('optimizing');
-            setTimeout(() => {
-                setSystemStatus('healthy');
-                console.log('Delta Sovereign Engine: System synchronized, memory optimized, and security protocols verified.');
-            }, 1500);
-        };
-
-        integrityCheck();
-    }, 45000); // Sync every 45 seconds for high responsiveness
-
-    // Global Error Capture for Auto-Fix
-    const handleError = (event: ErrorEvent) => {
-        console.error('Sovereign Hub Auto-Fix: Intercepted fatal error:', event.message);
-        // Logic to reset problematic state if needed
-        if (event.message.includes('localStorage')) {
-            localStorage.clear();
-            window.location.reload();
-        }
-    };
-
-    window.addEventListener('error', handleError);
-    return () => {
-        clearInterval(interval);
-        window.removeEventListener('error', handleError);
-    };
-  }, [language, addToast]);
 
   const [promotions, setPromotions] = useState<Promotion[]>(() => safeStorage.get(STORAGE_KEYS.PROMOS, []));
   const [showroomItems, setShowroomItems] = useState<ShowroomItem[]>(() => safeStorage.get(STORAGE_KEYS.SHOWROOM, []));
@@ -187,22 +133,21 @@ function MainApp() {
   }, []);
 
   const pageContent = useMemo(() => {
-    try {
       return (
         <div key={currentPage} className="animate-fade-in-up">
-          <Suspense fallback={
-            <div className="min-h-[60vh] flex items-center justify-center">
-              <div className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-            </div>
-          }>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><div className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div></div>}>
             {(() => {
-              try {
                 switch (currentPage) {
                 case 'home': 
                     return <Home setPage={setPage} addToCart={addToCart} products={products} promotions={promotions} categories={DEFAULT_CATEGORIES} sections={homeSections} />;
                 case 'sourcing':
                     return <div className="pt-40 md:pt-48"><SourcingRequestPage /></div>;
                 case 'dashboard':
+                    // 🔒 أمان: منع الدخول بدون تسجيل رسمي
+                    if (!currentUser || (currentUser.type !== 'admin' && currentUser.type !== 'developer')) {
+                        setPage('login');
+                        return null;
+                    }
                     return (
                         <div className="pt-40 md:pt-48">
                             <DashboardPage 
@@ -219,27 +164,39 @@ function MainApp() {
                         </div>
                     );
                 case 'dev_console':
+                    // 🔒 أمان: المطور فقط هو من يرى كود المحرك
+                    if (!currentUser || currentUser.type !== 'developer') {
+                        alert(language === 'ar' ? 'عذراً، هذا القسم مخصص للمطور التقني فقط!' : 'Access denied: Developer only section.');
+                        setPage('dashboard');
+                        return null;
+                    }
                     return (
                         <div className="pt-40 md:pt-48">
                             <DeveloperDashboard 
-                                products={products} promotions={promotions} showroomItems={showroomItems}
-                                homeSections={homeSections}
-                                onUpdateProducts={(p) => { setProducts(p); }}
-                                onUpdatePromos={(pr) => { setPromotions(pr); }}
-                                onUpdateShowroom={(s) => { setShowroomItems(s); }}
-                                onUpdateSections={(s) => { setHomeSections(s); }}
+                                products={products} promotions={promotions} showroomItems={showroomItems} homeSections={homeSections}
+                                onUpdateProducts={(p) => setProducts(p)} onUpdatePromos={(pr) => setPromotions(pr)}
+                                onUpdateShowroom={(s) => setShowroomItems(s)} onUpdateSections={(s) => setHomeSections(s)}
                                 onBack={() => setPage('dashboard')}
                             />
                         </div>
                     );
                 case 'login': 
                     return <LoginPage onLogin={async (c)=>{
-                        if (c.email === 'deltastars777@gmail.com' && (c.password === '733691903***' || c.password === '321666')) {
-                            setCurrentUser({ type: 'developer', email: c.email });
+                        const email = c.email.toLowerCase().trim();
+                        const pass = c.password.trim();
+                        // 🔑 الدخول الرسمي: الإدارة العليا
+                        if (email === 'marketing@deltastars-ksa.com' && (pass === '***733691903***%' || pass === '%***733691903***')) {
+                            setCurrentUser({ type: 'admin', email: email });
                             setPage('dashboard');
                             return { success: true };
                         }
-                        return { success: false, error: 'بيانات الدخول غير صحيحة' };
+                        // 🔑 الدخول الرسمي: المطور
+                        if (email === 'deltastars@zoho.mail.com' && pass === '321666') {
+                            setCurrentUser({ type: 'developer', email: email });
+                            setPage('dashboard');
+                            return { success: true };
+                        }
+                        return { success: false, error: language === 'ar' ? 'بيانات الدخول غير صحيحة' : 'Invalid credentials' };
                     }} setPage={setPage} />;
                 case 'vipLogin': 
                     return <VipLoginPage onLogin={async (c)=>{
@@ -263,70 +220,55 @@ function MainApp() {
                     return <div className="pt-40 md:pt-48"><ProductsPage initialCategory={selectedFilterCategory} setPage={setPage} addToCart={addToCart} products={products} toggleWishlist={()=>{}} isProductInWishlist={()=>false} getAverageRating={()=>({average:5,count:1})} reviews={[]} /></div>;
                 case 'cart': 
                     return <div className="pt-40 md:pt-48"><CartPage cart={cart} removeFromCart={(id)=>setCart(cart.filter(i=>i.id!==id))} updateQuantity={(id,q)=>setCart(cart.map(i=>i.id===id?{...i,quantity:Math.max(1,q)}:i))} clearCart={()=>setCart([])} setPage={setPage} addPurchaseHistory={()=>{}} /></div>;
-                case 'privacy':
-                    return <LegalPages type="privacy" />;
-                case 'terms':
-                    return <LegalPages type="terms" />;
-                case 'returns':
-                    return <LegalPages type="returns" />;
-                case 'driverDashboard':
-                    return <div className="pt-40 md:pt-48"><DriverDashboardPage setPage={setPage} /></div>;
+                case 'privacy': return <LegalPages type="privacy" />;
+                case 'terms': return <LegalPages type="terms" />;
+                case 'returns': return <LegalPages type="returns" />;
+                case 'driverDashboard': return <div className="pt-40 md:pt-48"><DriverDashboardPage setPage={setPage} /></div>;
                 default: 
                     return <Home setPage={setPage} addToCart={addToCart} products={products} promotions={promotions} categories={DEFAULT_CATEGORIES} sections={homeSections} />;
                 }
-              } catch (e) {
-                console.error("Page Render Error:", e);
-                setPage('home');
-                return null;
-              }
             })()}
           </Suspense>
         </div>
       );
-    } catch (e) {
-      console.error("Content Render Error:", e);
-      return null;
-    }
-  }, [currentPage, products, currentUser, vipClients, cart, promotions, showroomItems, selectedFilterCategory, addToCart, setPage]);
+  }, [currentPage, products, currentUser, vipClients, cart, promotions, showroomItems, selectedFilterCategory, addToCart, setPage, language]);
 
   if (isInitializing) return <SplashScreen onComplete={() => setIsInitializing(false)} />;
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-white overflow-hidden selection:bg-secondary selection:text-white">
+      <div className="min-h-screen flex flex-col bg-white overflow-hidden">
         {!isOnline && (
-          <div className="fixed top-0 left-0 w-full bg-red-600 text-white py-2 px-4 z-[10000] text-center font-black text-sm animate-pulse flex items-center justify-center gap-3">
+          <div className="fixed top-0 left-0 w-full bg-red-600 text-white py-2 px-4 z-[10000] text-center font-black text-sm flex items-center justify-center gap-3">
             <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
-            {language === 'ar' ? 'أنت تتصفح الآن في وضع عدم الاتصال - قد تكون بعض الميزات محدودة' : 'You are currently offline - Some features may be limited'}
-          </div>
-        )}
-        <Header 
-          setPage={setPage} 
+            {language === 'ar' ? 'أنت تتصفح بدون اتصال' : 'Offline Mode'}
+          </div>                                    
+        )}                            
+        <Header                                       
+          setPage={setPage}   
           cartItemCount={cart.reduce((s,i)=>s+i.quantity,0)} 
-          wishlistItemCount={0} 
           user={currentUser} 
           onLogout={()=>{setCurrentUser(null); setPage('home')}} 
           onToggleAiAssistant={() => setShowAi(!showAi)} 
         />
         <main className="flex-grow p-0 m-0 relative z-10">{pageContent}</main>
         {showAi && <AiAssistant products={products} onClose={() => setShowAi(false)} />}
-        
         <Footer setPage={setPage} />
-        <PwaInstallPrompt />
-      </div>
-    </ErrorBoundary>
-  );
+        <PwaInstallPrompt />                            
+      </div>                            
+    </ErrorBoundary>                            
+  );                            
 }
 
 export default function App() {
-  return (
-    <I18nProvider>
-      <ToastProvider>
-        <GeminiAiProvider>
-          <MainApp />
-          <ToastContainer />
-        </GeminiAiProvider>
-      </ToastProvider>
-    </I18nProvider>
-  );
-}
+  return (                            
+    <I18nProvider>                            
+      <ToastProvider>                            
+        <GeminiAiProvider>                            
+          <MainApp />                            
+          <ToastContainer />                            
+        </GeminiAiProvider>                            
+      </ToastProvider>                            
+    </I18nProvider>                            
+  );          
+}}        
