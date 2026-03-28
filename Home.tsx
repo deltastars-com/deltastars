@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Product, Page, Promotion, CategoryKey } from '../../../types';
 import { ProductCard } from '../../ProductCard';
@@ -15,7 +14,6 @@ export const Home: React.FC<{
     const { t, language, getHijriDate } = useI18n();
     const [stats, setStats] = useState({ activeOrders: 12, qualityScore: 99.8 });
 
-    // محاكاة حركة البيانات الحية لرفع مستوى التفاعل
     useEffect(() => {
         const interval = setInterval(() => {
             setStats(prev => ({ ...prev, activeOrders: prev.activeOrders + (Math.random() > 0.5 ? 1 : -1) }));
@@ -26,7 +24,7 @@ export const Home: React.FC<{
     const categories: CategoryKey[] = ['fruits', 'vegetables', 'herbs', 'qassim', 'dates', 'packages'];
 
     return (
-        <div className="space-y-0 pb-32 bg-white overflow-x-hidden selection:bg-secondary selection:text-white">
+        <div className="space-y-0 pb-32 bg-white overflow-x-hidden selection:bg-secondary selection:text-white font-['Tajawal']">
             
             {/* Cinematic Hero Section v60 */}
             <section className="relative h-[95vh] flex items-center justify-center overflow-hidden bg-primary-dark">
@@ -53,8 +51,9 @@ export const Home: React.FC<{
                         
                         <div className="flex items-center gap-6 mb-16">
                             <div className="h-px w-20 bg-secondary/50"></div>
+                            {/* تم التعديل هنا لضمان ظهور العلامة التجارية الجديدة بشكل دائم */}
                             <p className="text-2xl md:text-5xl font-bold text-secondary italic opacity-90 tracking-tight">
-                                {language === 'ar' ? COMPANY_INFO.slogan : COMPANY_INFO.slogan_en}
+                                {language === 'ar' ? 'شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة' : 'Your Ideal Partner for High-Quality Vegetables, Fruits, and Dates'}
                             </p>
                             <div className="h-px w-20 bg-secondary/50"></div>
                         </div>
@@ -68,10 +67,10 @@ export const Home: React.FC<{
                                 <div className="absolute inset-0 bg-secondary opacity-0 group-hover:opacity-10 transition-opacity"></div>
                             </button>
                             <button 
-                                onClick={() => setPage('vipLogin')} 
+                                onClick={() => setPage('login')} 
                                 className="bg-secondary text-white px-20 py-8 rounded-[3rem] font-black text-3xl hover:scale-105 transition-all shadow-[0_30px_60px_rgba(255,146,43,0.3)] border-b-[10px] border-orange-800 active:translate-y-2 active:border-b-0"
                             >
-                                {t('home.hero.vipButton')} 🔐
+                                {language === 'ar' ? 'دخول الإدارة' : 'Admin Login'} 🔐
                             </button>
                         </div>
                     </div>
@@ -143,32 +142,22 @@ export const Home: React.FC<{
                             </div>
                             <h2 className="text-6xl md:text-8xl font-black text-primary leading-none uppercase tracking-tighter">
                                 نحن نضمن <br/> <span className="text-secondary">الثقة الرقمية</span>
-                            </h2>
-                            <p className="text-2xl font-bold text-slate-500 leading-relaxed max-w-xl italic">
-                                "من الحقول الوطنية إلى مائدتك، نستخدم أحدث تقنيات التتبع الجغرافي والتحقق من الجودة عبر الذكاء الاصطناعي لضمان أن كل ثمرة تصلك هي الأفضل عالمياً."
-                            </p>
-                            <div className="grid grid-cols-2 gap-8">
-                                <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-secondary">
-                                    <p className="text-4xl font-black text-primary mb-2">91+</p>
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">صنف معتمد</p>
-                                </div>
-                                <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-green-500">
-                                    <p className="text-4xl font-black text-primary mb-2">100%</p>
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">فحص مختبري</p>
-                                </div>
-                            </div>
-                        </div>
+                            </h2>                                                                                                                                                                                                                                                                                              
+                            <p className="text-2xl font-bold text-slate-500 leading-relaxed max-w-xl italic">                                                                                            
+                                "من الحقول الوطنية إلى مائدتك، نستخدم أحدث تقنيات التتبع الجغرافي والتحقق من الجودة لضمان أن كل ثمرة تصلك هي الأفضل عالمياً."
+                            </p>                                                                                                                                                                                                  
+                        </div>                                                                                                                                                                                                  
                         <div className="relative group">
                             <div className="absolute inset-0 bg-secondary rounded-[6rem] rotate-3 group-hover:rotate-0 transition-transform duration-700"></div>
-                            <img 
+                            <img                                                                                                                                                                                                   
                                 src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200" 
                                 className="relative rounded-[6rem] shadow-4xl border-8 border-white group-hover:-translate-x-4 group-hover:-translate-y-4 transition-all duration-700" 
-                                alt="Quality Hub"
+                                alt="Quality Hub"                                                                                                                                                                                                  
                             />
-                        </div>
-                    </div>
-                </div>
-            </section>
+                        </div>                                                                                                                                                                                                  
+                    </div>                                                                                                                                                                                                  
+                </div>                                                                                                                                                                                                  
+            </section>                                                                                                                                                                                                  
 
             <style>{`
                 @keyframes slow-pan {
@@ -178,6 +167,6 @@ export const Home: React.FC<{
                 }
                 .animate-slow-pan { animation: slow-pan 30s infinite alternate ease-in-out; }
             `}</style>
-        </div>
-    );
-};
+        </div>                                                                                                                                                                                                  
+    );                                                                                                                                                                                                  
+};                                                                                                                                                                                                  
