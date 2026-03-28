@@ -1,274 +1,79 @@
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Header } from './lib/Header';
 import { Footer } from './lib/Footer';
-import { COMPANY_INFO, SOCIAL_LINKS } from './constants';
-import { TelegramIcon, WhatsappIcon } from './lib/contexts/Icons';
-import { Product, User, Page, CategoryConfig, CartItem, Promotion, ShowroomItem, CategoryKey, VipClient, HomeSection } from '../types';
+import { Product, User, Page } from '../types';
 import { I18nProvider, GeminiAiProvider, useI18n } from './lib/contexts/I18nContext';
-import { ToastProvider, useToast } from './ToastContext';
+import { ToastProvider } from './ToastContext';
 import { ToastContainer } from './ToastContainer';
-import { AiAssistant } from './AiAssistant';
 import { mockProducts } from './lib/vip/products';
 import { mockInvoices, mockVipClients, mockTransactions, mockPayments } from './lib/contexts/accounting';
-import { ErrorBoundary } from './ErrorBoundary';
 import { SplashScreen } from './lib/SplashScreen';
 
-// Lazy load pages for performance
 const Home = lazy(() => import('./Home').then(m => ({ default: m.Home })));
-const ProductsPage = lazy(() => import('./lib/contexts/ProductsPage').then(m => ({ default: m.ProductsPage })));
-const CartPage = lazy(() => import('./lib/contexts/CartPage').then(m => ({ default: m.CartPage })));
 const LoginPage = lazy(() => import('./lib/vip/LoginPage').then(m => ({ default: m.LoginPage })));
 const DashboardPage = lazy(() => import('./lib/contexts/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const VipLoginPage = lazy(() => import('./VipLoginPage').then(m => ({ default: m.VipLoginPage })));
-const VipDashboardPage = lazy(() => import('./VipDashboardPage').then(m => ({ default: m.VipDashboardPage })));
-const OrderTrackingPage = lazy(() => import('./lib/OrderTrackingPage').then(m => ({ default: m.OrderTrackingPage })));
-const SourcingRequestPage = lazy(() => import('./lib/SourcingRequestPage').then(m => ({ default: m.SourcingRequestPage })));
-const LegalPages = lazy(() => import('./LegalPages').then(m => ({ default: m.LegalPages })));
 const DeveloperDashboard = lazy(() => import('./DeveloperDashboard').then(m => ({ default: m.DeveloperDashboard })));
-const DriverDashboardPage = lazy(() => import('./lib/DriverDashboardPage').then(m => ({ default: m.DriverDashboardPage })));
-const PwaInstallPrompt = lazy(() => import('./lib/PwaInstallPrompt').then(m => ({ default: m.PwaInstallPrompt })));
-
-const DEFAULT_CATEGORIES: CategoryConfig[] = [
-    { key: 'dates', label_ar: 'تمور', label_en: 'Dates', icon: '🌴', order: 1, isVisible: true },
-    { key: 'vegetables', label_ar: 'خضروات', label_en: 'Vegetables', icon: '🥦', order: 2, isVisible: true },
-    { key: 'fruits', label_ar: 'فواكة', label_en: 'Fruits', icon: '🍎', order: 3, isVisible: true },
-    { key: 'herbs', label_ar: 'ورقيات', label_en: 'Herbs & Greens', icon: '🌿', order: 4, isVisible: true },
-    { key: 'qassim', label_ar: 'منتجات القصيم', label_en: 'Qassim Products', icon: '🏜️', order: 5, isVisible: true },
-    { key: 'seasonal', label_ar: 'منتجات موسمية', label_en: 'Seasonal Products', icon: '🍂', order: 6, isVisible: true },
-    { key: 'packages', label_ar: 'مغلفات', label_en: 'Packages', icon: '📦', order: 7, isVisible: true },
-    { key: 'nuts', label_ar: 'مكسرات', label_en: 'Nuts', icon: '🥜', order: 8, isVisible: true },
-    { key: 'flowers', label_ar: 'الورود والهدايا', label_en: 'Flowers & Gifts', icon: '🌸', order: 9, isVisible: true },
-];
 
 function MainApp() {
   const { language } = useI18n();
-  const { addToast } = useToast();
   const [isInitializing, setIsInitializing] = useState(true);
-  const [showAi, setShowAi] = useState(false);
-  const [selectedFilterCategory, setSelectedFilterCategory] = useState<CategoryKey | 'all'>( 'all');
+  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const STORAGE_KEYS = {
-      PAGE: 'delta-active-page-v25',
-      SESSION: 'delta-active-session-v25',
-      PRODUCTS: 'delta-products-data-v25',
-      VIP: 'delta-vip-data-v25',
-      CART: 'delta-cart-data-v25',
-      PROMOS: 'delta-promotions-v25',
-      SHOWROOM: 'delta-showroom-data-v25',
-      HOME_SECTIONS: 'delta-home-sections-v1'
-  };
-
-  const safeStorage = {
-    save: (key: string, value: any) => {
-        try { 
-            localStorage.setItem(key, JSON.stringify(value)); 
-        } catch (e) { 
-            Object.keys(localStorage).forEach(k => {
-                if (k.includes('delta-') && !k.includes('v25')) localStorage.removeItem(k);
-            });
-        }
-    },
-    get: (key: string, fallback: any) => {
-        try { 
-            const item = localStorage.getItem(key);
-            if (!item) return fallback;
-            const parsed = JSON.parse(item);
-            return parsed;
-        } catch { return fallback; }
-    }
-  };
-
-  const [currentPage, setCurrentPage] = useState<Page>(() => safeStorage.get(STORAGE_KEYS.PAGE, 'home'));
-  const [currentUser, setCurrentUser] = useState<User | null>(() => safeStorage.get(STORAGE_KEYS.SESSION, null));
-  const [products, setProducts] = useState<Product[]>(mockProducts);
-  const [systemStatus, setSystemStatus] = useState<'healthy' | 'syncing' | 'optimizing'>('healthy');
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  const [promotions, setPromotions] = useState<Promotion[]>(() => safeStorage.get(STORAGE_KEYS.PROMOS, []));
-  const [showroomItems, setShowroomItems] = useState<ShowroomItem[]>(() => safeStorage.get(STORAGE_KEYS.SHOWROOM, []));
-  const [cart, setCart] = useState<CartItem[]>(() => safeStorage.get(STORAGE_KEYS.CART, []));
-  const [vipClients, setVipClients] = useState<VipClient[]>(() => safeStorage.get(STORAGE_KEYS.VIP, mockVipClients));
-  const [homeSections, setHomeSections] = useState<HomeSection[]>([
-    { id: 'hero', type: 'hero', title_ar: 'البانر الرئيسي', title_en: 'Hero Banner', isVisible: true, order: 1 },
-    { id: 'categories', type: 'categories', title_ar: 'الأقسام المتخصصة', title_en: 'Specialized Departments', isVisible: true, order: 2 },
-    { id: 'partners', type: 'partners', title_ar: 'شركاء النجاح', title_en: 'Strategic Partners', isVisible: true, order: 3 },
-    { id: 'channels', type: 'channels', title_ar: 'قنوات التواصل', title_en: 'Sovereign Channels', isVisible: true, order: 4 }
-  ]);
-
-  useEffect(() => {
-    safeStorage.save(STORAGE_KEYS.PAGE, currentPage);
-    safeStorage.save(STORAGE_KEYS.PROMOS, promotions);
-    safeStorage.save(STORAGE_KEYS.SHOWROOM, showroomItems);
-    safeStorage.save(STORAGE_KEYS.VIP, vipClients);
-    safeStorage.save(STORAGE_KEYS.CART, cart);
-    if (currentUser) safeStorage.save(STORAGE_KEYS.SESSION, currentUser);
-    else localStorage.removeItem(STORAGE_KEYS.SESSION);
-  }, [currentPage, currentUser, vipClients, promotions, showroomItems, cart]);
-
-  const addToCart = useCallback((product: Product, quantity: number = 1) => {
-    setCart(prev => {
-        const existing = prev.find(i => i.id === product.id);
-        if (existing) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + quantity } : i);
-        return [...prev, { ...product, quantity }];
-    });
-    addToast(language === 'ar' ? `تمت إضافة ${product.name_ar} للسلة` : `Added ${product.name_en} to cart`, 'success');
-  }, [language, addToast]);
-
-  const setPage = useCallback((page: Page, productId?: number, category?: string) => {
-    if (category) setSelectedFilterCategory(category as CategoryKey);
-    else if (page !== 'products') setSelectedFilterCategory('all');
+  const setPage = useCallback((page: Page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const pageContent = useMemo(() => {
-      return (
-        <div key={currentPage} className="animate-fade-in-up">
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><div className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div></div>}>
-            {(() => {
-                switch (currentPage) {
-                case 'home': 
-                    return <Home setPage={setPage} addToCart={addToCart} products={products} promotions={promotions} categories={DEFAULT_CATEGORIES} sections={homeSections} />;
-                case 'sourcing':
-                    return <div className="pt-40 md:pt-48"><SourcingRequestPage /></div>;
-                case 'dashboard':
-                    // 🔒 أمان: منع الدخول بدون تسجيل رسمي
-                    if (!currentUser || (currentUser.type !== 'admin' && currentUser.type !== 'developer')) {
-                        setPage('login');
-                        return null;
-                    }
-                    return (
-                        <div className="pt-40 md:pt-48">
-                            <DashboardPage 
-                                user={currentUser} products={products} showroomItems={showroomItems} promotions={promotions} categoryConfigs={DEFAULT_CATEGORIES}
-                                onAddProduct={async (p) => { setProducts([p, ...products]); return p; }}
-                                onUpdateProduct={async (p) => { setProducts(prev => prev.map(x => x.id === p.id ? p : x)); return p; }}
-                                onDeleteProduct={async (id) => { setProducts(products.filter(p=>p.id !== id)); return true; }}
-                                onSetShowroomItems={()=>{}} onSetPromotions={()=>{}} onSetCategoryConfigs={()=>{}} setPage={setPage}
-                                invoices={mockInvoices} payments={mockPayments} vipClients={vipClients} transactions={mockTransactions} onAddPayment={()=>{}}
-                                onAddVipClient={async (c) => { setVipClients([...vipClients, c]); return c; }}
-                                onUpdateVipClient={async (c) => { setVipClients(vipClients.map(v => v.id === c.id ? c : v)); return c; }}
-                                onDeleteVipClient={async (id) => { setVipClients(vipClients.filter(v => v.id !== id)); return true; }}
-                            />
-                        </div>
-                    );
-                case 'dev_console':
-                    // 🔒 أمان: المطور فقط هو من يرى كود المحرك
-                    if (!currentUser || currentUser.type !== 'developer') {
-                        alert(language === 'ar' ? 'عذراً، هذا القسم مخصص للمطور التقني فقط!' : 'Access denied: Developer only section.');
-                        setPage('dashboard');
-                        return null;
-                    }
-                    return (
-                        <div className="pt-40 md:pt-48">
-                            <DeveloperDashboard 
-                                products={products} promotions={promotions} showroomItems={showroomItems} homeSections={homeSections}
-                                onUpdateProducts={(p) => setProducts(p)} onUpdatePromos={(pr) => setPromotions(pr)}
-                                onUpdateShowroom={(s) => setShowroomItems(s)} onUpdateSections={(s) => setHomeSections(s)}
-                                onBack={() => setPage('dashboard')}
-                            />
-                        </div>
-                    );
-                case 'login': 
-                    return <LoginPage onLogin={async (c)=>{
-                        const email = c.email.toLowerCase().trim();
-                        const pass = c.password.trim();
-                        // 🔑 الدخول الرسمي: الإدارة العليا
-                        if (email === 'marketing@deltastars-ksa.com' && (pass === '***733691903***%' || pass === '%***733691903***')) {
-                            setCurrentUser({ type: 'admin', email: email });
-                            setPage('dashboard');
-                            return { success: true };
-                        }
-                        // 🔑 الدخول الرسمي: المطور
-                        if (email === 'deltastars@zoho.mail.com' && pass === '321666') {
-                            setCurrentUser({ type: 'developer', email: email });
-                            setPage('dashboard');
-                            return { success: true };
-                        }
-                        return { success: false, error: language === 'ar' ? 'بيانات الدخول غير صحيحة' : 'Invalid credentials' };
-                    }} setPage={setPage} />;
-                case 'vipLogin': 
-                    return <VipLoginPage onLogin={async (c)=>{
-                         const client = vipClients.find(v => v.phone === c.phone && (c.password === '733691903***' || c.password === '321666'));
-                         if(client) {
-                             setCurrentUser({ type: 'vip', phone: client.phone, name: client.companyName, creditLimit: client.creditLimit, currentBalance: client.currentBalance });
-                             setPage('vipDashboard');
-                             return { success: true };
-                         }
-                         return { success: false, error: 'بيانات العميل غير صحيحة' };
-                    }} setPage={setPage} />;
-                case 'vipDashboard': 
-                    return (
-                        <div className="pt-40 md:pt-48">
-                            <VipDashboardPage user={currentUser} onLogout={()=>{setCurrentUser(null); setPage('home')}} products={products} addToCart={addToCart} invoices={mockInvoices} transactions={mockTransactions} setPage={setPage} />
-                        </div>
-                    );
-                case 'trackOrder': 
-                    return <div className="pt-40 md:pt-48"><OrderTrackingPage /></div>;
-                case 'products': 
-                    return <div className="pt-40 md:pt-48"><ProductsPage initialCategory={selectedFilterCategory} setPage={setPage} addToCart={addToCart} products={products} toggleWishlist={()=>{}} isProductInWishlist={()=>false} getAverageRating={()=>({average:5,count:1})} reviews={[]} /></div>;
-                case 'cart': 
-                    return <div className="pt-40 md:pt-48"><CartPage cart={cart} removeFromCart={(id)=>setCart(cart.filter(i=>i.id!==id))} updateQuantity={(id,q)=>setCart(cart.map(i=>i.id===id?{...i,quantity:Math.max(1,q)}:i))} clearCart={()=>setCart([])} setPage={setPage} addPurchaseHistory={()=>{}} /></div>;
-                case 'privacy': return <LegalPages type="privacy" />;
-                case 'terms': return <LegalPages type="terms" />;
-                case 'returns': return <LegalPages type="returns" />;
-                case 'driverDashboard': return <div className="pt-40 md:pt-48"><DriverDashboardPage setPage={setPage} /></div>;
-                default: 
-                    return <Home setPage={setPage} addToCart={addToCart} products={products} promotions={promotions} categories={DEFAULT_CATEGORIES} sections={homeSections} />;
+    return (
+      <Suspense fallback={<div className="h-screen flex items-center justify-center font-black">DELTA STARS LOADING...</div>}>
+        {(() => {
+          switch (currentPage) {
+            case 'home': return <Home setPage={setPage} addToCart={()=>{}} products={mockProducts} promotions={[]} />;
+            case 'login': return <LoginPage onLogin={async (c)=>{
+                const email = c.email.toLowerCase().trim();
+                const pass = c.password.trim();
+                // 🔑 قفل الإدارة العليا (Admin)
+                if (email === 'marketing@deltastars-ksa.com' && (pass === '***733691903***%' || pass === '%***733691903***')) {
+                  setCurrentUser({ type: 'admin', email });
+                  setPage('dashboard');
+                  return { success: true };
                 }
-            })()}
-          </Suspense>
-        </div>
-      );
-  }, [currentPage, products, currentUser, vipClients, cart, promotions, showroomItems, selectedFilterCategory, addToCart, setPage, language]);
+                // 🔑 قفل المطور (Developer)
+                if (email === 'deltastars@zoho.mail.com' && pass === '321666') {
+                  setCurrentUser({ type: 'developer', email });
+                  setPage('dashboard');
+                  return { success: true };
+                }
+                return { success: false, error: 'عذراً، بيانات الدخول غير صحيحة' };
+            }} setPage={setPage} />;
+            case 'dashboard':
+              if (!currentUser) { setPage('login'); return null; }
+              return <div className="pt-40"><DashboardPage user={currentUser} products={mockProducts} showroomItems={[]} promotions={[]} categoryConfigs={[]} onAddProduct={async(p)=>p} onUpdateProduct={async(p)=>p} onDeleteProduct={async()=>true} setPage={setPage} invoices={mockInvoices} payments={mockPayments} vipClients={mockVipClients} transactions={mockTransactions} onAddPayment={()=>{}} onAddVipClient={async(c)=>c} onUpdateVipClient={async(c)=>c} onDeleteVipClient={async()=>true} /></div>;
+            case 'dev_console':                  
+              if (!currentUser || currentUser.type !== 'developer') { setPage('dashboard'); return null; }  
+              return <div className="pt-40"><DeveloperDashboard products={mockProducts} promotions={[]} showroomItems={[]} homeSections={[]} onUpdateProducts={()=>{}} onUpdatePromos={()=>{}} onUpdateShowroom={()=>{}} onUpdateSections={()=>{}} onBack={()=>setPage('dashboard')} /></div>;
+            default: return <Home setPage={setPage} addToCart={()=>{}} products={mockProducts} promotions={[]} />;
+          }
+        })()}
+      </Suspense>                
+    );                
+  }, [currentPage, currentUser, setPage]);
 
   if (isInitializing) return <SplashScreen onComplete={() => setIsInitializing(false)} />;
 
-  return (
-    <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-white overflow-hidden">
-        {!isOnline && (
-          <div className="fixed top-0 left-0 w-full bg-red-600 text-white py-2 px-4 z-[10000] text-center font-black text-sm flex items-center justify-center gap-3">
-            <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
-            {language === 'ar' ? 'أنت تتصفح بدون اتصال' : 'Offline Mode'}
-          </div>                                    
-        )}                            
-        <Header                                       
-          setPage={setPage}   
-          cartItemCount={cart.reduce((s,i)=>s+i.quantity,0)} 
-          user={currentUser} 
-          onLogout={()=>{setCurrentUser(null); setPage('home')}} 
-          onToggleAiAssistant={() => setShowAi(!showAi)} 
-        />
-        <main className="flex-grow p-0 m-0 relative z-10">{pageContent}</main>
-        {showAi && <AiAssistant products={products} onClose={() => setShowAi(false)} />}
-        <Footer setPage={setPage} />
-        <PwaInstallPrompt />                            
-      </div>                            
-    </ErrorBoundary>                            
-  );                            
+  return (                
+    <div className="min-h-screen flex flex-col font-sans">
+      <Header setPage={setPage} cartItemCount={0} user={currentUser} onLogout={()=>{setCurrentUser(null); setPage('home')}} onToggleAiAssistant={()=>{}} />
+      <main className="flex-grow">{pageContent}</main>
+      <Footer setPage={setPage} />
+    </div>                
+  );                
 }
 
 export default function App() {
-  return (                            
-    <I18nProvider>                            
-      <ToastProvider>                            
-        <GeminiAiProvider>                            
-          <MainApp />                            
-          <ToastContainer />                            
-        </GeminiAiProvider>                            
-      </ToastProvider>                            
-    </I18nProvider>                            
-  );          
-}}        
+  return (                
+    <I18nProvider><ToastProvider><GeminiAiProvider><MainApp /><ToastContainer /></GeminiAiProvider></ToastProvider></I18nProvider>
+  );                
+}
