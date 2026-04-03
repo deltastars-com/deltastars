@@ -1,3 +1,16 @@
+const SYSTEM_CONFIG = {
+  BRAND_NAME: "نجوم دلتا للتجارة",
+  SLOGAN: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
+  PRIMARY_COLOR: "#1a3a1a",
+  SECONDARY_COLOR: "#ca8a04",
+  AUTH: {
+    ADMIN: import.meta.env.VITE_ADMIN_EMAIL,
+    DEV: import.meta.env.VITE_DEV_EMAIL,
+    ADMIN_PASS: import.meta.env.VITE_ADMIN_PASS,
+    DEV_PASS: import.meta.env.VITE_DEV_PASS,
+  }
+};
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 // --- إعدادات النظام الموحدة ---
