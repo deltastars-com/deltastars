@@ -10,23 +10,6 @@ const SYSTEM_CONFIG = {
     DEV_PASS: import.meta.env.VITE_DEV_PASS,
   }
 };
-
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-
-// --- إعدادات النظام الموحدة ---
-const SYSTEM_CONFIG = {
-  BRAND_NAME: "نجوم دلتا للتجارة",
-  SLOGAN: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
-  PRIMARY_COLOR: "#1a3a1a",
-  SECONDARY_COLOR: "#ca8a04", // Gold
-  AUTH: {
-    ADMIN: "marketing@deltastars-ksa.com",
-    DEV: "deltastars@zoho.mail.com",
-    ADMIN_PASS: "***733691903***%",
-    DEV_PASS: "321666"
-  }
-};
-
 export default function DeltaStarsSovereignApp() {
   const [currentPage, setCurrentPage] = useState('home');
   const [user, setUser] = useState(null);
@@ -35,7 +18,6 @@ export default function DeltaStarsSovereignApp() {
     { id: 2, name: "صندوق طماطم طازج", price: 25, stock: 85, unit: "صندوق", desc: "قطاف اليوم - نخب أول" }
   ]);
   const [finances, setFinances] = useState({ revenue: 12450, orders: 48, pending: 1200 });
-
   // --- نظام الأمان والأقفال الذكي ---
   const handleLogin = (email, pass) => {
     const cleanEmail = email.toLowerCase().trim();
