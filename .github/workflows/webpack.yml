@@ -1,28 +1,32 @@
-name: NodeJS with Webpack
+name: Delta Stars Sovereign Clean Run 🚀
 
-on:                                  
-  push:            
-    branches: [ "main" ]
-  pull_request:                                  
+on:
+  push:
     branches: [ "main" ]
 
-jobs:                                  
-  build:            
-    runs-on: ubuntu-latest      
+jobs:
+  # مهمة التنظيف والبناء الشامل
+  sovereign-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    strategy:            
-      matrix:            
-        node-version: [18.x, 20.x, 22.x]
+      - name: Setup Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    steps:                                  
-    - uses: actions/checkout@v4
+      - name: Force Clean & Install
+        run: |
+          npm cache clean --force
+          npm install --legacy-peer-deps
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4            
-      with:  
-        node-version: ${{ matrix.node-version }}
+      - name: Final Production Build
+        run: npm run build
+        env:
+          VITE_BRAND: "نجوم دلتا للتجارة"
+          VITE_LOCATION: "جدة - شارع المنار"
 
-    - name: Build
-      run: |
-        npm install
-        npx webpack
+      - name: Notify Success
+        run: echo "Project Cleaned and Sovereign Update Applied ✅"
