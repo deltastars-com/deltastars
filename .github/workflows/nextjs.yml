@@ -3,8 +3,6 @@ import {
   ShoppingBag, Users, BarChart3, Package, Bell, 
   Settings, LogOut, ShieldCheck, MapPin, Truck 
 } from 'lucide-react';
-
-/**
  * @Sovereign_System_V2_Integrated
  * Brand: نجوم دلتا للتجارة (Delta Stars Trading)
  * Location: جدة - شارع المنار
