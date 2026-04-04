@@ -1,162 +1,141 @@
-const SYSTEM_CONFIG = {
-  BRAND_NAME: "نجوم دلتا للتجارة",
-  SLOGAN: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
-  PRIMARY_COLOR: "#1a3a1a",
-  SECONDARY_COLOR: "#ca8a04",
-  AUTH: {
-    ADMIN: import.meta.env.VITE_ADMIN_EMAIL,
-    DEV: import.meta.env.VITE_DEV_EMAIL,
-    ADMIN_PASS: import.meta.env.VITE_ADMIN_PASS,
-    DEV_PASS: import.meta.env.VITE_DEV_PASS,
-  }
-};
-export default function DeltaStarsSovereignApp() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [user, setUser] = useState(null);
-  const [inventory, setInventory] = useState([
-    { id: 1, name: "تمور خلاص فاخر", price: 45, stock: 120, unit: "كجم", desc: "تمور من مزارع القصيم مباشرة" },
-    { id: 2, name: "صندوق طماطم طازج", price: 25, stock: 85, unit: "صندوق", desc: "قطاف اليوم - نخب أول" }
-  ]);
-  const [finances, setFinances] = useState({ revenue: 12450, orders: 48, pending: 1200 });
-  // --- نظام الأمان والأقفال الذكي ---
-  const handleLogin = (email, pass) => {
-    const cleanEmail = email.toLowerCase().trim();
-    if (cleanEmail === SYSTEM_CONFIG.AUTH.ADMIN && pass === SYSTEM_CONFIG.AUTH.ADMIN_PASS) {
-      setUser({ type: 'admin', email: cleanEmail, permissions: 'full' });
-      setCurrentPage('dashboard');
-    } else if (cleanEmail === SYSTEM_CONFIG.AUTH.DEV && pass === SYSTEM_CONFIG.AUTH.DEV_PASS) {
-      setUser({ type: 'developer', email: cleanEmail, permissions: 'root' });
-      setCurrentPage('dashboard');
+import React, { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js'; // تم التصحيح هنا لضمان عمل المكتبة
+import { ShoppingBag, ShieldCheck, Truck, LayoutDashboard, Loader2 } from 'lucide-react';
+
+/**
+ * 🌟 نظام نجوم دلتا للتجارة - المحرك السيادي الموحد
+ * الربط الشامل: GitHub -> Netlify -> Supabase
+ * فرع جدة - شارع المنار
+ */
+
+// --- إعدادات الاتصال الآمنة ---
+// تسحب القيم تلقائياً من Environment Variables في Netlify
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const DeltaStarsSovereignApp = () => {
+  const [products, setProducts] = useState([]);
+  const [isLogged, setIsLogged] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // 1. جلب البيانات الحقيقية من Supabase (الخضروات والتمور)
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products') // تأكد أن اسم الجدول في سوبابيس هو products
+          .select('*');
+        
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error) {
+        console.error("خطأ في جلب البيانات:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // 2. نظام الدخول المحمي (Admin & Delegates)
+  const handleLogin = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (data?.user) {
+      setIsLogged(true);
+      alert("تم دخول نظام نجوم دلتا بنجاح 🚀");
     } else {
-      alert("⚠️ وصول غير مصرح به! تأكد من البيانات.");
+      alert("بيانات الدخول غير صحيحة - يرجى مراجعة الإدارة");
     }
   };
 
-  // --- واجهة الهيدر الملكي ---
-  const Header = () => (
-    <header className="fixed top-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b-[4px] border-yellow-600 shadow-2xl font-['Tajawal']">
-      <div className="container mx-auto h-24 px-6 flex items-center justify-between">
-        <div className="flex flex-col cursor-pointer" onClick={() => setCurrentPage('home')}>
-          <h1 className="text-3xl font-black text-[#1a3a1a] tracking-tighter leading-none">{SYSTEM_CONFIG.BRAND_NAME}</h1>
-          <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{SYSTEM_CONFIG.SLOGAN}</span>
-        </div>
-        <div className="flex items-center gap-6">
-          {user ? (
-            <div className="flex items-center gap-4 bg-gray-100 p-2 px-6 rounded-full border border-gray-200">
-              <span className="text-xs font-black text-[#1a3a1a]">{user.email}</span>
-              {user.type === 'developer' && <button onClick={() => setCurrentPage('dev_console')} className="bg-yellow-500 p-2 rounded-lg animate-bounce" title="صلاحيات الجذر">⚙️</button>}
-              <button onClick={() => {setUser(null); setCurrentPage('home');}} className="text-red-600 font-black text-xs border-r pr-4 border-gray-300">خروج</button>
-            </div>
-          ) : (
-            <button onClick={() => setCurrentPage('login')} className="bg-[#1a3a1a] text-white px-8 py-3 rounded-full font-black text-sm hover:bg-yellow-600 transition-all shadow-lg border-b-4 border-green-900">دخول الإدارة 🔒</button>
-          )}
-        </div>
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-50 text-green-800">
+        <Loader2 className="animate-spin mb-4" size={48} />
+        <h2 className="text-xl font-bold">جاري تشغيل محرك نجوم دلتا...</h2>
       </div>
-    </header>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-['Tajawal',sans-serif] selection:bg-yellow-500 text-right" dir="rtl">
-      <Header />
-      
-      <main className="pt-24">
-        {/* --- الواجهة الرئيسية (Home) --- */}
-        {currentPage === 'home' && (
-          <section className="h-[90vh] flex items-center justify-center bg-[#1a3a1a] text-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80')] bg-cover bg-center animate-pulse"></div>
-            <div className="relative z-10 px-4">
-              <h2 className="text-7xl md:text-9xl font-black text-white mb-6 drop-shadow-2xl">نجوم دلتا</h2>
-              <p className="text-2xl md:text-4xl font-bold text-yellow-500 mb-12 italic leading-relaxed max-w-4xl mx-auto">
-                {SYSTEM_CONFIG.SLOGAN}
-              </p>
-              <div className="flex flex-wrap justify-center gap-6">
-                 <button onClick={() => setCurrentPage('products')} className="bg-yellow-600 text-white px-12 py-5 rounded-full font-black text-3xl shadow-[0_20px_50px_rgba(202,138,4,0.4)] hover:scale-105 transition-all">تسوق الآن 🛒</button>
-                 <button onClick={() => setCurrentPage('login')} className="bg-white/10 backdrop-blur-md text-white border-2 border-white/20 px-12 py-5 rounded-full font-black text-3xl hover:bg-white hover:text-black transition-all">بوابة الشركاء 🤝</button>
-              </div>
-            </div>
-          </section>
-        )}
+    <div className="min-h-screen bg-gray-50 text-right font-sans" dir="rtl">
+      {/* واجهة المتجر السيادية */}
+      <nav className="bg-green-800 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          <div className="bg-white p-1 rounded-full text-green-800">
+             <ShoppingBag size={24} />
+          </div>
+          <h1 className="text-xl font-black">نجوم دلتا للتجارة 🌟</h1>
+        </div>
+        <button 
+          onClick={() => window.location.href='/admin'}
+          className="hover:bg-green-700 p-2 rounded-full transition-colors"
+        >
+          <ShieldCheck size={28} />
+        </button>
+      </nav>
 
-        {/* --- نظام الدخول المحمي --- */}
-        {currentPage === 'login' && (
-          <div className="h-[80vh] flex items-center justify-center p-6 bg-slate-100">
-            <div className="bg-white p-12 rounded-[3rem] shadow-4xl border-t-8 border-[#1a3a1a] w-full max-w-md">
-              <h2 className="text-3xl font-black text-center mb-4">الدخول السيادي</h2>
-              <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">Sovereign Access Only</p>
-              <input id="email" type="email" placeholder="البريد الإلكتروني" className="w-full p-5 mb-4 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <input id="pass" type="password" placeholder="كلمة المرور" className="w-full p-5 mb-8 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <button onClick={() => handleLogin(document.getElementById('email').value, document.getElementById('pass').value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
-            </div>
+      <main className="p-6 max-w-6xl mx-auto">
+        <header className="mb-10 text-center">
+          <h2 className="text-3xl font-black text-green-900 mb-2">منتجاتنا الطازجة</h2>
+          <p className="text-gray-500">من مزارعنا في جدة - شارع المنار مباشرة إلى مائدتكم</p>
+          <div className="h-1 w-24 bg-orange-500 mx-auto mt-4 rounded-full"></div>
+        </header>
+
+        {products.length === 0 ? (
+          <div className="text-center p-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
+            <p className="text-gray-400">لا توجد منتجات معروضة حالياً في "الخزنة".. بانتظار إضافة أول صنف من Supabase.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((item) => (
+              <div key={item.id} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
+                <div className="relative h-56 overflow-hidden">
+                  <img 
+                    src={item.image_url || 'https://via.placeholder.com/400x300?text=Delta+Stars'} 
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                  />
+                  <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    {item.category || 'طازج'}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-bold text-xl text-green-900 mb-2">{item.name}</h3>
+                  <p className="text-sm text-gray-500 mb-4 h-12 overflow-hidden leading-relaxed">
+                    {item.description || 'وصف المنتج غير متوفر حالياً'}
+                  </p>
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-gray-400">السعر</span>
+                      <span className="font-black text-2xl text-orange-600">{item.price} <small className="text-xs">ر.س</small></span>
+                    </div>
+                    <button className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-2xl font-bold transition-all transform active:scale-95 shadow-lg shadow-green-100">
+                      إضافة للسلة
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
+      </main>
 
-        {/* --- لوحة التحكم الشاملة (Dashboard) --- */}
-        {currentPage === 'dashboard' && user && (
-          <div className="p-10 container mx-auto animate-fade-in">
-            <div className="flex justify-between items-center mb-12">
-               <h2 className="text-5xl font-black text-[#1a3a1a]">لوحة إدارة نجوم دلتا</h2>
-               <div className="bg-yellow-100 text-yellow-800 px-6 py-2 rounded-full font-black text-sm">وضع {user.type === 'developer' ? 'الجذر' : 'المدير'} نشط</div>
-            </div>
+      <footer className="bg-white mt-20 p-10 border-t border-gray-100 text-center">
+        <div className="flex justify-center gap-6 mb-4 text-green-800 opacity-50">
+          <Truck size={24} />
+          <LayoutDashboard size={24} />
+        </div>
+        <p className="text-gray-600 font-bold mb-2">مؤسسة نجوم دلتا للتجارة - جميع الحقوق محفوظة © 2026</p>
+        <p className="text-xs text-gray-400">جدة - شارع المنار | نظام المطور المتكامل V2.1</p>
+      </footer>
+    </div>
+  );
+};
 
-            {/* النظام المحاسبي المالي */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-emerald-500">
-                  <p className="text-gray-400 font-bold mb-2">إجمالي المبيعات</p>
-                  <h4 className="text-4xl font-black text-emerald-600">{finances.revenue} ر.س</h4>
-               </div>
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-blue-500">
-                  <p className="text-gray-400 font-bold mb-2">الطلبات النشطة</p>
-                  <h4 className="text-4xl font-black text-blue-600">{finances.orders} طلب</h4>
-               </div>
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-yellow-500">
-                  <p className="text-gray-400 font-bold mb-2">مبالغ تحت التحصيل</p>
-                  <h4 className="text-4xl font-black text-yellow-600">{finances.pending} ر.س</h4>
-               </div>
-            </div>
-
-            {/* المخزون الذكي وإدارة المطور */}
-            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100">
-               <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-2xl font-black">إدارة المخزون والتسعير الذكي 📦</h3>
-                  {user.type === 'developer' && <button className="bg-black text-white px-6 py-2 rounded-xl text-xs font-bold">تحديث الأكواد البرمجية ⚡</button>}
-               </div>
-               <table className="w-full text-right">
-                  <thead>
-                     <tr className="text-gray-400 border-b-2">
-                        <th className="py-4">المنتج</th>
-                        <th>السعر (ر.س)</th>
-                        <th>الكمية المتوفرة</th>
-                        <th>الحالة</th>
-                        <th>الإجراءات</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {inventory.map(item => (
-                        <tr key={item.id} className="border-b hover:bg-slate-50 transition-colors">
-                           <td className="py-6 font-black">{item.name}</td>
-                           <td className="font-bold text-yellow-700">{item.price}</td>
-                           <td className="font-bold">{item.stock} {item.unit}</td>
-                           <td><span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black">نشط</span></td>
-                           <td>          
-                              <button className="text-blue-600 ml-4 font-bold">تعديل</button>
-                              {user.type === 'developer' && <button className="text-red-600 font-bold">حذف</button>}
-                           </td>          
-                        </tr>          
-                     ))}          
-                  </tbody>          
-               </table>          
-            </div>          
-          </div>          
-        )}          
-      </main>          
-      
-      {/* ستايل الخط العام لضمان تحسين الخط في كل المتصفحات */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif !important; }
-        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
-    </div>          
-  );          
-}
+export default DeltaStarsSovereignApp;
