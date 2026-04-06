@@ -38,3 +38,4 @@ npm install @simplewebauthn/browser @simplewebauthn/server
     "vite": "^6.2.0"
   }
 }
+npm install @simplewebauthn/browser @simplewebauthn/server
