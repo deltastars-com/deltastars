@@ -1,3 +1,4 @@
+npm install @simplewebauthn/browser @simplewebauthn/server
 {
   "name": "نجوم-دلتا-|-delta-stars",
   "private": true,
