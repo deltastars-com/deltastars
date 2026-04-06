@@ -1,249 +1,247 @@
-import React, { useState } from 'react';
-import { supabase } from '../supabaseClient'; // تأكد أن مسار ملف الاتصال صحيح حسب مجلداتك
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { Phone, Lock, Fingerprint, Sparkles, CheckCircle, ArrowLeft, Shield, UserCog } from 'lucide-react';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
+export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage }) => {
+  const {
+    sendOtp, verifyOtpAndCreateSession, loginWithSavedDevice,
+    loginWithPassword, loginWithBiometricForAdmin, registerBiometricForAdmin,
+    user, isLoading
+  } = useAuth();
+  const { addToast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const [mode, setMode] = useState<'client' | 'admin'>('client');
 
-    // 1. تسجيل الدخول عبر Supabase
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+  // --- حالة العميل (OTP) ---
+  const [phone, setPhone] = useState('');
+  const [otpStep, setOtpStep] = useState<'phone' | 'otp'>('phone');
+  const [otpCode, setOtpCode] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
 
-    if (authError) {
-      alert('خطأ في بيانات الدخول، تأكد من الإيميل وكلمة المرور!');
-      setLoading(false);
-      return;
-    }
+  // --- حالة الإدارة ---
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
+  const [needsPasswordChange, setNeedsPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showBiometricSetup, setShowBiometricSetup] = useState(false);
 
-    // 2. التحقق من رتبة المستخدم
-    if (authData.user) {
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('id', authData.user.id)
-        .single();
-
-      setLoading(false);
-
-      // 3. توجيه المستخدم حسب الصلاحية
-      if (roleData) {
-        if (roleData.role === 'super_admin') {
-          alert('مرحباً بك أيها المدير التقني!');
-          navigate('/developer-dashboard'); // رابط لوحة المطور (سننشئها لاحقاً)
-        } else if (roleData.role === 'admin') {
-          alert('مرحباً بك في لوحة الإدارة!');
-          navigate('/admin-dashboard'); // رابط لوحة الإدارة
-        } else {
-          navigate('/'); // المستخدم العادي يذهب للرئيسية
+  // محاولة الدخول التلقائي للعميل إذا كان الجهاز مسجلاً مسبقاً
+  useEffect(() => {
+    const attemptAutoLogin = async () => {
+      if (mode === 'client' && !user && !autoLoginAttempted) {
+        setAutoLoginAttempted(true);
+        const success = await loginWithSavedDevice();
+        if (success) {
+          addToast('تم تسجيل الدخول تلقائياً', 'success');
+          setPage('home');
         }
       }
+    };
+    attemptAutoLogin();
+  }, [mode, user, autoLoginAttempted]);
+
+  // --- دوال العميل ---
+  const formatPhone = (v: string) => v.replace(/\D/g, '').slice(0, 10);
+  const handleSendOtp = async () => {
+    if (phone.length < 10) { addToast('أدخل رقم جوال صحيح', 'error'); return; }
+    setIsSending(true);
+    try {
+      await sendOtp(`966${phone}`);
+      setOtpStep('otp');
+      setCountdown(60);
+      const timer = setInterval(() => setCountdown(prev => { if (prev <= 1) { clearInterval(timer); return 0; } return prev - 1; }), 1000);
+      addToast('تم إرسال رمز التحقق', 'success');
+    } catch (err: any) {
+      addToast(err.message || 'فشل الإرسال', 'error');
+    } finally {
+      setIsSending(false);
+    }
+  };
+  const handleVerifyOtp = async () => {
+    if (otpCode.length !== 6) { addToast('أدخل رمز مكون من 6 أرقام', 'error'); return; }
+    try {
+      const result = await verifyOtpAndCreateSession(`966${phone}`, otpCode);
+      if (result.needsDeviceSave) {
+        addToast('تم تسجيل الدخول. يرجى إتمام أول عملية شراء لحفظ جهازك.', 'info');
+        setPage('cart');
+      } else {
+        addToast('تم تسجيل الدخول بنجاح', 'success');
+        setPage('home');
+      }
+    } catch (err: any) {
+      addToast(err.message || 'رمز غير صحيح', 'error');
     }
   };
 
-  return (
-    <div style={{ textAlign: 'center', marginTop: '100px', direction: 'rtl' }}>
-      <h2>تسجيل الدخول - لوحة التحكم</h2>
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '15px' }}>
-          <input 
-            type="email" 
-            placeholder="البريد الإلكتروني" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ padding: '10px', width: '300px', borderRadius: '5px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div style={{ marginBottom: '15px' }}>
-          <input 
-            type="password" 
-            placeholder="كلمة المرور" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ padding: '10px', width: '300px', borderRadius: '5px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <button type="submit" disabled={loading} style={{ padding: '10px 40px', cursor: 'pointer', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', fontSize: '16px' }}>
-          {loading ? 'جاري التحقق...' : 'دخول الموظفين'}
-        </button>
-      </form>
-    </div>
-  );
-}
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-
-// --- إعدادات النظام الموحدة ---
-const SYSTEM_CONFIG = {
-  BRAND_NAME: "نجوم دلتا للتجارة",
-  SLOGAN: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
-  PRIMARY_COLOR: "#1a3a1a",
-  SECONDARY_COLOR: "#ca8a04", // Gold
-  AUTH: {
-    ADMIN: "marketing@deltastars-ksa.com",
-    DEV: "deltastars@zoho.mail.com",
-    ADMIN_PASS: "***733691903***%",
-    DEV_PASS: "321666"
-  }
-};
-
-export default function DeltaStarsSovereignApp() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [user, setUser] = useState(null);
-  const [inventory, setInventory] = useState([
-    { id: 1, name: "تمور خلاص فاخر", price: 45, stock: 120, unit: "كجم", desc: "تمور من مزارع القصيم مباشرة" },
-    { id: 2, name: "صندوق طماطم طازج", price: 25, stock: 85, unit: "صندوق", desc: "قطاف اليوم - نخب أول" }
-  ]);
-  const [finances, setFinances] = useState({ revenue: 12450, orders: 48, pending: 1200 });
-
-  // --- نظام الأمان والأقفال الذكي ---
-  const handleLogin = (email, pass) => {
-    const cleanEmail = email.toLowerCase().trim();
-    if (cleanEmail === SYSTEM_CONFIG.AUTH.ADMIN && pass === SYSTEM_CONFIG.AUTH.ADMIN_PASS) {
-      setUser({ type: 'admin', email: cleanEmail, permissions: 'full' });
-      setCurrentPage('dashboard');
-    } else if (cleanEmail === SYSTEM_CONFIG.AUTH.DEV && pass === SYSTEM_CONFIG.AUTH.DEV_PASS) {
-      setUser({ type: 'developer', email: cleanEmail, permissions: 'root' });
-      setCurrentPage('dashboard');
+  // --- دوال الإدارة ---
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAdminLoading(true);
+    try {
+      const result = await loginWithPassword(email, password);
+      if (result.needsPasswordChange) {
+        setNeedsPasswordChange(true);
+        addToast('يجب تغيير كلمة المرور الافتراضية', 'warning');
+      } else {
+        addToast('تم تسجيل الدخول بنجاح', 'success');
+        setPage('dashboard');
+      }
+    } catch (err: any) {
+      addToast(err.message || 'فشل تسجيل الدخول', 'error');
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) { addToast('كلمتا المرور غير متطابقتين', 'error'); return; }
+    if (newPassword.length < 8) { addToast('كلمة المرور 8 أحرف على الأقل', 'error'); return; }
+    setIsAdminLoading(true);
+    try {
+      await changePassword(newPassword);
+      addToast('تم تغيير كلمة المرور بنجاح', 'success');
+      setNeedsPasswordChange(false);
+      setShowBiometricSetup(true);
+    } catch (err: any) {
+      addToast(err.message, 'error');
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+  const handleBiometricLogin = async () => {
+    const success = await loginWithBiometricForAdmin();
+    if (success) {
+      addToast('تم الدخول بالبصمة', 'success');
+      setPage('dashboard');
     } else {
-      alert("⚠️ وصول غير مصرح به! تأكد من البيانات.");
+      addToast('فشل التعرف على البصمة', 'error');
+    }
+  };
+  const handleRegisterBiometric = async () => {
+    try {
+      await registerBiometricForAdmin();
+      addToast('تم تسجيل البصمة/الوجه بنجاح', 'success');
+      setShowBiometricSetup(false);
+      setPage('dashboard');
+    } catch (err: any) {
+      addToast(err.message || 'فشل تسجيل البصمة', 'error');
     }
   };
 
-  // --- واجهة الهيدر الملكي ---
-  const Header = () => (
-    <header className="fixed top-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b-[4px] border-yellow-600 shadow-2xl font-['Tajawal']">
-      <div className="container mx-auto h-24 px-6 flex items-center justify-between">
-        <div className="flex flex-col cursor-pointer" onClick={() => setCurrentPage('home')}>
-          <h1 className="text-3xl font-black text-[#1a3a1a] tracking-tighter leading-none">{SYSTEM_CONFIG.BRAND_NAME}</h1>
-          <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{SYSTEM_CONFIG.SLOGAN}</span>
-        </div>
-        <div className="flex items-center gap-6">
-          {user ? (
-            <div className="flex items-center gap-4 bg-gray-100 p-2 px-6 rounded-full border border-gray-200">
-              <span className="text-xs font-black text-[#1a3a1a]">{user.email}</span>
-              {user.type === 'developer' && <button onClick={() => setCurrentPage('dev_console')} className="bg-yellow-500 p-2 rounded-lg animate-bounce" title="صلاحيات الجذر">⚙️</button>}
-              <button onClick={() => {setUser(null); setCurrentPage('home');}} className="text-red-600 font-black text-xs border-r pr-4 border-gray-300">خروج</button>
-            </div>
-          ) : (
-            <button onClick={() => setCurrentPage('login')} className="bg-[#1a3a1a] text-white px-8 py-3 rounded-full font-black text-sm hover:bg-yellow-600 transition-all shadow-lg border-b-4 border-green-900">دخول الإدارة 🔒</button>
-          )}
+  // شاشة تغيير كلمة المرور الإجبارية (للمسؤول / المطور)
+  if (needsPasswordChange) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full">
+          <h2 className="text-2xl font-black text-primary mb-2">تغيير كلمة المرور</h2>
+          <p className="text-gray-500 mb-6">يجب تغيير كلمة المرور الافتراضية</p>
+          <input type="password" placeholder="كلمة المرور الجديدة" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full p-4 border rounded-xl mb-4" />
+          <input type="password" placeholder="تأكيد كلمة المرور" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full p-4 border rounded-xl mb-6" />
+          <button onClick={handleChangePassword} className="w-full bg-primary text-white py-4 rounded-xl font-black">تغيير كلمة المرور</button>
         </div>
       </div>
-    </header>
-  );
+    );
+  }
+
+  // شاشة تفعيل البصمة بعد تغيير كلمة المرور (اختياري)
+  if (showBiometricSetup) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center">
+          <Fingerprint className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-black mb-2">تفعيل الدخول بالبصمة / الوجه</h2>
+          <p className="text-gray-500 mb-6">يمكنك تسجيل بصمتك للدخول السريع في المرات القادمة</p>
+          <button onClick={handleRegisterBiometric} className="w-full bg-primary text-white py-4 rounded-xl font-black mb-3">تسجيل البصمة الآن</button>
+          <button onClick={() => { setShowBiometricSetup(false); setPage('dashboard'); }} className="w-full bg-gray-200 text-gray-700 py-4 rounded-xl font-black">تخطي</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-['Tajawal',sans-serif] selection:bg-yellow-500 text-right" dir="rtl">
-      <Header />
-      
-      <main className="pt-24">
-        {/* --- الواجهة الرئيسية (Home) --- */}
-        {currentPage === 'home' && (
-          <section className="h-[90vh] flex items-center justify-center bg-[#1a3a1a] text-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80')] bg-cover bg-center animate-pulse"></div>
-            <div className="relative z-10 px-4">
-              <h2 className="text-7xl md:text-9xl font-black text-white mb-6 drop-shadow-2xl">نجوم دلتا</h2>
-              <p className="text-2xl md:text-4xl font-bold text-yellow-500 mb-12 italic leading-relaxed max-w-4xl mx-auto">
-                {SYSTEM_CONFIG.SLOGAN}
-              </p>
-              <div className="flex flex-wrap justify-center gap-6">
-                 <button onClick={() => setCurrentPage('products')} className="bg-yellow-600 text-white px-12 py-5 rounded-full font-black text-3xl shadow-[0_20px_50px_rgba(202,138,4,0.4)] hover:scale-105 transition-all">تسوق الآن 🛒</button>
-                 <button onClick={() => setCurrentPage('login')} className="bg-white/10 backdrop-blur-md text-white border-2 border-white/20 px-12 py-5 rounded-full font-black text-3xl hover:bg-white hover:text-black transition-all">بوابة الشركاء 🤝</button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border-t-8 border-primary">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-black text-primary">Delta Stars</h1>
+          <p className="text-gray-400 text-sm">{mode === 'client' ? 'تسجيل العملاء' : 'لوحة التحكم'}</p>
+        </div>
+
+        {/* أزرار التبديل بين وضع العميل والإدارة */}
+        <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-full">
+          <button onClick={() => setMode('client')} className={`flex-1 py-2 rounded-full font-bold transition ${mode === 'client' ? 'bg-primary text-white shadow' : 'text-gray-500'}`}>
+            <Phone className="w-4 h-4 inline ml-1" /> عميل
+          </button>
+          <button onClick={() => setMode('admin')} className={`flex-1 py-2 rounded-full font-bold transition ${mode === 'admin' ? 'bg-primary text-white shadow' : 'text-gray-500'}`}>
+            <UserCog className="w-4 h-4 inline ml-1" /> إدارة
+          </button>
+        </div>
+
+        {/* ========== وضع العميل ========== */}
+        {mode === 'client' && (
+          <div>
+            {otpStep === 'phone' && (
+              <div className="space-y-6">
+                <div className="flex">
+                  <span className="inline-flex items-center px-4 bg-gray-100 border border-r-0 rounded-r-2xl text-gray-500 font-bold">+966</span>
+                  <input type="tel" value={phone} onChange={e => setPhone(formatPhone(e.target.value))} placeholder="5XXXXXXXX" className="flex-1 px-4 py-4 border rounded-l-2xl focus:ring-2 focus:ring-primary outline-none text-lg" maxLength={10} autoFocus />
+                </div>
+                <button onClick={handleSendOtp} disabled={isSending || phone.length < 10} className="w-full bg-primary text-white rounded-2xl py-4 font-black flex items-center justify-center gap-2 disabled:opacity-50">
+                  {isSending ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Sparkles className="w-5 h-5" /> إرسال رمز التحقق</>}
+                </button>
               </div>
-            </div>
-          </section>
+            )}
+            {otpStep === 'otp' && (
+              <div className="space-y-6">
+                <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0,6))} placeholder="أدخل الرمز" className="w-full px-4 py-4 border rounded-2xl text-center text-2xl font-mono tracking-widest" maxLength={6} autoFocus />
+                <button onClick={handleVerifyOtp} disabled={isLoading || otpCode.length !== 6} className="w-full bg-primary text-white rounded-2xl py-4 font-black flex items-center justify-center gap-2">
+                  {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><CheckCircle className="w-5 h-5" /> تأكيد وتسجيل الدخول</>}
+                </button>
+                <div className="text-center">
+                  <button onClick={handleSendOtp} disabled={countdown > 0} className="text-sm text-primary font-bold disabled:opacity-50">
+                    {countdown > 0 ? `إعادة الإرسال خلال ${countdown} ثانية` : 'إعادة إرسال الرمز'}
+                  </button>
+                </div>
+                <button onClick={() => { setOtpStep('phone'); setOtpCode(''); }} className="w-full py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold flex items-center justify-center gap-2"><ArrowLeft className="w-4 h-4" /> تغيير رقم الجوال</button>
+              </div>
+            )}
+          </div>
         )}
 
-        {/* --- نظام الدخول المحمي --- */}
-        {currentPage === 'login' && (
-          <div className="h-[80vh] flex items-center justify-center p-6 bg-slate-100">
-            <div className="bg-white p-12 rounded-[3rem] shadow-4xl border-t-8 border-[#1a3a1a] w-full max-w-md">
-              <h2 className="text-3xl font-black text-center mb-4">الدخول السيادي</h2>
-              <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">Sovereign Access Only</p>
-              <input id="email" type="email" placeholder="البريد الإلكتروني" className="w-full p-5 mb-4 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <input id="pass" type="password" placeholder="كلمة المرور" className="w-full p-5 mb-8 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <button onClick={() => handleLogin(document.getElementById('email').value, document.getElementById('pass').value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
+        {/* ========== وضع الإدارة ========== */}
+        {mode === 'admin' && (
+          <div>
+            <form onSubmit={handleAdminLogin}>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">البريد الإلكتروني</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary" required />
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 font-bold mb-2">كلمة المرور</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary" required />
+              </div>
+              <button type="submit" disabled={isAdminLoading} className="w-full bg-primary text-white py-4 rounded-xl font-black text-lg flex items-center justify-center gap-2">
+                {isAdminLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'تسجيل الدخول'}
+              </button>
+            </form>
+            <div className="mt-4 text-center">
+              <button onClick={handleBiometricLogin} className="text-sm text-primary hover:underline flex items-center justify-center gap-1 mx-auto">
+                <Fingerprint className="w-4 h-4" /> الدخول بالبصمة / الوجه
+              </button>
             </div>
           </div>
         )}
 
-        {/* --- لوحة التحكم الشاملة (Dashboard) --- */}
-        {currentPage === 'dashboard' && user && (
-          <div className="p-10 container mx-auto animate-fade-in">
-            <div className="flex justify-between items-center mb-12">
-               <h2 className="text-5xl font-black text-[#1a3a1a]">لوحة إدارة نجوم دلتا</h2>
-               <div className="bg-yellow-100 text-yellow-800 px-6 py-2 rounded-full font-black text-sm">وضع {user.type === 'developer' ? 'الجذر' : 'المدير'} نشط</div>
-            </div>
-
-            {/* النظام المحاسبي المالي */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-emerald-500">
-                  <p className="text-gray-400 font-bold mb-2">إجمالي المبيعات</p>
-                  <h4 className="text-4xl font-black text-emerald-600">{finances.revenue} ر.س</h4>
-               </div>
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-blue-500">
-                  <p className="text-gray-400 font-bold mb-2">الطلبات النشطة</p>
-                  <h4 className="text-4xl font-black text-blue-600">{finances.orders} طلب</h4>
-               </div>
-               <div className="bg-white p-8 rounded-[2rem] shadow-xl border-b-8 border-yellow-500">
-                  <p className="text-gray-400 font-bold mb-2">مبالغ تحت التحصيل</p>
-                  <h4 className="text-4xl font-black text-yellow-600">{finances.pending} ر.س</h4>
-               </div>
-            </div>
-
-            {/* المخزون الذكي وإدارة المطور */}
-            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100">
-               <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-2xl font-black">إدارة المخزون والتسعير الذكي 📦</h3>
-                  {user.type === 'developer' && <button className="bg-black text-white px-6 py-2 rounded-xl text-xs font-bold">تحديث الأكواد البرمجية ⚡</button>}
-               </div>
-               <table className="w-full text-right">
-                  <thead>
-                     <tr className="text-gray-400 border-b-2">
-                        <th className="py-4">المنتج</th>
-                        <th>السعر (ر.س)</th>
-                        <th>الكمية المتوفرة</th>
-                        <th>الحالة</th>
-                        <th>الإجراءات</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {inventory.map(item => (
-                        <tr key={item.id} className="border-b hover:bg-slate-50 transition-colors">
-                           <td className="py-6 font-black">{item.name}</td>
-                           <td className="font-bold text-yellow-700">{item.price}</td>
-                           <td className="font-bold">{item.stock} {item.unit}</td>
-                           <td><span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black">نشط</span></td>
-                           <td>
-                              <button className="text-blue-600 ml-4 font-bold">تعديل</button>
-                              {user.type === 'developer' && <button className="text-red-600 font-bold">حذف</button>}
-                           </td>
-                        </tr>
-                     ))}
-                  </tbody>
-               </table>
-            </div>
-          </div>
-        )}
-      </main>
-      
-      {/* ستايل الخط العام لضمان تحسين الخط في كل المتصفحات */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif !important; }
-        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+        {/* معلومات إضافية */}
+        <div className="mt-8 pt-6 border-t text-center text-xs text-gray-400">
+          <p>📧 للتواصل العام: info@deltastars.ksa.com</p>
+          {mode === 'admin' && <p className="mt-1">🔐 المسؤول: deltastars90@gmail.com | المطور: deltastars@zoho.com</p>}
+          {mode === 'client' && <p className="mt-1">✅ بعد أول عملية شراء، سيتم حفظ جهازك للدخول التلقائي لاحقاً</p>}
+        </div>
+      </div>
     </div>
   );
-}
+};
