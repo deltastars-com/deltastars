@@ -1,11 +1,10 @@
-
-import React, { useState, useEffect } from 'react';
+import { useDriverTracking } from '../hooks/useDriverTracking'; React, { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { useI18n } from './contexts/I18nContext';
 import { supabase } from './services/supabaseClient';
 import { DeliveryIcon, LocationMarkerIcon } from './contexts/Icons';
 
-const containerStyle = {
+const containerStyle = {const { driverLocation, startTracking } = useDriverTracking(orderId);
   width: '100%',
   height: '500px'
 };
