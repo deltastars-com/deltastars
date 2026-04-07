@@ -212,3 +212,17 @@ export const api = {
 };
 
 export default api;
+// أضف داخل api كائن:
+async updateDriverLocation(driverId: string, lat: number, lng: number, orderId?: string): Promise<void> {
+  await fetch(`${EDGE_FUNCTION_URL}/update-driver-location`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ driverId, lat, lng, orderId }),
+  });
+},
+
+subscribeToDriverLocation(orderId: string, callback: (location: any) => void) {
+  const channel = supabase.channel(`order:${orderId}`);
+  channel.on('broadcast', { event: 'driver_location' }, (payload) => callback(payload.payload)).subscribe();
+  return () => channel.unsubscribe();
+},
