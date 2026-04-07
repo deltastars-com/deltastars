@@ -10,19 +10,19 @@ export interface User {
   role: 'admin' | 'developer' | 'ops' | 'gm' | 'vip' | 'client' | 'marketing' | 'delegate';
   force_password_change?: boolean;
   biometric_enabled?: boolean;
-  device_registered?: boolean; // للعميل: هل تم حفظ هذا الجهاز؟
+  device_registered?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  // للعملاء (OTP + حفظ الجهاز بعد أول شراء)
+  // للعملاء
   sendOtp: (phone: string) => Promise<void>;
   verifyOtpAndCreateSession: (phone: string, code: string) => Promise<{ needsDeviceSave: boolean }>;
   saveDeviceAfterPurchase: () => Promise<void>;
   loginWithSavedDevice: () => Promise<boolean>;
-  // للإدارة (البريد + كلمة مرور + بصمة)
+  // للإدارة
   loginWithPassword: (email: string, password: string) => Promise<{ needsPasswordChange: boolean }>;
   changePassword: (newPassword: string) => Promise<void>;
   registerBiometricForAdmin: () => Promise<void>;
@@ -42,7 +42,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // استعادة الجلسة عند التحميل
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -53,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  // ==================== دوال العميل ====================
+  // ========== دوال العميل ==========
   const sendOtp = useCallback(async (phone: string) => {
     await api.sendOtp(phone, 'login');
   }, []);
@@ -64,7 +63,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user: verifiedUser } = await api.verifyOtp(phone, code, 'login');
       setUser(verifiedUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(verifiedUser));
-      // التحقق مما إذا كان هذا الجهاز مسجلاً مسبقاً لهذا المستخدم
       const deviceRegistered = localStorage.getItem(`${DEVICE_REGISTERED_KEY}_${verifiedUser.id}`);
       return { needsDeviceSave: !deviceRegistered };
     } finally {
@@ -75,7 +73,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const saveDeviceAfterPurchase = useCallback(async () => {
     if (!user) throw new Error('No user logged in');
     try {
-      // بدأ عملية تسجيل الجهاز عبر WebAuthn
       const options = await api.initiateDeviceRegistration(user.id);
       const credential = await startRegistration(options);
       await api.saveDevice(user.id, credential);
@@ -95,18 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const options = await api.getDeviceChallenge(user.id);
       const assertion = await startAuthentication(options);
       const verified = await api.verifyDeviceAssertion(user.id, assertion);
-      if (verified) {
-        // تحديث الجلسة (تمديد الوقت)
-        return true;
-      }
-      return false;
+      return verified;
     } catch (error) {
       console.error('Auto login failed:', error);
       return false;
     }
   }, [user]);
 
-  // ==================== دوال الإدارة (البريد + كلمة مرور + بصمة) ====================
+  // ========== دوال الإدارة ==========
   const loginWithPassword = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
@@ -147,19 +140,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const options = await api.initiateBiometricLogin(user.id);
       const assertion = await startAuthentication(options);
       const verified = await api.verifyBiometricLogin(user.id, assertion);
-      if (verified) return true;
-      return false;
+      return verified;
     } catch (error) {
       console.error('Biometric login failed:', error);
       return false;
     }
   }, [user]);
 
-  // ==================== دوال عامة ====================
+  // ========== دوال عامة ==========
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem(STORAGE_KEY);
-    // لا نمسح DEVICE_REGISTERED_KEY لأنه مرتبط بالجهاز وليس الجلسة
   }, []);
 
   const updateUser = useCallback((data: Partial<User>) => {
