@@ -1,7 +1,29 @@
 import { supabase } from '../lib/supabaseClient';
 import { Product, Order, User } from '../types';
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
-
+// أضف داخل api { ... }
+async getUniqueCategories(): Promise<string[]> {
+  // جلب جميع الأقسام من العمودين (category_ar و category_en) مع إزالة التكرار
+  const { data, error } = await supabase
+    .from('products')
+    .select('category_ar, category_en');
+  
+  if (error) throw new Error(`Failed to fetch categories: ${error.message}`);
+  
+  // جمع القيم من كلا العمودين وتصفية التكرار و القيم الفارغة
+  const categoriesSet = new Set<string>();
+  data?.forEach(product => {
+    if (product.category_ar && product.category_ar.trim() !== '') {
+      categoriesSet.add(product.category_ar);
+    }
+    if (product.category_en && product.category_en.trim() !== '') {
+      categoriesSet.add(product.category_en);
+    }
+  });
+  
+  // تحويل Set إلى مصفوفة وترتيبها أبجدياً
+  return Array.from(categoriesSet).sort();
+}
 const EDGE_FUNCTION_URL = import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL ||
   `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
