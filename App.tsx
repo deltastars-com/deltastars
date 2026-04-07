@@ -1,49 +1,104 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { ShoppingBag, Loader2 } from 'lucide-react';
+import { Header } from './Header';
+import { Footer } from './Footer';
+import { HomePage } from './HomePage';
+import { ProductsPage } from './ProductsPage';
+import { CartPage } from './CartPage';
+import { LoginPage } from './LoginPage';
+import { DashboardPage } from './DashboardPage';
+import { VipLoginPage } from './VipLoginPage';
+import { VipDashboardPage } from './VipDashboardPage';
+import { WishlistPage } from './WishlistPage';
+import { ShowroomPage } from './ShowroomPage';
+import { ProductDetailPage } from './ProductDetailPage';
+import { OperationsPage } from './OperationsPage';
+import { WarehousePage } from './WarehousePage';
+import { PrivacyPolicyPage } from './PrivacyPolicyPage';
+import { SecuritySetupPage } from './SecuritySetupPage';
+import { OrderTrackingPage } from './OrderTrackingPage';
+import { DevConsolePage } from './DevConsolePage';
+import { TrustCenterPage } from './TrustCenterPage';
+import { SourcingRequestPage } from './SourcingRequestPage';
+import { TermsPage } from './TermsPage';
+import { ReturnsPage } from './ReturnsPage';
+import { ShippingPolicyPage } from './ShippingPolicyPage';
+import { DriverDashboardPage } from './DriverDashboardPage';
+import { UnitsPage } from './UnitsPage';
+import { ContactPage } from './ContactPage';
+import { AdminDashboardPage } from './AdminDashboardPage';
+import { Page } from '../../types';
+import { useCart } from '../hooks/useCart';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { ToastProvider } from '../contexts/ToastContext';
+import { I18nProvider } from '../contexts/I18nContext';
+import { SplashScreen } from './SplashScreen';
+import { PwaInstallPrompt } from './PwaInstallPrompt';
+import { OdayAssistant } from './OdayAssistant';
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+const AppContent: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [showOday, setShowOday] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const { itemCount, clearCart } = useCart();
+  const { user, logout } = useAuth();
 
-const DeltaStarsStore = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const handleLogout = () => { logout(); setCurrentPage('home'); };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await supabase.from('products').select('*').order('id', { ascending: true });
-      setProducts(data || []);
-      setLoading(false);
-    };
-    fetchProducts();
-  }, []);
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home': return <HomePage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+      case 'products': return <ProductsPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+      case 'cart': return <CartPage setPage={setCurrentPage} clearCart={clearCart} />;
+      case 'login': return <LoginPage setPage={setCurrentPage} />;
+      case 'dashboard': return <DashboardPage setPage={setCurrentPage} />;
+      case 'vipLogin': return <VipLoginPage setPage={setCurrentPage} />;
+      case 'vipDashboard': return <VipDashboardPage setPage={setCurrentPage} />;
+      case 'wishlist': return <WishlistPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+      case 'showroom': return <ShowroomPage setPage={setCurrentPage} />;
+      case 'productDetail': return selectedProductId ? <ProductDetailPage productId={selectedProductId} setPage={setCurrentPage} /> : <ProductsPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+      case 'operations': return <OperationsPage setPage={setCurrentPage} />;
+      case 'warehouse': return <WarehousePage setPage={setCurrentPage} />;
+      case 'privacy': return <PrivacyPolicyPage />;
+      case 'security_setup': return <SecuritySetupPage setPage={setCurrentPage} />;
+      case 'trackOrder': return <OrderTrackingPage />;
+      case 'dev_console': return <DevConsolePage setPage={setCurrentPage} />;
+      case 'trust_center': return <TrustCenterPage />;
+      case 'sourcing': return <SourcingRequestPage />;
+      case 'terms': return <TermsPage />;
+      case 'returns': return <ReturnsPage />;
+      case 'shipping': return <ShippingPolicyPage />;
+      case 'driverDashboard': return <DriverDashboardPage setPage={setCurrentPage} />;
+      case 'units': return <UnitsPage />;
+      case 'contact': return <ContactPage />;
+      case 'admin_dashboard': return <AdminDashboardPage setPage={setCurrentPage} />;
+      default: return <HomePage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+    }
+  };
 
-  if (loading) return <div className="h-screen flex flex-col items-center justify-center bg-gray-50 text-green-800"><Loader2 className="animate-spin mb-2" size={40}/> جاري تحميل الخيرات...</div>;
+  if (showSplash) return <SplashScreen onComplete={() => setShowSplash(false)} />;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-right font-sans" dir="rtl">
-      <nav className="bg-green-800 text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
-        <h1 className="text-xl font-black">نجوم دلتا للتجارة 🌟</h1>
-        <ShoppingBag size={24} />
-      </nav>
-
-      <main className="p-4 max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {products.map((p) => (
-            <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col">
-              <img src={p.image_url} className="h-32 w-full object-cover" alt={p.name_ar} />
-              <div className="p-3 flex-1 flex flex-col justify-between">
-                <h3 className="font-bold text-xs text-green-900 mb-2 leading-tight h-8 overflow-hidden">{p.name_ar}</h3>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-orange-600 font-black text-sm">{p.price_1kg} <small className="text-[8px]">ر.س</small></span>
-                  <button className="bg-green-700 text-white text-[10px] px-2 py-1 rounded-lg shadow-sm">إضافة</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-      <footer className="p-8 text-center text-gray-400 text-xs">جدة - شارع المنار | v2.5</footer>
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header setPage={setCurrentPage} cartItemCount={itemCount} user={user} onLogout={handleLogout} onToggleAiAssistant={() => setShowOday(!showOday)} />
+      <main className="flex-grow pt-32">{renderPage()}</main>
+      <Footer setPage={setCurrentPage} />
+      <PwaInstallPrompt />
+      {showOday && <OdayAssistant onClose={() => setShowOday(false)} />}
     </div>
   );
 };
-export default DeltaStarsStore;
+
+function App() {
+  return (
+    <I18nProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ToastProvider>
+    </I18nProvider>
+  );
+}
+
+export default App;
