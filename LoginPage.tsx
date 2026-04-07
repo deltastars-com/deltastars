@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import { Phone, Lock, Fingerprint, Sparkles, CheckCircle, ArrowLeft, Shield, UserCog } from 'lucide-react';
+import { Phone, Lock, Fingerprint, Sparkles, CheckCircle, ArrowLeft, UserCog } from 'lucide-react';
 
 export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage }) => {
   const {
@@ -13,7 +13,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
 
   const [mode, setMode] = useState<'client' | 'admin'>('client');
 
-  // --- حالة العميل (OTP) ---
+  // --- حالة العميل ---
   const [phone, setPhone] = useState('');
   const [otpStep, setOtpStep] = useState<'phone' | 'otp'>('phone');
   const [otpCode, setOtpCode] = useState('');
@@ -30,7 +30,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showBiometricSetup, setShowBiometricSetup] = useState(false);
 
-  // محاولة الدخول التلقائي للعميل إذا كان الجهاز مسجلاً مسبقاً
+  // محاولة الدخول التلقائي للعميل إذا كان الجهاز مسجلاً
   useEffect(() => {
     const attemptAutoLogin = async () => {
       if (mode === 'client' && !user && !autoLoginAttempted) {
@@ -45,7 +45,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
     attemptAutoLogin();
   }, [mode, user, autoLoginAttempted]);
 
-  // --- دوال العميل ---
+  // دوال العميل
   const formatPhone = (v: string) => v.replace(/\D/g, '').slice(0, 10);
   const handleSendOtp = async () => {
     if (phone.length < 10) { addToast('أدخل رقم جوال صحيح', 'error'); return; }
@@ -78,7 +78,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
     }
   };
 
-  // --- دوال الإدارة ---
+  // دوال الإدارة
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAdminLoading(true);
@@ -132,7 +132,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
     }
   };
 
-  // شاشة تغيير كلمة المرور الإجبارية (للمسؤول / المطور)
+  // شاشة تغيير كلمة المرور الإجبارية
   if (needsPasswordChange) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -147,7 +147,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
     );
   }
 
-  // شاشة تفعيل البصمة بعد تغيير كلمة المرور (اختياري)
+  // شاشة تفعيل البصمة بعد تغيير كلمة المرور
   if (showBiometricSetup) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -170,7 +170,6 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
           <p className="text-gray-400 text-sm">{mode === 'client' ? 'تسجيل العملاء' : 'لوحة التحكم'}</p>
         </div>
 
-        {/* أزرار التبديل بين وضع العميل والإدارة */}
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-full">
           <button onClick={() => setMode('client')} className={`flex-1 py-2 rounded-full font-bold transition ${mode === 'client' ? 'bg-primary text-white shadow' : 'text-gray-500'}`}>
             <Phone className="w-4 h-4 inline ml-1" /> عميل
@@ -180,7 +179,6 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
           </button>
         </div>
 
-        {/* ========== وضع العميل ========== */}
         {mode === 'client' && (
           <div>
             {otpStep === 'phone' && (
@@ -211,7 +209,6 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
           </div>
         )}
 
-        {/* ========== وضع الإدارة ========== */}
         {mode === 'admin' && (
           <div>
             <form onSubmit={handleAdminLogin}>
@@ -235,7 +232,6 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
           </div>
         )}
 
-        {/* معلومات إضافية */}
         <div className="mt-8 pt-6 border-t text-center text-xs text-gray-400">
           <p>📧 للتواصل العام: info@deltastars.ksa.com</p>
           {mode === 'admin' && <p className="mt-1">🔐 المسؤول: deltastars90@gmail.com | المطور: deltastars@zoho.com</p>}
