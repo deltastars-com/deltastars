@@ -1,75 +1,55 @@
-import { useDriverTracking } from '../hooks/useDriverTracking'; React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { useI18n } from './contexts/I18nContext';
-import { supabase } from './services/supabaseClient';
-import { DeliveryIcon, LocationMarkerIcon } from './contexts/Icons';
+import { useI18n } from '../contexts/I18nContext';
+import { useDriverTracking } from '../hooks/useDriverTracking';
+import { supabase } from '../lib/supabaseClient';
+import { DeliveryIcon, LocationMarkerIcon } from '../contexts/Icons';
 
-const containerStyle = {const { driverLocation, startTracking } = useDriverTracking(orderId);
+const containerStyle = {
   width: '100%',
   height: '500px'
 };
 
-const center = {
+const defaultCenter = {
   lat: 21.5424,
   lng: 39.2201
 };
 
 export const OrderTrackingPage: React.FC = () => {
   const { language } = useI18n();
-  const [driverLocation, setDriverLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [customerLocation, setCustomerLocation] = useState<{lat: number, lng: number}>(center);
-  const [orderId, setOrderId] = useState('DS-ORD-1234');
+  const [orderId, setOrderId] = useState('DS-ORD-1234'); // في التطبيق الحقيقي، سيتم استلام orderId من props أو من الـ URL
+  const [customerLocation, setCustomerLocation] = useState<{lat: number, lng: number}>(defaultCenter);
+  
+  // استخدام الـ Hook الخاص بتتبع المندوب
+  const { driverLocation, startTracking, stopTracking } = useDriverTracking(orderId);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
   });
 
+  // جلب موقع العميل من قاعدة البيانات (أو من الطلب)
   useEffect(() => {
-    // Simulate getting customer location from order
-    // In a real app, you'd fetch this from your DB
-    setCustomerLocation({ lat: 21.5524, lng: 39.2301 });
-
-    // Subscribe to driver location updates
-    const channel = supabase
-      .channel('driver-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'drivers',
-          filter: `id=eq.DS-DRV-99`, // Example driver ID
-        },
-        (payload) => {
-          console.log('Driver location updated:', payload.new);
-          setDriverLocation({
-            lat: payload.new.lat,
-            lng: payload.new.lng
-          });
-        }
-      )
-      .subscribe();
-
-    // Initial fetch
-    const fetchInitialLocation = async () => {
-      const { data, error } = await supabase
-        .from('drivers')
-        .select('lat, lng')
-        .eq('id', 'DS-DRV-99')
-        .single();
-      
-      if (data && !error) {
-        setDriverLocation({ lat: data.lat, lng: data.lng });
-      }
+    const fetchCustomerLocation = async () => {
+      // في التطبيق الحقيقي، يتم جلب عنوان التسليم من جدول orders
+      // هذا مجرد مثال توضيحي
+      setCustomerLocation({ lat: 21.5524, lng: 39.2301 });
     };
+    fetchCustomerLocation();
+  }, [orderId]);
 
-    fetchInitialLocation();
-
+  // بدء تتبع المندوب عند تحميل الصفحة أو عند تغيير orderId
+  useEffect(() => {
+    if (orderId) {
+      startTracking();
+    }
     return () => {
-      supabase.removeChannel(channel);
+      stopTracking();
     };
-  }, []);
+  }, [orderId, startTracking, stopTracking]);
+
+  // مركز الخريطة: موقع المندوب أولاً (إذا وجد)، ثم موقع العميل، ثم الموقع الافتراضي
+  const mapCenter = driverLocation || customerLocation || defaultCenter;
 
   return (
     <div className="container mx-auto px-6 py-12 animate-fade-in text-black">
@@ -91,13 +71,16 @@ export const OrderTrackingPage: React.FC = () => {
             {isLoaded ? (
               <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={driverLocation || customerLocation}
+                center={mapCenter}
                 zoom={14}
               >
+                {/* نقطة العميل */}
                 <Marker 
                   position={customerLocation} 
                   label={language === 'ar' ? "أنت" : "You"} 
                 />
+                
+                {/* نقطة المندوب - تظهر فقط إذا كان هناك موقع */}
                 {driverLocation && (
                   <Marker 
                     position={driverLocation} 
@@ -110,20 +93,30 @@ export const OrderTrackingPage: React.FC = () => {
               </GoogleMap>
             ) : (
               <div className="w-full h-[500px] bg-gray-100 flex items-center justify-center animate-pulse">
-                <p className="font-black text-gray-400 uppercase tracking-widest">Loading Map...</p>
+                <p className="font-black text-gray-400 uppercase tracking-widest">
+                  {language === 'ar' ? 'جاري تحميل الخريطة...' : 'Loading Map...'}
+                </p>
               </div>
             )}
           </div>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-gray-50 p-8 rounded-[2.5rem] border border-gray-100">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Estimated Arrival</p>
-              <p className="text-4xl font-black text-slate-800">12 - 18 <span className="text-lg">MIN</span></p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                {language === 'ar' ? 'الوقت المتوقع للوصول' : 'Estimated Arrival'}
+              </p>
+              <p className="text-4xl font-black text-slate-800">
+                12 - 18 <span className="text-lg">MIN</span>
+              </p>
             </div>
             <div className="bg-primary text-white p-8 rounded-[2.5rem]">
-              <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-4">Driver Status</p>
+              <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-4">
+                {language === 'ar' ? 'حالة المندوب' : 'Driver Status'}
+              </p>
               <p className="text-2xl font-black">
-                {driverLocation ? (language === 'ar' ? 'المندوب في الطريق إليك' : 'Driver is on the way') : (language === 'ar' ? 'جاري تحديد موقع المندوب...' : 'Locating driver...')}
+                {driverLocation 
+                  ? (language === 'ar' ? 'المندوب في الطريق إليك' : 'Driver is on the way') 
+                  : (language === 'ar' ? 'جاري تحديد موقع المندوب...' : 'Locating driver...')}
               </p>
             </div>
           </div>
@@ -132,34 +125,3 @@ export const OrderTrackingPage: React.FC = () => {
     </div>
   );
 };
-// داخل OrderTrackingPage.tsx
-const { driverLocation, startTracking } = useDriverTracking(orderId);
-
-useEffect(() => {
-  if (orderId) {
-    startTracking();
-  }
-}, [orderId, startTracking]);
-
-// في جزء الخريطة (GoogleMap أو Leaflet)
-const mapCenter = driverLocation || customerLocation || { lat: 21.5424, lng: 39.2201 };
-
-return (
-  <GoogleMap
-    mapContainerStyle={containerStyle}
-    center={mapCenter}
-    zoom={14}
-  >
-    {/* نقطة العميل */}
-    <Marker position={customerLocation} label="أنت" />
-    
-    {/* نقطة المندوب - تظهر فقط إذا كان هناك موقع */}
-    {driverLocation && (
-      <Marker 
-        position={driverLocation} 
-        label="المندوب"
-        icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png' }}
-      />
-    )}
-  </GoogleMap>
-);
