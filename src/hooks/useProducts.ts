@@ -3,43 +3,79 @@ import api from '../services/api';
 import { Product } from '../types';
 import { useToast } from '../contexts/ToastContext';
 
+const PAGE_SIZE = 20;
+
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filtered, setFiltered] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
-  const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc'>('default');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [categories, setCategories] = useState<string[]>([]);
   const { addToast } = useToast();
 
+  // جلب الأقسام من قاعدة البيانات
+  const fetchCategories = useCallback(async () => {
+    try {
+      const cats = await api.getUniqueCategories();
+      setCategories(cats);
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+    }
+  }, []);
+
+  // جلب المنتجات مع Pagination والتصفية
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.getProducts();
+      const { data, count } = await api.getProductsPaginated(
+        currentPage,
+        PAGE_SIZE,
+        selectedCategory === 'all' ? undefined : selectedCategory
+      );
       setProducts(data);
-      setFiltered(data);
+      setTotalProducts(count);
+      setTotalPages(Math.ceil(count / PAGE_SIZE));
     } catch (error) {
       addToast('فشل في تحميل المنتجات', 'error');
+      setProducts([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
-  }, [addToast]);
+  }, [currentPage, selectedCategory, addToast]);
+
+  const goToPage = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const changeCategory = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  // تحميل الأقسام عند تحميل الهوك لأول مرة
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   useEffect(() => {
-    let result = [...products];
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(p => p.name_ar.includes(q) || p.name_en.toLowerCase().includes(q));
-    }
-    if (category !== 'all') {
-      result = result.filter(p => p.category_ar === category || p.category_en === category);
-    }
-    if (sortBy === 'price_asc') result.sort((a,b) => (a.price_1kg||0) - (b.price_1kg||0));
-    else if (sortBy === 'price_desc') result.sort((a,b) => (b.price_1kg||0) - (a.price_1kg||0));
-    setFiltered(result);
-  }, [products, search, category, sortBy]);
+    fetchProducts();
+  }, [fetchProducts]);
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
-
-  return { products: filtered, loading, search, setSearch, category, setCategory, sortBy, setSortBy, refresh: fetchProducts };
+  return {
+    products,
+    loading,
+    currentPage,
+    totalPages,
+    totalProducts,
+    selectedCategory,
+    categories: ['all', ...categories], // إضافة خيار "الكل" في البداية
+    changeCategory,
+    goToPage,
+    refresh: fetchProducts,
+  };
 };
