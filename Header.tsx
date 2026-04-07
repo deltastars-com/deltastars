@@ -1,71 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User, Page } from '../../types';
+import { useAuth } from '../contexts/AuthContext';
+import { useI18n } from '../contexts/I18nContext';
+import { ShoppingCart, User as UserIcon, LogOut, Settings, Menu, X } from 'lucide-react';
 
-interface HeaderProps {
-  setPage: (page: Page) => void;
-  cartItemCount: number;
-  user: User | null;
-  onLogout: () => void;
-  onToggleAiAssistant: () => void;
-}
+interface HeaderProps { setPage: (page: Page) => void; cartItemCount: number; user: User | null; onLogout: () => void; onToggleAiAssistant: () => void; }
 
-export const Header: React.FC<HeaderProps> = ({ setPage, cartItemCount, user, onLogout }) => {
+export const Header: React.FC<HeaderProps> = ({ setPage, cartItemCount, user, onLogout, onToggleAiAssistant }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t, language } = useI18n();
+  const { isRole } = useAuth();
+
+  const navLinks = [
+    { key: 'home', label: t('header.navLinks.home') },
+    { key: 'products', label: t('header.navLinks.products') },
+    { key: 'showroom', label: t('header.navLinks.showroom') },
+    { key: 'wishlist', label: t('header.navLinks.wishlist') },
+    { key: 'trackOrder', label: t('header.navLinks.trackOrder') },
+    { key: 'contact', label: t('header.navLinks.contact') },
+  ];
+  const adminLinks = [
+    { key: 'dashboard', label: t('header.navLinks.dashboard'), roles: ['admin', 'ops', 'gm'] },
+    { key: 'vipPortal', label: t('header.navLinks.vipPortal'), roles: ['admin', 'vip'] },
+    { key: 'driverDashboard', label: t('header.navLinks.driverDashboard'), roles: ['admin', 'delegate'] },
+    { key: 'dev_console', label: t('header.navLinks.dev_console'), roles: ['developer'] },
+  ];
+
+  const handleNav = (page: Page) => { setPage(page); setMobileMenuOpen(false); };
+
   return (
-    <header className="fixed top-0 left-0 w-full z-[1000] bg-white/95 backdrop-blur-xl border-b-4 border-yellow-600 shadow-2xl">
-      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-        
-        {/* الهوية التجارية الجديدة الثابتة */}
-        <div className="flex flex-col cursor-pointer group" onClick={() => setPage('home')}>
-          <h1 className="text-3xl font-black text-[#1a3a1a] tracking-tighter uppercase group-hover:text-yellow-600 transition-colors">
-            نجوم دلتا للتجارة
-          </h1>
-          <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">
-            شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة
-          </span>
-        </div>
+    <header className="fixed top-0 left-0 w-full z-[1000] bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          <div className="flex flex-col cursor-pointer" onClick={() => handleNav('home')}>
+            <h1 className="text-2xl md:text-3xl font-black text-primary tracking-tighter uppercase">Delta Stars</h1>
+            <span className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('header.storeTitle')}</span>
+          </div>
 
-        {/* أزرار التحكم والدخول الذكي */}
-        <div className="flex items-center gap-8">
-          {user ? (
-            <div className="flex items-center gap-4 bg-gray-100 p-2 rounded-full px-6 border border-gray-200 shadow-inner">
-              <div className="flex flex-col text-right">
-                <span className="text-[11px] font-black text-[#1a3a1a] leading-none">{user.email}</span>
-                <span className="text-[9px] font-bold text-emerald-600">الجلسة نشطة الآن ✓</span>
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map(link => <button key={link.key} onClick={() => handleNav(link.key as Page)} className="text-sm font-black text-gray-600 hover:text-primary uppercase tracking-wide">{link.label}</button>)}
+            {user && adminLinks.map(link => (link.roles && !isRole(link.roles) ? null : <button key={link.key} onClick={() => handleNav(link.key as Page)} className="text-sm font-black text-secondary hover:text-primary uppercase tracking-wide">{link.label}</button>))}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <button onClick={onToggleAiAssistant} className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-black">🤖 {t('header.navLinks.oday')}</button>
+            <button onClick={() => handleNav('cart')} className="relative p-2"><ShoppingCart className="w-6 h-6" />{cartItemCount > 0 && <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">{cartItemCount}</span>}</button>
+            {user ? (
+              <div className="relative group">
+                <button className="flex items-center gap-2 p-2 bg-gray-100 rounded-full"><UserIcon className="w-5 h-5" /><span className="text-sm font-bold max-w-[100px] truncate">{user.full_name || user.email || user.phone}</span></button>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                  <div className="p-2"><div className="px-3 py-2 border-b"><p className="text-xs text-gray-400">{user.role}</p><p className="text-sm font-bold truncate">{user.email || user.phone}</p></div>
+                  <button onClick={() => handleNav('dashboard')} className="w-full text-right px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-xl flex items-center gap-2"><Settings className="w-4 h-4" /> لوحة التحكم</button>
+                  <button onClick={onLogout} className="w-full text-right px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl flex items-center gap-2"><LogOut className="w-4 h-4" /> تسجيل خروج</button></div>
+                </div>
               </div>
-              
-              {/* زر المطور السري - لا يظهر إلا عند دخولك بإيميل المطور فقط */}
-              {user.type === 'developer' && (
-                <button 
-                  onClick={() => setPage('dev_console')}
-                  className="bg-yellow-500 text-black p-2 rounded-xl hover:rotate-180 transition-transform shadow-lg border-b-4 border-yellow-700 active:translate-y-1 active:border-b-0"
-                  title="لوحة العمليات التقنية"
-                >
-                  ⚙️
-                </button>                                
-              )}                                
-                      
-              <button onClick={onLogout} className="text-[11px] text-red-600 font-black border-r-2 pr-4 border-gray-300 hover:text-red-800">خروج</button>
-            </div>                        
-          ) : (
-            <button                         
-              onClick={() => setPage('login')} 
-              className="text-sm font-black text-white bg-[#1a3a1a] px-8 py-3 rounded-full hover:bg-yellow-600 transition-all shadow-lg border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
-            >
-              دخول الإدارة
-            </button>                        
-          )}                        
-
-          {/* سلة المشتريات */}
-          <div className="relative cursor-pointer group" onClick={() => setPage('cart')}>
-            <span className="text-3xl group-hover:scale-110 transition-transform inline-block">🛒</span>
-            {cartItemCount > 0 && (
-              <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black w-6 h-6 flex items-center justify-center rounded-full border-2 border-white animate-bounce shadow-xl">
-                {cartItemCount}                        
-              </span>                        
-            )}                        
-          </div>                        
-        </div>                        
-      </div>                        
-    </header>                        
-  );                        
-};                        
+            ) : (
+              <button onClick={() => handleNav('login')} className="hidden md:flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-full text-sm font-black"><UserIcon className="w-4 h-4" /> {t('header.navLinks.dashboard')}</button>
+            )}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2">{mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}</button>
+          </div>
+        </div>
+      </div>
+      {mobileMenuOpen && <div className="lg:hidden bg-white border-t py-4 px-4 flex flex-col gap-3">{navLinks.map(link => <button key={link.key} onClick={() => handleNav(link.key as Page)} className="text-right px-4 py-3 text-gray-600 font-bold">{link.label}</button>)}{user && adminLinks.map(link => <button key={link.key} onClick={() => handleNav(link.key as Page)} className="text-right px-4 py-3 text-secondary font-bold">{link.label}</button>)}<button onClick={onToggleAiAssistant} className="text-right px-4 py-3 text-primary font-bold">🤖 {t('header.navLinks.oday')}</button></div>}
+    </header>
+  );
+};
