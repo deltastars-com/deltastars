@@ -132,3 +132,34 @@ export const OrderTrackingPage: React.FC = () => {
     </div>
   );
 };
+// داخل OrderTrackingPage.tsx
+const { driverLocation, startTracking } = useDriverTracking(orderId);
+
+useEffect(() => {
+  if (orderId) {
+    startTracking();
+  }
+}, [orderId, startTracking]);
+
+// في جزء الخريطة (GoogleMap أو Leaflet)
+const mapCenter = driverLocation || customerLocation || { lat: 21.5424, lng: 39.2201 };
+
+return (
+  <GoogleMap
+    mapContainerStyle={containerStyle}
+    center={mapCenter}
+    zoom={14}
+  >
+    {/* نقطة العميل */}
+    <Marker position={customerLocation} label="أنت" />
+    
+    {/* نقطة المندوب - تظهر فقط إذا كان هناك موقع */}
+    {driverLocation && (
+      <Marker 
+        position={driverLocation} 
+        label="المندوب"
+        icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png' }}
+      />
+    )}
+  </GoogleMap>
+);
