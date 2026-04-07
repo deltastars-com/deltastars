@@ -1,0 +1,45 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
+import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+
+export const useDriverTracking = (orderId?: string) => {
+  const [driverLocation, setDriverLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isTracking, setIsTracking] = useState(false);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+  const { user } = useAuth();
+
+  const startTracking = useCallback(() => {
+    if (!orderId) return;
+    if (unsubscribeRef.current) unsubscribeRef.current();
+    const unsub = api.subscribeToDriverLocation(orderId, (loc) => setDriverLocation(loc));
+    unsubscribeRef.current = unsub;
+    setIsTracking(true);
+  }, [orderId]);
+
+  const stopTracking = useCallback(() => {
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
+    setIsTracking(false);
+    setDriverLocation(null);
+  }, []);
+
+  const updateMyLocation = useCallback(async (lat: number, lng: number, currentOrderId?: string) => {
+    if (!user?.id) return false;
+    try {
+      await api.updateDriverLocation(user.id, lat, lng, currentOrderId || orderId);
+      return true;
+    } catch (error) {
+      console.error('Update location failed', error);
+      return false;
+    }
+  }, [user, orderId]);
+
+  useEffect(() => {
+    if (orderId) startTracking();
+    return () => stopTracking();
+  }, [orderId]);
+
+  return { driverLocation, isTracking, startTracking, stopTracking, updateMyLocation };
+};
