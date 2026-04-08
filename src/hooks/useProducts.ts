@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
+import { api } from '../services/api';
 import { Product } from '../types';
 import { useToast } from '../contexts/ToastContext';
 
@@ -15,7 +15,6 @@ export const useProducts = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const { addToast } = useToast();
 
-  // جلب الأقسام من قاعدة البيانات
   const fetchCategories = useCallback(async () => {
     try {
       const cats = await api.getUniqueCategories();
@@ -25,7 +24,6 @@ export const useProducts = () => {
     }
   }, []);
 
-  // جلب المنتجات مع Pagination والتصفية
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -57,7 +55,6 @@ export const useProducts = () => {
     setCurrentPage(1);
   };
 
-  // تحميل الأقسام عند تحميل الهوك لأول مرة
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -73,7 +70,7 @@ export const useProducts = () => {
     totalPages,
     totalProducts,
     selectedCategory,
-    categories: ['all', ...categories], // إضافة خيار "الكل" في البداية
+    categories: ['all', ...categories],
     changeCategory,
     goToPage,
     refresh: fetchProducts,
