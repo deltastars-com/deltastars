@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 // --- إعدادات النظام الموحدة ---
 const SYSTEM_CONFIG = {
-  BRAND_NAME: "نجوم دلتا للتجارة",
+  BRAND_NAME: "Delta Stars",
   SLOGAN: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
   PRIMARY_COLOR: "#1a3a1a",
   SECONDARY_COLOR: "#ca8a04", // Gold
@@ -41,9 +41,9 @@ export default function DeltaStarsSovereignApp() {
   const Header = () => (
     <header className="fixed top-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b-[4px] border-yellow-600 shadow-2xl font-['Tajawal']">
       <div className="container mx-auto h-24 px-6 flex items-center justify-between">
-        <div className="flex flex-col cursor-pointer" onClick={() => setCurrentPage('home')}>
-          <h1 className="text-3xl font-black text-[#1a3a1a] tracking-tighter leading-none">{SYSTEM_CONFIG.BRAND_NAME}</h1>
-          <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{SYSTEM_CONFIG.SLOGAN}</span>
+        <div className="flex flex-col cursor-pointer mt-2 md:mt-0" onClick={() => setCurrentPage('home')}>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#1a3a1a] tracking-tight leading-none">{SYSTEM_CONFIG.BRAND_NAME}</h1>
+          <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 mt-1 sm:mt-1.5">{SYSTEM_CONFIG.SLOGAN}</span>
         </div>
         <div className="flex items-center gap-6">
           {user ? (
@@ -69,14 +69,14 @@ export default function DeltaStarsSovereignApp() {
         {currentPage === 'home' && (
           <section className="h-[90vh] flex items-center justify-center bg-[#1a3a1a] text-center relative overflow-hidden">
             <div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80')] bg-cover bg-center animate-pulse"></div>
-            <div className="relative z-10 px-4">
-              <h2 className="text-7xl md:text-9xl font-black text-white mb-6 drop-shadow-2xl">نجوم دلتا</h2>
-              <p className="text-2xl md:text-4xl font-bold text-yellow-500 mb-12 italic leading-relaxed max-w-4xl mx-auto">
+            <div className="relative z-10 px-4 mt-8 md:mt-0">
+              <h2 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 sm:mb-6 drop-shadow-2xl tracking-tight leading-tight">Delta Stars</h2>
+              <p className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-bold text-yellow-500 mb-8 sm:mb-12 italic leading-snug sm:leading-relaxed max-w-4xl mx-auto drop-shadow-md">
                 {SYSTEM_CONFIG.SLOGAN}
               </p>
-              <div className="flex flex-wrap justify-center gap-6">
-                 <button onClick={() => setCurrentPage('products')} className="bg-yellow-600 text-white px-12 py-5 rounded-full font-black text-3xl shadow-[0_20px_50px_rgba(202,138,4,0.4)] hover:scale-105 transition-all">تسوق الآن 🛒</button>
-                 <button onClick={() => setCurrentPage('login')} className="bg-white/10 backdrop-blur-md text-white border-2 border-white/20 px-12 py-5 rounded-full font-black text-3xl hover:bg-white hover:text-black transition-all">بوابة الشركاء 🤝</button>
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6">
+                 <button onClick={() => setCurrentPage('products')} className="bg-yellow-600 text-white w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 rounded-full font-black text-xl sm:text-3xl shadow-[0_20px_50px_rgba(202,138,4,0.4)] hover:scale-105 transition-transform duration-300">تسوق الآن 🛒</button>
+                 <button onClick={() => setCurrentPage('login')} className="bg-white/10 backdrop-blur-md text-white border-2 border-white/20 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 rounded-full font-black text-xl sm:text-3xl hover:bg-white hover:text-[#1a3a1a] transition-all duration-300">بوابة الشركاء 🤝</button>
               </div>
             </div>
           </section>
@@ -90,7 +90,7 @@ export default function DeltaStarsSovereignApp() {
               <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">Sovereign Access Only</p>
               <input id="email" type="email" placeholder="البريد الإلكتروني" className="w-full p-5 mb-4 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
               <input id="pass" type="password" placeholder="كلمة المرور" className="w-full p-5 mb-8 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <button onClick={() => handleLogin(document.getElementById('email').value, document.getElementById('pass').value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
+              <button onClick={() => handleLogin((document.getElementById('email') as HTMLInputElement).value, (document.getElementById('pass') as HTMLInputElement).value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
             </div>
           </div>
         )}

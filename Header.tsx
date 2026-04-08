@@ -32,9 +32,9 @@ export const Header: React.FC<HeaderProps> = ({ setPage, cartItemCount, user, on
     <header className="fixed top-0 left-0 w-full z-[1000] bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <div className="flex flex-col cursor-pointer" onClick={() => handleNav('home')}>
-            <h1 className="text-2xl md:text-3xl font-black text-primary tracking-tighter uppercase">Delta Stars</h1>
-            <span className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('header.storeTitle')}</span>
+          <div className="flex flex-col cursor-pointer mt-2 md:mt-0" onClick={() => handleNav('home')}>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-primary tracking-tight leading-none">Delta Stars</h1>
+            <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 mt-1 sm:mt-1.5">{t('header.storeTitle')}</span>
           </div>
 
           <nav className="hidden lg:flex items-center gap-8">
