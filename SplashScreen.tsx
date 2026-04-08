@@ -27,18 +27,18 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
                     </div>
                 </div>
 
-                <div className="space-y-4 animate-fade-in text-white">
-                    <h1 className="text-6xl md:text-[7rem] font-black tracking-tighter uppercase leading-none drop-shadow-xl">
-                        {language === 'ar' ? 'نجوم دلتا' : 'Delta Stars'}
+                <div className="space-y-4 animate-fade-in text-white mt-4">
+                    <h1 className="text-5xl sm:text-6xl md:text-[6rem] lg:text-[7rem] font-black tracking-tight uppercase leading-none drop-shadow-xl">
+                        Delta Stars
                     </h1>
                     
-                    <div className="flex items-center justify-center gap-4">
-                        <div className="h-0.5 w-12 bg-secondary opacity-50 rounded-full"></div>
-                        <span className="text-secondary font-black text-[8px] uppercase tracking-[0.4em]">Sovereign Hub</span>
-                        <div className="h-0.5 w-12 bg-secondary opacity-50 rounded-full"></div>
+                    <div className="flex items-center justify-center gap-2 sm:gap-4 my-4">
+                        <div className="h-0.5 w-8 sm:w-12 bg-secondary opacity-50 rounded-full"></div>
+                        <span className="text-secondary font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em]">Sovereign Hub</span>
+                        <div className="h-0.5 w-8 sm:w-12 bg-secondary opacity-50 rounded-full"></div>
                     </div>
 
-                    <p className="text-white/60 text-lg font-bold italic max-w-xl mx-auto">
+                    <p className="text-white/80 text-sm sm:text-base md:text-lg font-bold italic max-w-xl mx-auto leading-relaxed px-4">
                         {language === 'ar' ? COMPANY_INFO.slogan : COMPANY_INFO.slogan_en}
                     </p>
                 </div>

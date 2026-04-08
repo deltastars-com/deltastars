@@ -9,8 +9,8 @@ const getThumb = (id: string) => `https://lh3.googleusercontent.com/d/${id}`;
 export const COMPANY_INFO = {
     name: "نجوم دلتا للتجارة",
     name_en: "Delta Stars Trading",
-    slogan: "شريكك الأمثل للجودة والتوريد",
-    slogan_en: "Your Perfect Partner for Quality & Supply",
+    slogan: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
+    slogan_en: "Your Perfect Partner for High Quality Vegetables, Fruits and Dates",
     phone: "00966920023204",
     whatsapp: "00966558828009",
     email: "INFO@DELTASTARS-KSA.COM",

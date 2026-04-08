@@ -140,7 +140,7 @@ export default function CustomerPortal() {
           <div className="flex items-center gap-3">
             <img src="/logo_square.jpg" alt="Delta Stars" className="w-10 h-10 rounded-lg object-contain bg-white p-0.5" />
             <div>
-              <h1 className="font-bold text-lg leading-tight">نجوم دلتا</h1>
+              <h1 className="font-bold text-lg leading-tight">Delta Stars</h1>
               <p className="text-green-200 text-xs">بوابة العملاء المميزين</p>
             </div>
           </div>

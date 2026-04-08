@@ -7,7 +7,7 @@ export const LoginPage: React.FC<{ setPage: (page: any) => void }> = ({ setPage 
   const {
     sendOtp, verifyOtpAndCreateSession, loginWithSavedDevice,
     loginWithPassword, loginWithBiometricForAdmin, registerBiometricForAdmin,
-    user, isLoading
+    user, isLoading, changePassword
   } = useAuth();
   const { addToast } = useToast();
 

@@ -31,7 +31,7 @@ export const translations: { [key: string]: Translation } = {
     },
     header: {
       storeName: "نجوم دلتا",
-      storeTitle: "نجوم دلتا | الجودة من المزرعة للمائدة",
+      storeTitle: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
       utility: {
         install: "تثبيت التطبيق",
         version: "إصدار التوريد المتميز v31.0"
