@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import api, { CreateOrderInput } from '../services/api';
+import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 
@@ -9,7 +9,7 @@ export const useOrder = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
 
-  const createOrder = useCallback(async (orderData: Omit<CreateOrderInput, 'userId'>) => {
+  const createOrder = useCallback(async (orderData: any) => {
     setLoading(true);
     setError(null);
     try {
