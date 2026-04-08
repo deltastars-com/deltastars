@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
+import { api } from '../services/api';
 import { Product, CartItem } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -85,13 +85,27 @@ export const useCart = () => {
 
   const subtotal = items.reduce((sum, i) => {
     const price = i.unit_type === 'kg' ? i.price_1kg : i.price_500g;
-    return sum + (price * i.quantity);
+    return sum + price * i.quantity;
   }, 0);
   const tax = subtotal * 0.15;
   const total = subtotal + tax;
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
-  useEffect(() => { loadCart(); }, [loadCart]);
+  useEffect(() => {
+    loadCart();
+  }, [loadCart]);
 
-  return { items, loading, itemCount, subtotal, tax, total, addItem, removeItem, updateQuantity, clearCart, isCartEmpty: items.length === 0 };
+  return {
+    items,
+    loading,
+    itemCount,
+    subtotal,
+    tax,
+    total,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    isCartEmpty: items.length === 0,
+  };
 };
