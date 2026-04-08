@@ -27,7 +27,12 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
       <div className="fixed bottom-6 right-6 left-6 md:left-auto z-[9999] flex flex-col gap-3">
         {toasts.map(toast => (
-          <div key={toast.id} className={`p-4 bg-white rounded-lg shadow-lg border-l-4 ${toast.type === 'success' ? 'border-green-500' : toast.type === 'error' ? 'border-red-500' : 'border-blue-500'} animate-fade-in-up`}>
+          <div
+            key={toast.id}
+            className={`p-4 bg-white rounded-lg shadow-lg border-l-4 ${
+              toast.type === 'success' ? 'border-green-500' : toast.type === 'error' ? 'border-red-500' : 'border-blue-500'
+            } animate-fade-in-up`}
+          >
             <p className="text-sm font-bold">{toast.message}</p>
           </div>
         ))}
