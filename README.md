@@ -1,51 +1,20 @@
-# 🌟 مشروع نجوم دلتا للتجارة | Delta Stars Trading System V2
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-![Status](https://img.shields.io/badge/Status-Sovereign_Active-green)
-![Location](https://img.shields.io/badge/Location-Jeddah_Al--Manar-orange)
-![Developer](https://img.shields.io/badge/Dev-Integrated_Automated-blue)
+# Run and deploy your AI Studio app
 
-## 📖 نظرة عامة (Overview)
-النظام المتكامل لإدارة توريد وتوزيع الخضروات، الفواكه، والتمور عالية الجودة. يمثل هذا المشروع التحول الرقمي الشامل لشركة **"نجوم دلتا للتجارة"** بجدة، حيث يجمع بين واجهة العرض الفاخرة وأنظمة الإدارة السيادية المتقدمة.
+This contains everything you need to run your app locally.
 
-> **الشعار اللفظي:** شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة.
+View your app in AI Studio: https://ai.studio/apps/aba8a22e-f091-4cf9-b967-d32263bc6dcc
 
----
+## Run Locally
 
-## 🛠️ الأنظمة والمميزات التقنية (Core Features)
+**Prerequisites:**  Node.js
 
-### 1. نظام الإدارة السيادي (Sovereign Management)
-* **بوابة دخول آمنة:** قفل أمني متطور لا يسمح بالدخول إلا للبريد الرسمي المعتمد.
-* **لوحة تحكم المطور:** صلاحيات كاملة ومتقدمة للتحكم في بنية النظام آلياً.
-* **إدارة الفروع:** شاشات مخصصة لمندوبي الفروع لمتابعة الجرد والمبيعات لحظياً.
 
-### 2. النظام المحاسبي المتقدم (Advanced Accounting)
-* **تتبع المبيعات:** تقارير يومية وشهرية دقيقة لحركة الأموال.
-* **حساب الهوامش:** نظام آلي لحساب الأرباح والتكاليف وضريبة القيمة المضافة.
-* **إصدار الفواتير:** أتمتة عمليات الفوترة لمندوبي الجملة والتجزئة.
-
-### 3. إدارة المخزون الذكية (Smart Inventory)
-* **تنبيهات النقص:** إشعارات فورية عند انخفاض مستويات المخزون (خاصة الأصناف الحساسة كتمور الخلاص).
-* **تتبع الموقع:** نظام مرتبط بفرع المؤسسة الرئيسي (جدة - شارع المنار).
-* **إدارة الموردين:** قاعدة بيانات متكاملة لعمليات التوريد والخدمات اللوجستية.
-
----
-
-## 🔐 بيانات الوصول الرسمية (Access Credentials)
-
-| الرتبة | البريد الإلكتروني | الصلاحيات |
-| :--- | :--- | :--- |
-| **المدير العام** | `marketing@deltastars-ksa.com` | تحكم كامل في المبيعات والمخزون |
-| **المطور** | `deltastars777@gmail.com` | صلاحيات برمجية وتقنية متقدمة |
-| **المناديب** | `delegate-X@deltastars.store` | تسجيل مبيعات واستلام بضائع |
-
----
-
-## 🚀 التثبيت والتشغيل (Deployment)
-
-تم بناء المشروع باستخدام تقنيات **React** و **Vite** لضمان سرعة الاستجابة الفائقة.
-
-1. **الرفع للمستودع:**
-   ```bash
-   git add .
-   git commit -m "Apply Integrated Sovereign Update V2"
-   git push origin main
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

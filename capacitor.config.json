@@ -1,10 +1,10 @@
 {
-  "appId": "cc.deltastars.app",
-  "appName": "نجوم دلتا | Delta Stars",
+  "appId": "com.deltastars.app",
+  "appName": "DeltaStars",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {
-    "url": "https://deltastars.com",
+    "url": "https://deltastars.store",
     "cleartext": true
   },
   "plugins": {

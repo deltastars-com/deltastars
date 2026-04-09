@@ -1,104 +1,178 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { HomePage } from './HomePage';
-import { ProductsPage } from './ProductsPage';
-import { CartPage } from './CartPage';
+import HomePage from './HomePage';
+import { ProductsPage, CartPage, WishlistPage, ProductDetailPage, useFirebase, useI18n } from './lib/contexts';
 import { LoginPage } from './LoginPage';
-import { DashboardPage } from './DashboardPage';
+import { AdminLoginPage } from './AdminLoginPage';
+import AdminDashboardPage from './AdminDashboardPage';
 import { VipLoginPage } from './VipLoginPage';
 import { VipDashboardPage } from './VipDashboardPage';
-import { WishlistPage } from './WishlistPage';
 import { ShowroomPage } from './ShowroomPage';
-import { ProductDetailPage } from './ProductDetailPage';
-import { OperationsPage } from './OperationsPage';
-import { WarehousePage } from './WarehousePage';
-import { PrivacyPolicyPage } from './PrivacyPolicyPage';
-import { SecuritySetupPage } from './SecuritySetupPage';
-import { OrderTrackingPage } from './OrderTrackingPage';
+import { OperationsView as OperationsPage } from './OperationsView';
+import { WarehouseView as WarehousePage } from './WarehouseView';
+import { PrivacyPolicyPage, TermsPage, ReturnsPage, ShippingPolicyPage } from './LegalPages';
 import { DevConsolePage } from './DevConsolePage';
-import { TrustCenterPage } from './TrustCenterPage';
-import { SourcingRequestPage } from './SourcingRequestPage';
-import { TermsPage } from './TermsPage';
-import { ReturnsPage } from './ReturnsPage';
-import { ShippingPolicyPage } from './ShippingPolicyPage';
 import { DriverDashboardPage } from './DriverDashboardPage';
 import { UnitsPage } from './UnitsPage';
 import { ContactPage } from './ContactPage';
-import { AdminDashboardPage } from './AdminDashboardPage';
-import { Page } from '../../types';
-import { useCart } from '../hooks/useCart';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
-import { ToastProvider } from '../contexts/ToastContext';
-import { I18nProvider } from '../contexts/I18nContext';
-import { SplashScreen } from './SplashScreen';
-import { PwaInstallPrompt } from './PwaInstallPrompt';
-import { OdayAssistant } from './OdayAssistant';
+import { useAuth } from '../src/contexts/AuthContext';
+import { useProducts } from '../src/hooks/useProducts';
+import { useCart } from '../src/hooks/useCart';
+import { AiAssistant } from './AiAssistant';
+import { BotIcon } from './lib/contexts/Icons';
 
 const AppContent: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState('home');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
+  const { products, loading: productsLoading, categories: productCategories } = useProducts();
+  const { items: cartItems, addItem, removeItem, updateQuantity, clearCart } = useCart();
+  const { language } = useI18n();
+  const { ads, categories: firebaseCategories, units, updateProduct } = useFirebase();
+  
+  const [isAiOpen, setIsAiOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-  const [showOday, setShowOday] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const { itemCount, clearCart } = useCart();
-  const { user, logout } = useAuth();
 
-  const handleLogout = () => { logout(); setCurrentPage('home'); };
+  useEffect(() => {
+    // Auto-redirect based on role if authenticated
+    if (isAuthenticated && user) {
+      const isLoginPage = currentPage === 'login' || currentPage === 'vip_login';
+      if (isLoginPage) {
+        if (user.role === 'driver') {
+          setCurrentPage('driver_dashboard');
+        } else if (['admin', 'developer', 'marketing'].includes(user.role)) {
+          setCurrentPage('admin_dashboard');
+        } else if (user.role === 'vip') {
+          setCurrentPage('vip_dashboard');
+        } else {
+          setCurrentPage('home');
+        }
+      }
+    }
+  }, [isAuthenticated, user, currentPage]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-green-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-yellow-600"></div>
+      </div>
+    );
+  }
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home': return <HomePage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
-      case 'products': return <ProductsPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
-      case 'cart': return <CartPage setPage={setCurrentPage} clearCart={clearCart} />;
-      case 'login': return <LoginPage setPage={setCurrentPage} />;
-      case 'dashboard': return <DashboardPage setPage={setCurrentPage} />;
-      case 'vipLogin': return <VipLoginPage setPage={setCurrentPage} />;
-      case 'vipDashboard': return <VipDashboardPage setPage={setCurrentPage} />;
-      case 'wishlist': return <WishlistPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
-      case 'showroom': return <ShowroomPage setPage={setCurrentPage} />;
-      case 'productDetail': return selectedProductId ? <ProductDetailPage productId={selectedProductId} setPage={setCurrentPage} /> : <ProductsPage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
-      case 'operations': return <OperationsPage setPage={setCurrentPage} />;
-      case 'warehouse': return <WarehousePage setPage={setCurrentPage} />;
-      case 'privacy': return <PrivacyPolicyPage />;
-      case 'security_setup': return <SecuritySetupPage setPage={setCurrentPage} />;
-      case 'trackOrder': return <OrderTrackingPage />;
-      case 'dev_console': return <DevConsolePage setPage={setCurrentPage} />;
-      case 'trust_center': return <TrustCenterPage />;
-      case 'sourcing': return <SourcingRequestPage />;
-      case 'terms': return <TermsPage />;
-      case 'returns': return <ReturnsPage />;
-      case 'shipping': return <ShippingPolicyPage />;
-      case 'driverDashboard': return <DriverDashboardPage setPage={setCurrentPage} />;
-      case 'units': return <UnitsPage />;
+      case 'home': return (
+        <HomePage 
+          setCurrentPage={setCurrentPage} 
+          SYSTEM_CONFIG={{ BRAND_NAME: 'نجوم دلتا', SLOGAN: 'شريكك الأمثل' }} 
+          ads={ads || []} 
+        />
+      );
+      case 'products': return (
+        <ProductsPage 
+          addToCart={addItem} 
+          products={products} 
+          toggleWishlist={() => {}} 
+          isProductInWishlist={() => false}
+          setPage={(page, id) => {
+            if (id) setSelectedProductId(id);
+            setCurrentPage(page);
+          }}
+          getAverageRating={() => ({ average: 5, count: 0 })}
+          reviews={[]}
+          categories={firebaseCategories || []}
+        />
+      );
+      case 'cart': return (
+        <CartPage 
+          cart={cartItems} 
+          removeFromCart={removeItem} 
+          updateQuantity={updateQuantity} 
+          clearCart={clearCart} 
+          setPage={setCurrentPage as any}
+          addPurchaseHistory={() => {}}
+        />
+      );
+      case 'login': return <LoginPage onLoginSuccess={() => setCurrentPage('home')} />;
+      case 'admin_login': return (
+        <AdminLoginPage 
+          onSuccess={() => {
+            setShowAdminLogin(false);
+            setCurrentPage('admin_dashboard');
+          }} 
+          onBack={() => setCurrentPage('home')} 
+        />
+      );
+      case 'vip_login': return <VipLoginPage onLoginSuccess={() => setCurrentPage('vip_dashboard')} />;
+      case 'vip_dashboard': return <VipDashboardPage user={user as any} onLogout={() => { logout(); setCurrentPage('home'); }} />;
+      case 'wishlist': return (
+        <WishlistPage 
+          wishlist={[]} 
+          removeFromWishlist={() => {}} 
+          addToCart={addItem} 
+          setPage={(page, id) => {
+            if (id) setSelectedProductId(id);
+            setCurrentPage(page);
+          }}
+        />
+      );
+      case 'showroom': return <ShowroomPage items={[]} showroomBanner="" setPage={setCurrentPage as any} />;
+      case 'productDetail': return (
+        <ProductDetailPage 
+          product={products.find(p => p.id === selectedProductId) || products[0] || {} as any}
+          setPage={(page, id) => {
+            if (id) setSelectedProductId(id);
+            setCurrentPage(page);
+          }}
+          reviews={[]}
+          onAddReview={() => {}}
+          addToCart={addItem}
+          averageRating={{ average: 5, count: 0 }}
+          toggleWishlist={() => {}}
+          isInWishlist={false}
+        />
+      );
       case 'contact': return <ContactPage />;
-      case 'admin_dashboard': return <AdminDashboardPage setPage={setCurrentPage} />;
-      default: return <HomePage setPage={setCurrentPage} setSelectedProductId={setSelectedProductId} />;
+      case 'admin_dashboard': return <AdminDashboardPage user={user as any} />;
+      case 'driver_dashboard': return <DriverDashboardPage onLogout={() => { logout(); setCurrentPage('home'); }} />;
+      case 'privacy': return <PrivacyPolicyPage onBack={() => setCurrentPage('home')} />;
+      case 'terms': return <TermsPage onBack={() => setCurrentPage('home')} />;
+      case 'returns': return <ReturnsPage onBack={() => setCurrentPage('home')} />;
+      case 'shipping': return <ShippingPolicyPage onBack={() => setCurrentPage('home')} />;
+      case 'dev_console': return <DevConsolePage onBack={() => setCurrentPage('home')} />;
+      case 'operations': return <OperationsPage onBack={() => setCurrentPage('admin_dashboard')} />;
+      case 'warehouse': return (
+        <WarehousePage 
+          onBack={() => setCurrentPage('admin_dashboard')} 
+          products={products}
+          onUpdateStock={(id, qty) => updateProduct(id, { stock_quantity: qty })}
+          invoices={[]}
+        />
+      );
+      case 'units': return <UnitsPage units={units || []} />;
+      default: return <HomePage setCurrentPage={setCurrentPage} SYSTEM_CONFIG={{ BRAND_NAME: 'نجوم دلتا', SLOGAN: 'شريكك الأمثل' }} ads={[]} />;
     }
   };
 
-  if (showSplash) return <SplashScreen onComplete={() => setShowSplash(false)} />;
-
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Header setPage={setCurrentPage} cartItemCount={itemCount} user={user} onLogout={handleLogout} onToggleAiAssistant={() => setShowOday(!showOday)} />
-      <main className="flex-grow pt-32">{renderPage()}</main>
-      <Footer setPage={setCurrentPage} />
-      <PwaInstallPrompt />
-      {showOday && <OdayAssistant onClose={() => setShowOday(false)} />}
+    <div className="min-h-screen bg-slate-50 font-tajawal" dir="rtl">
+      <Header onNavigate={setCurrentPage} currentPage={currentPage} />
+      <main className="pt-24 min-h-[80vh]">
+        {renderPage()}
+      </main>
+      <Footer onNavigate={setCurrentPage} />
+      
+      <button 
+        onClick={() => setIsAiOpen(true)}
+        className="fixed bottom-10 left-10 z-[1000] bg-green-900 text-white p-6 rounded-full shadow-2xl hover:scale-110 transition-all border-4 border-yellow-600"
+      >
+        <BotIcon className="w-10 h-10" />
+      </button>
+
+      {isAiOpen && <AiAssistant onClose={() => setIsAiOpen(false)} products={products} />}
     </div>
   );
 };
 
-function App() {
-  return (
-    <I18nProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </ToastProvider>
-    </I18nProvider>
-  );
-}
-
-export default App;
+export default AppContent;

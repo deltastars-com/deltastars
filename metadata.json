@@ -1,7 +1,7 @@
 {
-  "name": "نجوم دلتا | Delta Stars Sovereign Hub",
+  "name": "delta stars",
   "short_name": "نجوم دلتا",
-  "description": "deltastars.com - شريكك الأمثل للتوريد اللوجستي المتكامل والذكي للفنادق والشركات الكبرى بالمملكة العربية السعودية",
+  "description": "نجوم دلتا للتجارة - شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة بالمملكة العربية السعودية",
   "icons": [
     {
       "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
@@ -61,7 +61,7 @@
       "url": "/trackOrder",
       "icons": [
         {
-          "src": "https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
+          "src": "https://lh3.ربgoogleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l",
           "sizes": "192x192"
         }
       ]

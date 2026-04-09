@@ -1,185 +1,84 @@
-import { supabase } from '../lib/supabaseClient';
-import { Product, User } from '../types';
 
-const EDGE_FUNCTION_URL = import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL ||
-  `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+import { sovereignBackend } from './SovereignBackend';
 
-export const api = {
-  // Products
-  async getProducts(): Promise<Product[]> {
-    const { data, error } = await supabase.from('products').select('*').order('id');
-    if (error) throw new Error(error.message);
-    return data || [];
-  },
-
-  async getProduct(id: number): Promise<Product | null> {
-    const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
-    if (error) return null;
-    return data;
-  },
-
-  async getProductsPaginated(page: number, pageSize: number, category?: string): Promise<{ data: Product[]; count: number }> {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize - 1;
-    let query = supabase.from('products').select('*', { count: 'exact' });
-    if (category && category !== 'all') {
-      query = query.or(`category_ar.eq.${category},category_en.eq.${category}`);
+export class ApiError extends Error {
+    status: number;
+    data: any;
+    constructor(message: string, status: number, data: any) {
+        super(message);
+        this.name = 'ApiError';
+        this.status = status;
+        this.data = data;
     }
-    const { data, error, count } = await query.range(from, to).order('id');
-    if (error) throw new Error(error.message);
-    return { data: data || [], count: count || 0 };
-  },
+}
 
-  async getUniqueCategories(): Promise<string[]> {
-    const { data, error } = await supabase.from('products').select('category_ar, category_en');
-    if (error) throw new Error(error.message);
-    const categoriesSet = new Set<string>();
-    data?.forEach(p => {
-      if (p.category_ar) categoriesSet.add(p.category_ar);
-      if (p.category_en) categoriesSet.add(p.category_en);
-    });
-    return Array.from(categoriesSet).sort();
-  },
-
-  // OTP
-  async sendOtp(phone: string, purpose: string): Promise<void> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/send-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, purpose }),
-    });
-    if (!res.ok) throw new Error('Failed to send OTP');
-  },
-
-  async verifyOtp(phone: string, code: string, purpose: string): Promise<{ user: User; verified: boolean }> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, code, purpose }),
-    });
-    if (!res.ok) throw new Error('Invalid OTP');
-    return res.json();
-  },
-
-  // Orders
-  async createOrder(orderData: any): Promise<{ orderId: string; total: number }> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/create-order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    });
-    if (!res.ok) throw new Error('Order creation failed');
-    return res.json();
-  },
-
-  async updateOrderStatus(orderId: string, status: string): Promise<void> {
-    const { error } = await supabase.from('orders').update({ order_status: status }).eq('id', orderId);
-    if (error) throw error;
-  },
-
-  // Admin
-  async loginWithPassword(email: string, password: string): Promise<{ user: User }> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/auth-with-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error('Invalid credentials');
-    return res.json();
-  },
-
-  async changePassword(userId: string, newPassword: string): Promise<void> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/change-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, newPassword }),
-    });
-    if (!res.ok) throw new Error('Failed to change password');
-  },
-
-  async getAdminStats(): Promise<any> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/admin-stats`);
-    if (!res.ok) throw new Error('Failed to fetch stats');
-    return res.json();
-  },
-
-  // AI Assistant
-  async askAssistant(prompt: string, language: string = 'ar'): Promise<string> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/ai-assistant`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, language }),
-    });
-    const data = await res.json();
-    return data.reply;
-  },
-
-  // WebAuthn (biometrics & device)
-  async initiateDeviceRegistration(userId: string): Promise<any> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-device-reg`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
-    });
-    return res.json();
-  },
-
-  async saveDevice(userId: string, credential: any): Promise<void> {
-    await fetch(`${EDGE_FUNCTION_URL}/save-device`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, credential }),
-    });
-  },
-
-  async getDeviceChallenge(userId: string): Promise<any> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/device-challenge?userId=${userId}`);
-    return res.json();
-  },
-
-  async verifyDeviceAssertion(userId: string, assertion: any): Promise<boolean> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/verify-device`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, assertion }),
-    });
-    const data = await res.json();
-    return data.verified;
-  },
-
-  async initiateBiometricRegistration(userId: string): Promise<any> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-biometric-reg`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
-    });
-    return res.json();
-  },
-
-  async registerBiometric(userId: string, credential: any): Promise<void> {
-    await fetch(`${EDGE_FUNCTION_URL}/register-biometric`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, credential }),
-    });
-  },
-
-  async initiateBiometricLogin(userId: string): Promise<any> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-biometric-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
-    });
-    return res.json();
-  },
-
-  async verifyBiometricLogin(userId: string, assertion: any): Promise<boolean> {
-    const res = await fetch(`${EDGE_FUNCTION_URL}/verify-biometric`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, assertion }),
-    });
-    const data = await res.json();
-    return data.verified;
-  },
+/**
+ * Delta Stars API Core v60.0
+ * محرك تواصل موحد يربط الواجهات بالنظام السيادي.
+ */
+export const setFetcher = (f: any) => {
+    (window as any)._deltaSovereignFetcher = f;
 };
+
+const api = {
+    // --- AUTH ENGINE ---
+    async sendOtp(phone: string) {
+        try {
+            const res = await fetch('/api/health'); // Just a health check for now
+            return await sovereignBackend.sendOTP(phone);
+        } catch (e) {
+            return await sovereignBackend.sendOTP(phone);
+        }
+    },
+
+    async verifyOtp(phone: string, code: string) {
+        return await sovereignBackend.verifyOTP(phone, code);
+    },
+
+    async login(phone: string) {
+        return await sovereignBackend.authenticate(phone);
+    },
+
+    // --- ORDER ENGINE ---
+    async createOrder(payload: any) {
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) return await res.json();
+        } catch (e) {
+            console.warn("Backend offline, using Sovereign fallback");
+        }
+        return await sovereignBackend.createOrder(payload);
+    },
+
+    // --- MONITORING ---
+    getSystemLogs() {
+        return sovereignBackend.getLogs();
+    },
+
+    // --- REPAIR ---
+    async triggerEmergencyRepair() {
+        return await sovereignBackend.fullSystemReset();
+    },
+
+    // --- DATA FETCHING ---
+    async get(endpoint: string) {
+        try {
+            const res = await fetch(`/api/${endpoint}`);
+            if (res.ok) return await res.json();
+        } catch (e) {
+            console.warn(`Backend offline for ${endpoint}, using Local fallback`);
+        }
+        
+        if(endpoint.includes('products')) {
+             const saved = localStorage.getItem('delta-products-v50');
+             return saved ? JSON.parse(saved) : [];
+        }
+        return [];
+    }
+};
+
+export default api;

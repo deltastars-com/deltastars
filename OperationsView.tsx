@@ -3,29 +3,39 @@ import { useI18n } from './lib/contexts/I18nContext';
 import { DeliveryAgent } from '../types';
 import { useToast } from './ToastContext';
 import { PhoneIcon, DeliveryIcon, PlusIcon, TrashIcon, SparklesIcon, PencilIcon, UserIcon } from './lib/contexts/Icons';
+import { useFirebase } from './lib/contexts/FirebaseContext';
 
 declare var L: any;
 
 export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const { language } = useI18n();
     const { addToast } = useToast();
+    const { deliveryAgents, updateDeliveryAgent, addDeliveryAgent, deleteDeliveryAgent } = useFirebase();
     const mapRef = useRef<any>(null);
     const markersRef = useRef<{ [key: string]: any }>({});
+    const [isSimulating, setIsSimulating] = useState(false);
     
-    const [agents, setAgents] = useState<DeliveryAgent[]>(() => {
-        const saved = localStorage.getItem('delta-fleet-data-v15');
-        return saved ? JSON.parse(saved) : [
-            { id: 'DS-701', name: 'سعد القحطاني', phone: '0558828009', vehicle_type: 'truck', status: 'delivering', rating: 4.9, completed_orders: 1540, location: { lat: 21.5424, lng: 39.2201 } },
-            { id: 'DS-702', name: 'محمد الزهراني', phone: '0551122334', vehicle_type: 'car', status: 'online', rating: 5.0, completed_orders: 980, location: { lat: 21.5600, lng: 39.2400 } }
-        ];
-    });
-
     const [showAgentForm, setShowAgentForm] = useState(false);
     const [editingAgent, setEditingAgent] = useState<DeliveryAgent | null>(null);
 
+    // Simulation logic
     useEffect(() => {
-        localStorage.setItem('delta-fleet-data-v15', JSON.stringify(agents));
-    }, [agents]);
+        if (!isSimulating) return;
+
+        const interval = setInterval(() => {
+            deliveryAgents.forEach(agent => {
+                if (agent.status === 'delivering' || agent.status === 'online') {
+                    const newLat = agent.location.lat + (Math.random() - 0.5) * 0.0005;
+                    const newLng = agent.location.lng + (Math.random() - 0.5) * 0.0005;
+                    updateDeliveryAgent(agent.id, {
+                        location: { lat: newLat, lng: newLng }
+                    });
+                }
+            });
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [isSimulating, deliveryAgents, updateDeliveryAgent]);
 
     // Map Initialization with enhanced safety to prevent duplicate initialization
     useEffect(() => {
@@ -66,7 +76,7 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
     useEffect(() => {
         if (!mapRef.current) return;
 
-        const currentAgentIds = new Set(agents.map(a => a.id));
+        const currentAgentIds = new Set(deliveryAgents.map(a => a.id));
 
         // 1. Remove markers for agents that no longer exist
         Object.keys(markersRef.current).forEach(id => {
@@ -77,7 +87,7 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
         });
 
         // 2. Update or Add markers
-        agents.forEach(agent => {
+        deliveryAgents.forEach(agent => {
             const markerColor = agent.status === 'delivering' ? 'bg-secondary' : (agent.status === 'online' ? 'bg-green-500' : 'bg-gray-500');
             const iconHtml = `
                 <div class="relative group" id="marker-${agent.id}">
@@ -110,7 +120,7 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
                 markersRef.current[agent.id] = marker;
             }
         });
-    }, [agents]);
+    }, [deliveryAgents]);
 
     const handleAddAgent = (e: React.FormEvent) => {
         e.preventDefault();
@@ -119,16 +129,18 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
         const phone = formData.get('phone') as string;
         const vehicle = formData.get('vehicle') as any;
 
-        const newAgent: DeliveryAgent = {
-            id: editingAgent?.id || `DS-AGT-${Date.now().toString().slice(-4)}`,
+        const agentData: Omit<DeliveryAgent, 'id'> = {
             name, phone, vehicle_type: vehicle,
             status: 'online', rating: 5.0,
             completed_orders: editingAgent?.completed_orders || 0,
             location: editingAgent?.location || { lat: 21.5424 + (Math.random() - 0.5) * 0.01, lng: 39.2201 + (Math.random() - 0.5) * 0.01 }
         };
 
-        if (editingAgent) setAgents(agents.map(a => a.id === editingAgent.id ? newAgent : a));
-        else setAgents([...agents, newAgent]);
+        if (editingAgent) {
+            updateDeliveryAgent(editingAgent.id, agentData);
+        } else {
+            addDeliveryAgent(agentData);
+        }
 
         addToast(language === 'ar' ? 'تم تحديث الأسطول بنجاح' : 'Fleet Updated Successfully', 'success');
         setShowAgentForm(false);
@@ -148,6 +160,13 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
                     </div>
                 </div>
                 <div className="flex gap-4">
+                    <button 
+                        onClick={() => setIsSimulating(!isSimulating)} 
+                        className={`px-6 py-3 rounded-2xl font-black shadow-2xl transition-all flex items-center gap-3 ${isSimulating ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}
+                    >
+                        <div className={`w-3 h-3 rounded-full ${isSimulating ? 'bg-white animate-pulse' : 'bg-white/50'}`}></div>
+                        {language === 'ar' ? (isSimulating ? 'إيقاف المحاكاة' : 'بدء المحاكاة') : (isSimulating ? 'Stop Simulation' : 'Start Simulation')}
+                    </button>
                     <button onClick={() => setShowAgentForm(true)} className="bg-primary hover:bg-primary-light px-8 py-3 rounded-2xl font-black shadow-2xl transition-all flex items-center gap-3">
                         <PlusIcon className="w-5 h-5" /> إضافة مندوب
                     </button>
@@ -171,12 +190,12 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
                             <SparklesIcon className="w-6 h-6" /> حالة الأسطول النشط
                         </h3>
                         <div className="space-y-4">
-                            {agents.length === 0 ? (
+                            {deliveryAgents.length === 0 ? (
                                 <div className="text-center py-12 opacity-20 italic">لا توجد مركبات نشطة حالياً</div>
                             ) : (
-                                agents.map(agent => (
+                                deliveryAgents.map(agent => (
                                     <div key={agent.id} className="p-6 rounded-[2rem] bg-white/5 border border-transparent hover:border-secondary transition-all flex justify-between items-center group">
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-4 cursor-pointer" onClick={() => mapRef.current?.setView([agent.location.lat, agent.location.lng], 15)}>
                                             <span className="text-4xl filter drop-shadow-lg">{agent.vehicle_type === 'truck' ? '🚛' : '🚗'}</span>
                                             <div>
                                                 <p className="font-black text-xl leading-none">{agent.name}</p>
@@ -186,13 +205,28 @@ export const OperationsView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
                                                 </div>
                                             </div>
                                         </div>
-                                        <button 
-                                            onClick={() => setAgents(agents.filter(a => a.id !== agent.id))} 
-                                            className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
-                                            title="حذف من الرادار"
-                                        >
-                                            <TrashIcon className="w-5 h-5"/>
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button 
+                                                onClick={() => {
+                                                    setEditingAgent(agent);
+                                                    setShowAgentForm(true);
+                                                }}
+                                                className="p-3 bg-white/10 text-white rounded-xl hover:bg-primary transition-all"
+                                            >
+                                                <PencilIcon className="w-5 h-5"/>
+                                            </button>
+                                            <button 
+                                                onClick={() => {
+                                                    if (confirm(language === 'ar' ? 'هل أنت متأكد من حذف هذا المندوب؟' : 'Are you sure you want to delete this agent?')) {
+                                                        deleteDeliveryAgent(agent.id);
+                                                    }
+                                                }} 
+                                                className="p-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                title="حذف من الرادار"
+                                            >
+                                                <TrashIcon className="w-5 h-5"/>
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                             )}

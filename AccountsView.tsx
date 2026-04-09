@@ -21,9 +21,20 @@ type AccountsViewProps = {
     onDeleteVipClient: (id: string) => Promise<boolean>;
 };
 
-export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vipClients, transactions }) => {
+export const AccountsView: React.FC<AccountsViewProps> = (props) => {
+    const { onBack, invoices, vipClients, transactions } = props;
     const { t, language, formatCurrency } = useI18n();
-    const [activeTab, setActiveTab] = useState<'summary' | 'invoices' | 'ledger' | 'reports'>('summary');
+    const [activeTab, setActiveTab] = useState<'summary' | 'invoices' | 'ledger' | 'reports' | 'ai_advisor' | 'vip_management'>('summary');
+    const [isAddingClient, setIsAddingClient] = useState(false);
+    const [newClient, setNewClient] = useState<Partial<VipClient>>({
+        companyName: '',
+        contactPerson: '',
+        phone: '',
+        shippingAddress: '',
+        creditLimit: 0,
+        currentBalance: 0,
+        clientStatus: 'active'
+    });
 
     // محاكاة المحرك المحاسبي مع البيانات الحالية
     const engine = useMemo(() => {
@@ -64,7 +75,9 @@ export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vi
                     { id: 'summary', label: 'لوحة التحكم المالية', icon: '📊' },
                     { id: 'invoices', label: 'إدارة الفواتير', icon: '🧾' },
                     { id: 'reports', label: 'التقارير الختامية', icon: '📜' },
-                    { id: 'ledger', label: 'ميزان المراجعة', icon: '⚖️' }
+                    { id: 'ledger', label: 'ميزان المراجعة', icon: '⚖️' },
+                    { id: 'vip_management', label: 'إدارة كبار العملاء', icon: '💎' },
+                    { id: 'ai_advisor', label: 'المستشار المالي AI', icon: '🤖' }
                 ].map(tab => (
                     <button
                         key={tab.id}
@@ -103,9 +116,17 @@ export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vi
 
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                             <div className="bg-white p-10 rounded-[4rem] shadow-3xl border border-gray-100">
-                                <h3 className="text-2xl font-black mb-8 flex items-center gap-4 text-primary">
-                                    <SparklesIcon className="w-6 h-6" /> كبار العملاء المدينين (VIP AR)
-                                </h3>
+                                <div className="flex justify-between items-center mb-8">
+                                    <h3 className="text-2xl font-black flex items-center gap-4 text-primary">
+                                        <SparklesIcon className="w-6 h-6" /> كبار العملاء المدينين (VIP AR)
+                                    </h3>
+                                    <button 
+                                        onClick={() => setActiveTab('vip_management')}
+                                        className="text-xs font-black bg-primary/5 text-primary px-4 py-2 rounded-xl hover:bg-primary hover:text-white transition-all"
+                                    >
+                                        إدارة الكل
+                                    </button>
+                                </div>
                                 <div className="space-y-4">
                                     {vipClients.slice(0, 4).map(client => (
                                         <div key={client.id} className="p-6 bg-gray-50 rounded-[2rem] flex justify-between items-center hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-gray-100 group">
@@ -113,7 +134,12 @@ export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vi
                                                 <div className="w-14 h-14 bg-primary/5 rounded-2xl flex items-center justify-center font-black text-primary group-hover:bg-primary group-hover:text-white transition-all">VIP</div>
                                                 <div>
                                                     <p className="font-black text-lg">{client.companyName}</p>
-                                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Credit Limit: {formatCurrency(client.creditLimit)}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Credit Limit: {formatCurrency(client.creditLimit)}</p>
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase ${client.clientStatus === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
+                                                            {client.clientStatus === 'active' ? 'VIP' : 'Standard'}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <p className={`text-xl font-black ${client.currentBalance < 0 ? 'text-red-500' : 'text-green-500'}`}>{formatCurrency(client.currentBalance)}</p>
@@ -216,7 +242,7 @@ export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vi
 
                 {activeTab === 'invoices' && (
                     <div className="bg-white p-10 rounded-[4rem] shadow-3xl border border-gray-100 animate-fade-in-up">
-                        <div className="flex justify-between items-center mb-12">
+                        <div className="flex justify-between items-center mb-10">
                             <h3 className="text-3xl font-black text-slate-800">سجل الفواتير السيادي</h3>
                             <div className="flex gap-4">
                                 <button className="bg-primary text-white px-8 py-3 rounded-2xl font-black flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
@@ -260,6 +286,260 @@ export const AccountsView: React.FC<AccountsViewProps> = ({ onBack, invoices, vi
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'vip_management' && (
+                    <div className="space-y-10 animate-fade-in-up">
+                        <div className="flex justify-between items-center bg-white p-10 rounded-[3rem] shadow-xl border border-gray-100">
+                            <div>
+                                <h3 className="text-3xl font-black text-primary mb-2">إدارة حسابات كبار العملاء</h3>
+                                <p className="text-gray-400 font-bold">إدارة الائتمان والتحصيل للشركاء الاستراتيجيين</p>
+                            </div>
+                            <button 
+                                onClick={() => setIsAddingClient(!isAddingClient)}
+                                className="bg-secondary text-white px-10 py-4 rounded-2xl font-black flex items-center gap-3 shadow-2xl hover:scale-105 transition-all"
+                            >
+                                <PlusIcon className="w-6 h-6" /> {isAddingClient ? 'إلغاء' : 'إضافة عميل VIP جديد'}
+                            </button>
+                        </div>
+
+                        {isAddingClient && (
+                            <div className="bg-white p-12 rounded-[4rem] shadow-4xl border-2 border-secondary/20 animate-fade-in">
+                                <h4 className="text-2xl font-black mb-10 text-primary border-b pb-4">نموذج تسجيل شريك استراتيجي جديد</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">اسم الشركة / الكيان</label>
+                                        <input 
+                                            type="text" 
+                                            value={newClient.companyName}
+                                            onChange={e => setNewClient({...newClient, companyName: e.target.value})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                            placeholder="مثال: شركة النجوم المحدودة"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">الشخص المسؤول (Contact Person)</label>
+                                        <input 
+                                            type="text" 
+                                            value={newClient.contactPerson}
+                                            onChange={e => setNewClient({...newClient, contactPerson: e.target.value})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                            placeholder="الاسم الثلاثي للمسؤول"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">رقم التواصل</label>
+                                        <input 
+                                            type="text" 
+                                            value={newClient.phone}
+                                            onChange={e => setNewClient({...newClient, phone: e.target.value})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                            placeholder="05xxxxxxxx"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">عنوان الشحن الرئيسي</label>
+                                        <input 
+                                            type="text" 
+                                            value={newClient.shippingAddress}
+                                            onChange={e => setNewClient({...newClient, shippingAddress: e.target.value})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                            placeholder="المدينة، الحي، الشارع"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">الحد الائتماني (Credit Limit)</label>
+                                        <input 
+                                            type="number" 
+                                            value={newClient.creditLimit}
+                                            onChange={e => setNewClient({...newClient, creditLimit: Number(e.target.value)})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">الرصيد الافتتاحي (Initial Balance)</label>
+                                        <input 
+                                            type="number" 
+                                            value={newClient.currentBalance}
+                                            onChange={e => setNewClient({...newClient, currentBalance: Number(e.target.value)})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">حالة العميل (Client Status)</label>
+                                        <select 
+                                            value={newClient.clientStatus}
+                                            onChange={e => setNewClient({...newClient, clientStatus: e.target.value as 'active' | 'standard'})}
+                                            className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-secondary/30 rounded-2xl font-bold outline-none transition-all"
+                                        >
+                                            <option value="active">VIP (Active)</option>
+                                            <option value="standard">Standard</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="mt-12 flex gap-6">
+                                    <button 
+                                        onClick={async () => {
+                                            if (!newClient.companyName) return;
+                                            const client: VipClient = {
+                                                ...newClient as VipClient,
+                                                id: `VIP-${Date.now()}`
+                                            };
+                                            await props.onAddVipClient(client);
+                                            setIsAddingClient(false);
+                                            setNewClient({
+                                                companyName: '',
+                                                contactPerson: '',
+                                                phone: '',
+                                                shippingAddress: '',
+                                                creditLimit: 0,
+                                                currentBalance: 0,
+                                                clientStatus: 'active'
+                                            });
+                                        }}
+                                        className="flex-1 bg-primary text-white py-6 rounded-[2rem] font-black text-xl shadow-2xl hover:scale-105 transition-all"
+                                    >
+                                        تأكيد وتسجيل العميل
+                                    </button>
+                                    <button 
+                                        onClick={() => setIsAddingClient(false)}
+                                        className="px-12 py-6 bg-gray-100 text-gray-400 rounded-[2rem] font-black text-xl hover:bg-gray-200 transition-all"
+                                    >
+                                        إلغاء
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="bg-white rounded-[4rem] shadow-3xl overflow-hidden border border-gray-100">
+                            <div className="bg-primary p-8 text-white flex justify-between items-center">
+                                <h4 className="text-xl font-black">قائمة الشركاء الحاليين</h4>
+                                <span className="text-xs font-bold opacity-60 uppercase tracking-widest">{vipClients.length} Active VIPs</span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-right">
+                                    <thead className="bg-gray-50 border-b-2 border-gray-100">
+                                        <tr>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">الشركة</th>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">المسؤول</th>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">الحالة</th>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">الحد الائتماني</th>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">الرصيد الحالي</th>
+                                            <th className="p-6 font-black text-gray-400 text-xs uppercase tracking-widest">الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {vipClients.map(client => (
+                                            <tr key={client.id} className="border-b hover:bg-gray-50 transition-all group">
+                                                <td className="p-6">
+                                                    <p className="font-black text-slate-800">{client.companyName}</p>
+                                                    <p className="text-[10px] text-gray-400 font-bold">{client.id}</p>
+                                                </td>
+                                                <td className="p-6 font-bold text-gray-600">{client.contactPerson}</td>
+                                                <td className="p-6">
+                                                    <span className={`px-4 py-1 rounded-full font-black text-xs uppercase ${client.clientStatus === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
+                                                        {client.clientStatus === 'active' ? 'VIP' : 'Standard'}
+                                                    </span>
+                                                </td>
+                                                <td className="p-6 font-black text-primary">{formatCurrency(client.creditLimit)}</td>
+                                                <td className="p-6">
+                                                    <span className={`px-4 py-1 rounded-full font-black text-sm ${client.currentBalance < 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                                        {formatCurrency(client.currentBalance)}
+                                                    </span>
+                                                </td>
+                                                <td className="p-6">
+                                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all">
+                                                            <PencilIcon className="w-4 h-4" />
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => props.onDeleteVipClient(client.id)}
+                                                            className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all"
+                                                        >
+                                                            <TrashIcon className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'ai_advisor' && (
+                    <div className="space-y-10 animate-fade-in-up">
+                        <div className="bg-slate-900 p-12 rounded-[4rem] text-white relative overflow-hidden shadow-4xl border-b-[20px] border-secondary">
+                            <div className="absolute top-0 right-0 w-full h-full opacity-10">
+                                <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-secondary rounded-full blur-[120px]"></div>
+                            </div>
+                            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                                <div className="text-center md:text-right">
+                                    <h3 className="text-4xl font-black mb-4 flex items-center justify-center md:justify-start gap-4">
+                                        <SparklesIcon className="w-10 h-10 text-secondary" />
+                                        المستشار المالي الذكي (Oday AI)
+                                    </h3>
+                                    <p className="text-xl opacity-70 font-bold">تحليل السيولة والتنبؤ بالمخاطر المالية باستخدام الذكاء الاصطناعي</p>
+                                </div>
+                                <div className="bg-white/10 p-8 rounded-[3rem] border border-white/20 backdrop-blur-xl text-center">
+                                    <p className="text-secondary font-black text-sm uppercase tracking-widest mb-2">Cash Flow Accuracy</p>
+                                    <p className="text-5xl font-black">98.4%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div className="bg-white p-10 rounded-[4rem] shadow-3xl border border-gray-100">
+                                <h4 className="text-2xl font-black mb-8 text-primary flex items-center gap-3">
+                                    <ChartBarIcon className="w-6 h-6" /> توقعات التدفق النقدي (30 يوم)
+                                </h4>
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-green-50 rounded-3xl border border-green-100">
+                                        <div className="flex justify-between mb-2">
+                                            <span className="font-black">المتحصلات المتوقعة</span>
+                                            <span className="text-green-600 font-black">+{formatCurrency(incomeStatement.revenue * 1.2)}</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-green-200 rounded-full overflow-hidden">
+                                            <div className="h-full bg-green-500 w-[85%]"></div>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 bg-red-50 rounded-3xl border border-red-100">
+                                        <div className="flex justify-between mb-2">
+                                            <span className="font-black">الالتزامات المتوقعة</span>
+                                            <span className="text-red-600 font-black">-{formatCurrency(incomeStatement.cogs * 1.1)}</span>
+                                        </div>
+                                        <div className="w-full h-2 bg-red-200 rounded-full overflow-hidden">
+                                            <div className="h-full bg-red-500 w-[40%]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-10 rounded-[4rem] shadow-3xl border border-gray-100">
+                                <h4 className="text-2xl font-black mb-8 text-secondary flex items-center gap-3">
+                                    <SparklesIcon className="w-6 h-6" /> تنبيهات المخاطر الذكية
+                                </h4>
+                                <div className="space-y-4">
+                                    <div className="flex items-start gap-4 p-4 bg-orange-50 rounded-2xl border-r-4 border-orange-500">
+                                        <div className="text-2xl">⚠️</div>
+                                        <div>
+                                            <p className="font-black text-orange-800">تأخر محتمل في التحصيل</p>
+                                            <p className="text-sm text-orange-600 font-bold">العميل "مطاعم النخبة" لديه نمط تأخير متزايد بنسبة 15%</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-2xl border-r-4 border-blue-500">
+                                        <div className="text-2xl">💡</div>
+                                        <div>
+                                            <p className="font-black text-blue-800">فرصة تحسين التكلفة</p>
+                                            <p className="text-sm text-blue-600 font-bold">شراء كميات أكبر من "التمور الملكية" الآن سيوفر 8% من التكاليف المستقبلية</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

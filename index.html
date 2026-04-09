@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l" />
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1-0qvsPmpVVnWdGJHrlJ4rbtecG-i5n4l" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="delta stars" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>delta stars | شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة</title>
+    <meta name="description" content="delta stars - شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة في المملكة العربية السعودية. توريد طازج وموثوق." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://deltastars.com/" />
+    <meta property="og:title" content="delta stars | شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة" />
+    <meta property="og:description" content="شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة في المملكة العربية السعودية. توريد طازج وموثوق." />
+    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1NNENjClCwzrb-xxUdDyT2W7hH22NG3C1" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://deltastars.com/" />
+    <meta property="twitter:title" content="delta stars | شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة" />
+    <meta property="twitter:description" content="شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة في المملكة العربية السعودية. توريد طازج وموثوق." />
+    <meta property="twitter:image" content="https://lh3.googleusercontent.com/d/1NNENjClCwzrb-xxUdDyT2W7hH22NG3C1" />
+
+    <meta name="theme-color" content="#1a3a1a" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="delta stars">
+    <meta name="apple-mobile-web-app-title" content="delta stars">
+    <meta name="msapplication-starturl" content="/">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Professional Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --color-primary: #1a3a1a;
+        --color-secondary: #FF922B;
+        --font-main: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
+        --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      * { 
+        scrollbar-width: thin;
+        scrollbar-color: #e2e8f0 transparent;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        letter-spacing: -0.01em;
+        font-feature-settings: "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv08", "cv09", "cv10", "cv11";
+      }
+
+      input, textarea, [contenteditable="true"] {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+
+      body { 
+        font-family: var(--font-main); 
+        background-color: #ffffff; 
+        color: #0f172a;
+        -webkit-tap-highlight-color: transparent; 
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+
+      .sovereign-shadow {
+        box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.12);
+      }
+
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-thumb { 
+        background: var(--color-primary); 
+        border-radius: 20px;
+      }
+
+      #root { min-height: 100vh; display: flex; flex-direction: column; }
+
+      @keyframes animate-fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .animate-fade-in-up {
+        animation: animate-fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      /* Desktop Font Size Optimization */
+      @media (min-width: 1024px) {
+        html {
+          font-size: 14px; /* Balanced base font for desktop elegance */
+        }
+        .hero-title {
+          font-size: 6rem !important;
+          line-height: 1 !important;
+          letter-spacing: -0.04em !important;
+        }
+        .hero-subtitle {
+          font-size: 2.2rem !important;
+          max-width: 800px !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+        .container {
+          max-width: 1400px !important;
+        }
+      }
+
+      /* Mobile Font Size Optimization */
+      @media (max-width: 768px) {
+        html {
+          font-size: 12px;
+        }
+        .hero-title {
+          font-size: 3.5rem !important;
+          line-height: 1.1 !important;
+        }
+        .hero-subtitle {
+          font-size: 1.4rem !important;
+          border-right-width: 4px !important;
+          padding-right: 1rem !important;
+        }
+      }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required)
+    //   - role: string (required, ['admin', 'ops', 'developer', 'gm', 'vip', 'client', 'delegate'])
+    //   - assignedBranchId: string (optional)
+    //   - displayName: string (optional)
+    //   - phone: string (optional)
+    //   - companyName: string (optional)
+    //   - creditLimit: number (optional)
+    //   - currentBalance: number (optional)
+    //
+    // Collection: products
+    // Document ID: {productId}
+    // Fields:
+    //   - id: number (required)
+    //   - name_ar: string (required)
+    //   - name_en: string (required)
+    //   - category: string (required)
+    //   - price: number (required)
+    //   - image: string (required)
+    //   - unit_ar: string (required)
+    //   - unit_en: string (required)
+    //   - stock_quantity: number (required)
+    //   - min_threshold: number (required)
+    //
+    // Collection: orders
+    // Document ID: {orderId}
+    // Fields:
+    //   - id: string (required)
+    //   - customerId: string (required)
+    //   - total: number (required)
+    //   - status: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: branches
+    // Document ID: {branchId}
+    // Fields:
+    //   - id: string (required)
+    //   - name_ar: string (required)
+    //   - city: string (required)
+    //   - is_active: boolean (optional)
+    //
+    // Collection: user_roles
+    // Document ID: {userId}
+    // Fields:
+    //   - userId: string (required)
+    //   - email: string (required)
+    //   - role: string (required)
+    //   - biometric_enabled: boolean (optional)
+    //   - permissions: map (optional)
+    //
+    // Collection: financial_ledger
+    // Document ID: {ledgerId}
+    // Fields:
+    //   - id: string (required)
+    //   - branch_id: string (required)
+    //   - transaction_type: string (required)
+    //   - amount: number (required)
+    //   - tax_amount: number (required)
+    //   - created_at: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'developer' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'gm' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'marketing' ||
+         ((request.auth.token.email == "deltastars777@gmail.com" || 
+           request.auth.token.email == "marketing@deltastars-ksa.com" || 
+           request.auth.token.email == "developer@deltastars-ksa.com") && 
+          request.auth.token.email_verified == true));
+    }
+
+    function isDelegate() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'delegate';
+    }
+
+    function getAssignedBranchId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.assignedBranchId;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'email', 'role']) &&
+             data.uid is string && data.uid.size() > 0 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['admin', 'ops', 'developer', 'gm', 'vip', 'client', 'marketing', 'delegate'] &&
+             (!('clientStatus' in data) || data.clientStatus in ['active', 'inactive', 'pending']) &&
+             (!('assignedBranchId' in data) || data.assignedBranchId is string);
+    }
+
+    function isValidProduct(data) {
+      return hasRequiredFields(['id', 'name_ar', 'name_en', 'category', 'price', 'image', 'unit_ar', 'unit_en', 'stock_quantity', 'min_threshold']) &&
+             data.id is number &&
+             data.name_ar is string && data.name_ar.size() > 0 && data.name_ar.size() < 200 &&
+             data.price is number && data.price >= 0;
+    }
+
+    function isValidOrder(data) {
+      return hasRequiredFields(['id', 'customerId', 'total', 'status', 'createdAt']) &&
+             data.customerId is string &&
+             data.total is number && data.total >= 0 &&
+             data.status in ['pending', 'preparing', 'setup', 'shipped', 'delivered', 'cancelled'];
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.customerId || 
+        request.auth.uid == resource.data.driverId || 
+        isAdmin() || 
+        (isDelegate() && resource.data.branchId == getAssignedBranchId())
+      );
+      allow create: if isAuthenticated() && isValidOrder(request.resource.data) && (
+        request.auth.uid == request.resource.data.customerId || 
+        isAdmin()
+      );
+      allow update: if isAuthenticated() && isValidOrder(request.resource.data) && (
+        request.auth.uid == resource.data.customerId || 
+        request.auth.uid == resource.data.driverId || 
+        isAdmin() ||
+        (isDelegate() && resource.data.branchId == getAssignedBranchId() && request.resource.data.branchId == resource.data.branchId)
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /drivers/{driverId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(driverId) || isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /units/{unitId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /homeSections/{sectionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /shipments/{shipmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || (isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ops');
+    }
+
+    match /complaints/{complaintId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.customerId || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /branches/{branchId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /user_roles/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /financial_ledger/{ledgerId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -27,14 +27,22 @@ export const translations: { [key: string]: Translation } = {
       update: "تحديث المخزون",
       unit: "الوحدة",
       price: "السعر",
-      total: "الإجمالي"
+      total: "الإجمالي",
+      units: {
+        kg: "كيلو",
+        half_kg: "نصف كيلو (500 جرام)",
+        bundle: "حزمة",
+        packet: "باكت",
+        piece: "حبة",
+        box: "صندوق / كرتون"
+      }
     },
     header: {
-      storeName: "نجوم دلتا",
-      storeTitle: "نجوم دلتا | الجودة من المزرعة للمائدة",
+      storeName: "Delta Stars",
+      storeTitle: "Delta Stars | شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
       utility: {
         install: "تثبيت التطبيق",
-        version: "إصدار التوريد المتميز v31.0"
+        version: "إصدار التوريد المتميز v62.0"
       },
       navLinks: {
         home: "الرئيسية",
@@ -48,7 +56,36 @@ export const translations: { [key: string]: Translation } = {
         privacy: "سياسة الخصوصية",
         terms: "الشروط والأحكام",
         returns: "سياسة الإرجاع",
-        driverDashboard: "لوحة المندوب"
+        driverDashboard: "لوحة المندوب",
+        contact: "تواصل معنا"
+      }
+    },
+    contact: {
+      title: "تواصل معنا",
+      subtitle: "نحن هنا لخدمتكم وتلبية احتياجاتكم. لا تترددوا في التواصل معنا عبر أي من القنوات التالية.",
+      callUs: "اتصل بنا",
+      whatsapp: "واتساب",
+      email: "البريد الإلكتروني",
+      location: "الموقع",
+      businessHours: "ساعات العمل",
+      satThu: "السبت - الخميس",
+      friday: "الجمعة",
+      sendMessage: "أرسل لنا رسالة",
+      fullName: "الاسم الكامل",
+      phone: "رقم الجوال",
+      subject: "الموضوع",
+      message: "الرسالة",
+      submit: "إرسال الرسالة",
+      success: "تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.",
+      placeholders: {
+        name: "أدخل اسمك",
+        help: "كيف يمكننا مساعدتك؟"
+      },
+      subjects: {
+        general: "استفسار عام",
+        special: "طلب خاص",
+        complaint: "شكوى أو اقتراح",
+        partnership: "شراكة أعمال"
       }
     },
     checkout: {
@@ -77,10 +114,12 @@ export const translations: { [key: string]: Translation } = {
     },
     home: {
       hero: {
-        quality_badge: "الجودة العالمية في متناول يدك",
+        quality_badge: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
+        headline: "Delta Stars",
+        description: "شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة",
         button: "دخول المتجر",
         vipButton: "بوابة الشركات",
-        slogan: "شريكك الأمثل"
+        slogan: "Delta Stars | شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة"
       },
       categories: {
         title: "أقسامنا المتخصصة",
@@ -92,7 +131,7 @@ export const translations: { [key: string]: Translation } = {
         subtitle: "نفخر بخدمة نخبة من كبرى المنشآت الوطنية والعالمية في المملكة"
       },
       lounges: {
-        title: "مجتمعات نجوم دلتا",
+        title: "مجتمعات delta stars",
         subtitle: "تواصل مباشر وحصري لأحدث العروض اليومية",
         whatsapp: {
           title: "مجتمع واتساب",
@@ -108,7 +147,7 @@ export const translations: { [key: string]: Translation } = {
     },
     dashboard: {
       title: "نظام التحكم القيادي",
-      subtitle: "شركة نجوم دلتا للتجارة",
+      subtitle: "شركة delta stars للتجارة",
       stats: {
         sales: "إجمالي المبيعات المحققة",
         lowStock: "أصناف تحتاج إعادة توريد",
@@ -160,7 +199,18 @@ export const translations: { [key: string]: Translation } = {
           orderId: "رقم طلبك المرجعي",
           whatsappConfirmation: "تأكيد عبر واتساب",
           backToStore: "العودة للمتجر",
-          whatsappConfirmationMessage: "مرحباً نجوم دلتا، أود تأكيد طلبي رقم {{orderId}} بقيمة {{formattedTotal}}."
+          whatsappConfirmationMessage: "مرحباً delta stars، أود تأكيد طلبي رقم {{orderId}} بقيمة {{formattedTotal}}."
+      }
+    },
+    oday: {
+      settings: {
+        title: "إعدادات المستشار عُدي",
+        persona: "شخصية المستشار",
+        classic: "كلاسيكي (رسمي)",
+        friendly: "ودود (اجتماعي)",
+        expert: "خبير (تقني)",
+        concise: "مختصر (سريع)",
+        save: "تطبيق التغييرات"
       }
     },
     auth: {
@@ -206,14 +256,22 @@ export const translations: { [key: string]: Translation } = {
       update: "Update Inventory",
       unit: "Unit",
       price: "Price",
-      total: "Total"
+      total: "Total",
+      units: {
+        kg: "Kg",
+        half_kg: "0.5 Kg (500g)",
+        bundle: "Bundle",
+        packet: "Packet",
+        piece: "Piece",
+        box: "Box / Carton"
+      }
     },
     header: {
-      storeName: "Deltastars",
-      storeTitle: "Delta Stars | Quality from Farm to Table",
+      storeName: "Delta Stars",
+      storeTitle: "Delta Stars | Your Ideal Partner for High-Quality Vegetables, Fruits & Dates",
       utility: {
         install: "Install App",
-        version: "Elite Supply Node v31.0"
+        version: "Elite Supply Node v62.0"
       },
       navLinks: {
         home: "Home",
@@ -227,7 +285,36 @@ export const translations: { [key: string]: Translation } = {
         privacy: "Privacy Policy",
         terms: "Terms & Conditions",
         returns: "Return Policy",
-        driverDashboard: "Driver Portal"
+        driverDashboard: "Driver Portal",
+        contact: "Contact Us"
+      }
+    },
+    contact: {
+      title: "Contact Us",
+      subtitle: "We are here to serve you and meet your needs. Feel free to contact us through any of the following channels.",
+      callUs: "Call Us",
+      whatsapp: "WhatsApp",
+      email: "Email",
+      location: "Location",
+      businessHours: "Business Hours",
+      satThu: "Sat - Thu",
+      friday: "Friday",
+      sendMessage: "Send us a Message",
+      fullName: "Full Name",
+      phone: "Phone Number",
+      subject: "Subject",
+      message: "Message",
+      submit: "Send Message",
+      success: "Your message has been sent successfully. We will contact you soon.",
+      placeholders: {
+        name: "Enter your name",
+        help: "How can we help you?"
+      },
+      subjects: {
+        general: "General Inquiry",
+        special: "Special Request",
+        complaint: "Complaint or Suggestion",
+        partnership: "Business Partnership"
       }
     },
     checkout: {
@@ -256,10 +343,12 @@ export const translations: { [key: string]: Translation } = {
     },
     home: {
       hero: {
-        quality_badge: "Global Quality at Your Fingertips",
+        quality_badge: "Your Ideal Partner for High-Quality Vegetables, Fruits & Dates",
+        headline: "Delta Stars",
+        description: "Your Ideal Partner for High-Quality Vegetables, Fruits and Dates",
         button: "Enter Market",
         vipButton: "Corporate Portal",
-        slogan: "Your Perfect Partner"
+        slogan: "Delta Stars | Your Ideal Partner for High-Quality Vegetables, Fruits & Dates"
       },
       categories: {
         title: "Specialized Units",
@@ -271,7 +360,7 @@ export const translations: { [key: string]: Translation } = {
         subtitle: "Proudly serving elite national and international establishments in KSA"
       },
       lounges: {
-        title: "Delta Stars Communities",
+        title: "delta stars Communities",
         subtitle: "Direct and Exclusive Access to Daily Offers",
         whatsapp: {
           title: "WhatsApp Community",
@@ -287,7 +376,7 @@ export const translations: { [key: string]: Translation } = {
     },
     dashboard: {
       title: "Command Center",
-      subtitle: "Delta Stars Trading Co.",
+      subtitle: "delta stars Trading Co.",
       stats: {
         sales: "Total Realized Sales",
         lowStock: "Items Needing Restock",
@@ -339,7 +428,18 @@ export const translations: { [key: string]: Translation } = {
           orderId: "Your Order Reference",
           whatsappConfirmation: "Confirm via WhatsApp",
           backToStore: "Back to Market",
-          whatsappConfirmationMessage: "Hello Delta Stars, I want to confirm my order #{{orderId}} with total {{formattedTotal}}."
+          whatsappConfirmationMessage: "Hello delta stars, I want to confirm my order #{{orderId}} with total {{formattedTotal}}."
+      }
+    },
+    oday: {
+      settings: {
+        title: "Oday AI Settings",
+        persona: "Advisor Persona",
+        classic: "Classic (Formal)",
+        friendly: "Friendly (Social)",
+        expert: "Expert (Technical)",
+        concise: "Concise (Fast)",
+        save: "Apply Changes"
       }
     },
     auth: {

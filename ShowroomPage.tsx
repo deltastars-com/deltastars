@@ -1,223 +1,185 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useI18n } from './lib/contexts/I18nContext';
-import { ShowroomItem, ShowroomAsset, Page } from '../types';
-import { COMPANY_INFO } from './constants';
-// Removed non-existent ArrowRightIcon import as it is not exported by the Icons module
-import { PlayIcon, SparklesIcon, XIcon, EyeIcon, PlusIcon } from './lib/contexts/Icons';
+import React, { useState, useMemo } from 'react';
+import { useI18n } from './lib/contexts';
+import { SearchIcon, FilterIcon, ShoppingCartIcon, XIcon } from './lib/contexts/Icons';
 
 interface ShowroomPageProps {
-  items: ShowroomItem[];
+  items: any[];
   showroomBanner: string;
-  setPage: (page: Page) => void;
+  setPage: (page: string) => void;
 }
 
-const TheaterAssetView: React.FC<{ asset: ShowroomAsset; active: boolean }> = ({ asset, active }) => {
-    const isVideo = asset.type === 'video';
-    const [isLoading, setIsLoading] = useState(true);
+export function ShowroomPage({ items, showroomBanner, setPage }: ShowroomPageProps) {
+  const { language, formatCurrency } = useI18n();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-    if (!active) return null;
-
-    return (
-        <div className="w-full h-full flex items-center justify-center bg-black/40 relative">
-            {isLoading && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/20 backdrop-blur-md">
-                     <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
-                </div>
-            )}
-            {isVideo ? (
-                <iframe 
-                    src={`https://drive.google.com/file/d/${asset.url}/preview?autoplay=1`}
-                    className="w-full h-full border-none shadow-2xl" 
-                    allow="autoplay; fullscreen"
-                    onLoad={() => setIsLoading(false)}
-                ></iframe>
-            ) : (
-                <img 
-                    src={`https://lh3.googleusercontent.com/d/${asset.url}`} 
-                    className="max-w-full max-h-full object-contain drop-shadow-4xl animate-fade-in" 
-                    alt={asset.title_en}
-                    onLoad={() => setIsLoading(false)}
-                />
-            )}
-        </div>
-    );
-};
-
-export const ShowroomPage: React.FC<ShowroomPageProps> = ({ items, showroomBanner, setPage }) => {
-  const { t, language } = useI18n();
-  const [activeSection, setActiveSection] = useState<string>('all');
-  const [selectedItem, setSelectedItem] = useState<ShowroomItem | null>(null);
-  const [activeAssetIndex, setActiveAssetIndex] = useState(0);
-
-  const sections = useMemo(() => {
-    const s = Array.from(new Set(items.map(item => language === 'ar' ? item.section_ar : item.section_en)));
-    return ['all', ...s.filter(Boolean) as string[]];
-  }, [items, language]);
+  const categories = useMemo(() => {
+    const cats = new Set(items.map(item => item.category));
+    return ['all', ...Array.from(cats)];
+  }, [items]);
 
   const filteredItems = useMemo(() => {
-    if (activeSection === 'all') return items;
-    return items.filter(item => (language === 'ar' ? item.section_ar : item.section_en) === activeSection);
-  }, [items, activeSection, language]);
-
-  const openTheater = (item: ShowroomItem) => {
-      setSelectedItem(item);
-      setActiveAssetIndex(0);
-  };
+    return items.filter(item => {
+      const name = language === 'ar' ? item.name_ar : item.name_en;
+      const desc = language === 'ar' ? item.description_ar : item.description_en;
+      const matchesSearch = name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            desc?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [items, searchTerm, selectedCategory, language]);
 
   return (
-    <div className="animate-fade-in pb-40 selection:bg-secondary selection:text-white bg-white overflow-x-hidden">
-        {/* Cinematic Header */}
-        <section className="bg-primary-dark pt-32 pb-40 px-6 text-center relative overflow-hidden border-b-[20px] border-secondary/10">
-            <div className="absolute top-0 right-0 w-[80rem] h-[80rem] bg-secondary/5 blur-[180px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            
-            <div className="relative z-10 max-w-6xl mx-auto">
-                <div className="inline-flex items-center gap-5 bg-white/5 backdrop-blur-3xl px-12 py-4 rounded-full border border-white/10 text-secondary font-black text-sm mb-12 uppercase tracking-[0.5em] shadow-2xl">
-                    <SparklesIcon className="w-6 h-6" />
-                    {language === 'ar' ? 'بوابة المحتوى السيادي' : 'Sovereign Content Hub'}
-                </div>
-                
-                <h1 className="text-7xl md:text-[10rem] font-black text-white mb-8 leading-none tracking-tighter uppercase drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                    {language === 'ar' ? 'صالة العرض' : 'Showroom'}
-                </h1>
-                
-                <p className="text-3xl md:text-5xl font-bold text-secondary italic opacity-80 max-w-4xl mx-auto leading-tight">
-                    {language === 'ar' ? 'رحلة مرئية عبر معايير الجودة واللوجستيات' : 'A Visual Journey through Quality & Logistics'}
-                </p>
-            </div>
-        </section>
-
-        {/* Discovery Navigation */}
-        <div className="sticky top-[80px] z-40 bg-white/95 backdrop-blur-3xl border-b border-gray-100 shadow-xl py-8">
-            <div className="container mx-auto px-6">
-                <div className="flex justify-center gap-6 overflow-x-auto pb-2 no-scrollbar items-center">
-                    {sections.map(sec => (
-                        <button
-                            key={sec}
-                            onClick={() => setActiveSection(sec)}
-                            className={`px-12 py-4 rounded-[2.5rem] font-black transition-all border-4 text-xl whitespace-nowrap shadow-md ${activeSection === sec ? 'bg-primary text-white border-primary scale-105' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/20'}`}
-                        >
-                            {sec === 'all' ? (language === 'ar' ? 'كل المحتوى' : 'All Stories') : sec}
-                        </button>
-                    ))}
-                </div>
-            </div>
+    <div className="animate-fade-in bg-slate-50 min-h-screen pb-20">
+      {/* Banner */}
+      <div className="relative h-96 overflow-hidden">
+        <img 
+          src={showroomBanner} 
+          className="w-full h-full object-cover" 
+          alt="Showroom Banner"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/40 to-transparent flex items-end p-12">
+          <div className="container mx-auto">
+            <h2 className="text-5xl md:text-7xl font-black text-white mb-4 uppercase tracking-tighter">صالة العرض الملكية</h2>
+            <p className="text-xl md:text-2xl text-yellow-500 font-bold italic">{language === 'ar' ? 'شريكك الأمثل للخضروات والفواكه والتمور عالية الجودة' : 'Your Ideal Partner for High-Quality Vegetables, Fruits & Dates'}</p>
+          </div>
         </div>
+      </div>
 
-        {/* Dynamic Gallery Grid */}
-        <section className="container mx-auto px-6 py-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-                {filteredItems.map(item => (
-                    <div 
-                        key={item.id} 
-                        className="bg-white rounded-[4rem] shadow-3xl overflow-hidden group border border-gray-50 hover:-translate-y-4 transition-all duration-500 relative cursor-pointer"
-                        onClick={() => openTheater(item)}
-                    >
-                        <div className="relative h-[500px] overflow-hidden">
-                            <img src={item.image} alt={item.title_en} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent opacity-80"></div>
-                            
-                            {/* Asset Count Badge */}
-                            <div className="absolute top-8 left-8 bg-black/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 text-white font-black text-xs flex items-center gap-3">
-                                <span className="w-2 h-2 bg-secondary rounded-full"></span>
-                                {item.assets.length} {language === 'ar' ? 'أصول مرئية' : 'Visual Assets'}
-                            </div>
+      {/* Controls */}
+      <div className="container mx-auto px-6 -mt-12 relative z-10">
+        <div className="bg-white p-8 rounded-[3rem] shadow-sovereign border border-gray-100 flex flex-col md:flex-row gap-6 items-center">
+          <div className="flex-1 relative w-full">
+            <SearchIcon className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
+            <input 
+              type="text" 
+              placeholder="ابحث عن منتج..." 
+              className="w-full p-5 pr-16 bg-slate-50 border-2 border-transparent focus:border-secondary rounded-2xl outline-none font-bold transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2 w-full md:w-auto">
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-8 py-4 rounded-2xl font-black text-sm whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-primary text-white shadow-lg' : 'bg-slate-100 text-gray-500 hover:bg-slate-200'}`}
+              >
+                {cat === 'all' ? (language === 'ar' ? 'الكل' : 'All') : cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                            <div className="absolute inset-0 p-12 flex flex-col justify-end">
-                                <span className="text-secondary font-black text-xs uppercase tracking-[0.3em] mb-4 block">{item.section_ar}</span>
-                                <h3 className="text-4xl font-black text-white leading-tight mb-4 group-hover:text-secondary transition-colors">
-                                    {language === 'ar' ? item.title_ar : item.title_en}
-                                </h3>
-                                <p className="text-white/70 font-bold text-lg leading-relaxed line-clamp-2">
-                                    {language === 'ar' ? item.description_ar : item.description_en}
-                                </p>
-                            </div>
-
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                 <div className="w-24 h-24 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center border-2 border-white/30 scale-50 group-hover:scale-100 transition-transform">
-                                    <PlayIcon className="w-10 h-10 text-white" />
-                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+      {/* Grid */}
+      <div className="container mx-auto px-6 mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+          {filteredItems.map(item => (
+            <div 
+              key={item.id} 
+              className="group bg-white rounded-[3rem] overflow-hidden shadow-xl hover:shadow-sovereign transition-all border border-gray-100 flex flex-col"
+            >
+              <div className="relative h-64 overflow-hidden">
+                <img 
+                  src={item.image} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  alt={language === 'ar' ? item.name_ar : item.name_en}
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute top-6 left-6 bg-secondary text-white px-4 py-2 rounded-xl font-black text-xs shadow-lg">
+                  {item.category}
+                </div>
+                {item.is_featured && (
+                  <div className="absolute top-6 right-6 bg-primary text-white px-4 py-2 rounded-xl font-black text-xs shadow-lg animate-bounce">
+                    {language === 'ar' ? 'مميز ⭐' : 'Featured ⭐'}
+                  </div>
+                )}
+              </div>
+              <div className="p-8 flex-1 flex flex-col">
+                <h3 className="text-2xl font-black text-primary mb-2">{language === 'ar' ? item.name_ar : item.name_en}</h3>
+                <p className="text-gray-400 font-bold text-sm mb-6 line-clamp-2">{language === 'ar' ? item.description_ar : item.description_en}</p>
+                <div className="mt-auto flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">السعر</span>
+                    <span className="text-2xl font-black text-secondary">{formatCurrency(item.price)}</span>
+                  </div>
+                  <button 
+                    onClick={() => setSelectedProduct(item)}
+                    className="bg-primary text-white p-4 rounded-2xl hover:bg-secondary transition-all shadow-lg active:scale-90"
+                  >
+                    <ShoppingCartIcon className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
             </div>
-        </section>
+          ))}
+        </div>
+      </div>
 
-        {/* Cinematic theater Lightbox */}
-        {selectedItem && (
-            <div className="fixed inset-0 bg-slate-950 z-[1000] flex flex-col md:flex-row animate-fade-in">
-                {/* Close Control */}
+      {/* Product Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-white w-full max-w-5xl rounded-[4rem] overflow-hidden shadow-4xl relative flex flex-col md:flex-row">
+            <button 
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-8 left-8 z-10 bg-white/20 backdrop-blur-md p-4 rounded-full text-white hover:bg-red-600 transition-all"
+            >
+              <XIcon className="w-8 h-8" />
+            </button>
+            
+            <div className="flex-1 h-96 md:h-auto">
+              <img 
+                src={selectedProduct.image} 
+                className="w-full h-full object-cover" 
+                alt={language === 'ar' ? selectedProduct.name_ar : selectedProduct.name_en}
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            
+            <div className="flex-1 p-12 md:p-20 space-y-8">
+              <div className="space-y-2">
+                <span className="text-secondary font-black text-sm uppercase tracking-widest">{selectedProduct.category}</span>
+                <h2 className="text-5xl font-black text-primary">{language === 'ar' ? selectedProduct.name_ar : selectedProduct.name_en}</h2>
+              </div>
+              
+              <p className="text-xl text-gray-500 font-bold leading-relaxed">{language === 'ar' ? selectedProduct.description_ar : selectedProduct.description_en}</p>
+              
+              <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">السعر النهائي</span>
+                  <span className="text-5xl font-black text-secondary">{formatCurrency(selectedProduct.price)}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">الرقم المرجعي</span>
+                  <p className="text-xl font-black text-primary">#DS-{selectedProduct.id}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-6">
                 <button 
-                    onClick={() => setSelectedItem(null)}
-                    className="absolute top-10 left-10 z-[1010] bg-white/10 hover:bg-red-600 text-white p-6 rounded-full backdrop-blur-xl transition-all border border-white/10"
+                  onClick={() => {
+                    setSelectedProduct(null);
+                    setPage('vip_login');
+                  }}
+                  className="flex-1 bg-primary text-white py-6 rounded-3xl font-black text-2xl shadow-sovereign hover:bg-black transition-all"
                 >
-                    <XIcon className="w-10 h-10" />
+                  اطلب الآن 🚀
                 </button>
-
-                {/* Main Theater View */}
-                <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-16 relative">
-                    <div className="w-full max-w-7xl aspect-video rounded-[3rem] md:rounded-[5rem] overflow-hidden bg-black shadow-[0_0_150px_rgba(0,0,0,0.8)] border-[12px] border-white/5 relative">
-                        <TheaterAssetView 
-                            asset={selectedItem.assets[activeAssetIndex]} 
-                            active={true}
-                        />
-                    </div>
-                    
-                    <div className="mt-12 text-center max-w-4xl px-6">
-                        <h2 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter drop-shadow-2xl">
-                            {language === 'ar' ? selectedItem.title_ar : selectedItem.title_en}
-                        </h2>
-                        <p className="text-xl md:text-2xl font-bold text-white/50 leading-relaxed italic">
-                            {language === 'ar' ? selectedItem.description_ar : selectedItem.description_en}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Asset Navigator Sidebar */}
-                <div className="w-full md:w-[30%] lg:w-[25%] bg-slate-900/50 backdrop-blur-4xl border-s border-white/10 p-10 flex flex-col overflow-y-auto">
-                    <h4 className="text-secondary font-black text-xs uppercase tracking-[0.4em] mb-10 text-center">Asset Navigator</h4>
-                    <div className="space-y-8">
-                        {selectedItem.assets.map((asset, index) => (
-                            <button 
-                                key={asset.id}
-                                onClick={() => setActiveAssetIndex(index)}
-                                className={`w-full text-start group transition-all ${activeAssetIndex === index ? 'scale-105' : 'opacity-40 hover:opacity-100'}`}
-                            >
-                                <div className={`relative aspect-video rounded-[2.5rem] overflow-hidden mb-4 border-4 transition-colors ${activeAssetIndex === index ? 'border-secondary' : 'border-white/5'}`}>
-                                    {asset.type === 'video' ? (
-                                        <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
-                                            <PlayIcon className="w-8 h-8 text-white/30" />
-                                        </div>
-                                    ) : (
-                                        <img src={`https://lh3.googleusercontent.com/d/${asset.url}`} className="w-full h-full object-cover" alt="" />
-                                    )}
-                                    {activeAssetIndex === index && (
-                                        <div className="absolute inset-0 bg-secondary/20 flex items-center justify-center">
-                                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary font-black text-xl">✓</div>
-                                        </div>
-                                    )}
-                                </div>
-                                <p className={`font-black text-sm px-4 ${activeAssetIndex === index ? 'text-secondary' : 'text-white'}`}>
-                                    {asset.title_ar || `Asset #${index + 1}`}
-                                </p>
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="mt-auto pt-12 text-center">
-                         <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5">
-                            <p className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-4">Inquiry about this story?</p>
-                            <button 
-                                onClick={() => window.open(`https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(selectedItem.title_en)}`, '_blank')}
-                                className="bg-secondary text-white w-full py-4 rounded-2xl font-black shadow-xl hover:scale-105 transition-all"
-                            >
-                                Contact Sales
-                            </button>
-                         </div>
-                    </div>
-                </div>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  className="px-10 border-4 border-slate-100 rounded-3xl font-black text-gray-400 hover:bg-slate-50 transition-all"
+                >
+                  إغلاق
+                </button>
+              </div>
             </div>
-        )}
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
