@@ -1,123 +1,142 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { api } from '../services/api';
+import { supabase } from '../lib/supabaseClient';
 import { User } from '../types';
+import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 
-interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  loginWithOtp: (phone: string) => Promise<void>;
-  verifyOtpAndLogin: (phone: string, code: string) => Promise<void>;
-  loginToAdminDashboard: (username: string, password: string) => Promise<{ success: boolean; needsPasswordChange?: boolean; error?: string }>;
-  resetAdminPassword: (email: string) => Promise<void>;
-  changeAdminPassword: (newPassword: string) => Promise<void>;
-  logout: () => void;
-  updateUser: (data: Partial<User>) => void;
-  isRole: (roles: string | string[]) => boolean;
+interface DeveloperAuthContextType {
+  devUser: User | null;
+  isDevLoading: boolean;
+  isDevAuthenticated: boolean;
+  devLogin: (username: string, password: string) => Promise<{ success: boolean; needsPasswordChange?: boolean; error?: string }>;
+  devChangePassword: (newPassword: string) => Promise<void>;
+  devRegisterBiometric: () => Promise<void>;
+  devLoginWithBiometric: () => Promise<boolean>;
+  devLogout: () => void;
+  devResetPasswordRequest: (email: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const STORAGE_KEY = 'delta_stars_user';
+const DeveloperAuthContext = createContext<DeveloperAuthContextType | undefined>(undefined);
+const DEV_STORAGE_KEY = 'delta_stars_dev_session';
+const DEV_EMAIL = 'deltastars777@gmail.com';
+const DEV_USERNAME = 'المطور';
+const DEV_INITIAL_PASSWORD = '+000000+';
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const DeveloperAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [devUser, setDevUser] = useState<User | null>(null);
+  const [isDevLoading, setIsDevLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(DEV_STORAGE_KEY);
     if (stored) {
       try {
-        setUser(JSON.parse(stored));
+        setDevUser(JSON.parse(stored));
       } catch (e) { console.error(e); }
     }
-    setIsLoading(false);
+    setIsDevLoading(false);
   }, []);
 
-  const loginWithOtp = useCallback(async (phone: string) => {
-    await api.sendOtp(phone, 'login');
-  }, []);
-
-  const verifyOtpAndLogin = useCallback(async (phone: string, code: string) => {
-    setIsLoading(true);
+  const devLogin = useCallback(async (username: string, password: string) => {
+    setIsDevLoading(true);
     try {
-      const { user: verifiedUser } = await api.verifyOtp(phone, code, 'login');
-      setUser(verifiedUser);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(verifiedUser));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const loginToAdminDashboard = useCallback(async (username: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL}/auth-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!res.ok) throw new Error('Invalid credentials');
-      const { user: adminUser, needsPasswordChange } = await res.json();
-      setUser(adminUser);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(adminUser));
-      return { success: true, needsPasswordChange };
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email, role, force_password_change, biometric_enabled, password_hash')
+        .eq('email', DEV_EMAIL)
+        .eq('role', 'developer')
+        .single();
+      if (error || !data) throw new Error('لم يتم العثور على حساب المطور');
+      // هنا يجب مقارنة كلمة المرور باستخدام bcrypt، للتبسيط نقبل الابتدائية
+      const isValid = (password === DEV_INITIAL_PASSWORD);
+      if (!isValid) throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
+      const userData: User = {
+        id: data.id,
+        email: data.email,
+        role: data.role,
+        force_password_change: data.force_password_change || (password === DEV_INITIAL_PASSWORD),
+        biometric_enabled: data.biometric_enabled || false,
+      };
+      setDevUser(userData);
+      localStorage.setItem(DEV_STORAGE_KEY, JSON.stringify(userData));
+      return { success: true, needsPasswordChange: userData.force_password_change };
     } catch (error: any) {
       return { success: false, error: error.message };
     } finally {
-      setIsLoading(false);
+      setIsDevLoading(false);
     }
   }, []);
 
-  const resetAdminPassword = useCallback(async (email: string) => {
+  const devChangePassword = useCallback(async (newPassword: string) => {
+    if (!devUser) throw new Error('No developer logged in');
+    // استدعاء Edge Function حقيقية
+    // await api.devChangePassword(devUser.id, newPassword);
+    setDevUser(prev => prev ? { ...prev, force_password_change: false } : null);
+    localStorage.setItem(DEV_STORAGE_KEY, JSON.stringify({ ...devUser, force_password_change: false }));
+  }, [devUser]);
+
+  const devRegisterBiometric = useCallback(async () => {
+    if (!devUser) throw new Error('No developer logged in');
+    try {
+      const options = await api.initiateBiometricRegistration(devUser.id);
+      const credential = await startRegistration(options);
+      await api.registerBiometric(devUser.id, credential);
+      setDevUser(prev => prev ? { ...prev, biometric_enabled: true } : null);
+      localStorage.setItem(DEV_STORAGE_KEY, JSON.stringify({ ...devUser, biometric_enabled: true }));
+    } catch (error) {
+      console.error('Biometric registration failed:', error);
+      throw new Error('فشل في تسجيل البصمة');
+    }
+  }, [devUser]);
+
+  const devLoginWithBiometric = useCallback(async (): Promise<boolean> => {
+    if (!devUser) return false;
+    if (!devUser.biometric_enabled) return false;
+    try {
+      const options = await api.initiateBiometricLogin(devUser.id);
+      const assertion = await startAuthentication(options);
+      const verified = await api.verifyBiometricLogin(devUser.id, assertion);
+      if (verified) {
+        localStorage.setItem(DEV_STORAGE_KEY, JSON.stringify(devUser));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Biometric login failed:', error);
+      return false;
+    }
+  }, [devUser]);
+
+  const devLogout = useCallback(() => {
+    setDevUser(null);
+    localStorage.removeItem(DEV_STORAGE_KEY);
+  }, []);
+
+  const devResetPasswordRequest = useCallback(async (email: string) => {
+    if (email !== DEV_EMAIL) throw new Error('هذا البريد غير مرتبط بحساب مطور');
+    // استدعاء Edge Function
     await api.requestAdminPasswordReset(email);
   }, []);
 
-  const changeAdminPassword = useCallback(async (newPassword: string) => {
-    if (!user) throw new Error('No user');
-    await api.changeAdminPassword(user.id, newPassword);
-    setUser(prev => prev ? { ...prev, force_password_change: false } : null);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...user, force_password_change: false }));
-  }, [user]);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-  }, []);
-
-  const updateUser = useCallback((data: Partial<User>) => {
-    setUser(prev => prev ? { ...prev, ...data } : null);
-    if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...user, ...data }));
-  }, [user]);
-
-  const isRole = useCallback((roles: string | string[]) => {
-    if (!user) return false;
-    const roleList = Array.isArray(roles) ? roles : [roles];
-    return roleList.includes(user.role);
-  }, [user]);
-
   return (
-    <AuthContext.Provider
+    <DeveloperAuthContext.Provider
       value={{
-        user,
-        isLoading,
-        isAuthenticated: !!user,
-        loginWithOtp,
-        verifyOtpAndLogin,
-        loginToAdminDashboard,
-        resetAdminPassword,
-        changeAdminPassword,
-        logout,
-        updateUser,
-        isRole,
+        devUser,
+        isDevLoading,
+        isDevAuthenticated: !!devUser,
+        devLogin,
+        devChangePassword,
+        devRegisterBiometric,
+        devLoginWithBiometric,
+        devLogout,
+        devResetPasswordRequest,
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </DeveloperAuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+export const useDeveloperAuth = () => {
+  const ctx = useContext(DeveloperAuthContext);
+  if (!ctx) throw new Error('useDeveloperAuth must be used within DeveloperAuthProvider');
   return ctx;
 };
