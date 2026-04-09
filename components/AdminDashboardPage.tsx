@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabaseClient';
-import { Page, Product } from '../../types';
+import { Page, Product, User, Order, Coupon, Promotion } from '../types';
 import {
   Users, Package, Truck, MapPin, ShoppingBag, Gift, Ticket, Settings,
   DollarSign, Percent, Image, Eye, Edit, Trash2, PlusCircle, RefreshCw,
-  Search, Filter, ChevronLeft, ChevronRight
+  Search, ChevronLeft, ChevronRight, Shield, Key, Fingerprint, Save
 } from 'lucide-react';
 
 interface AdminDashboardPageProps {
@@ -15,12 +15,12 @@ interface AdminDashboardPageProps {
 
 // ==================== قسم الحسابات والمستخدمين ====================
 const AccountsSection: React.FC = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data, error } = await supabase.from('users').select('id, email, phone, role, created_at');
+      const { data, error } = await supabase.from('users').select('id, email, phone, full_name, role, created_at');
       if (data) setUsers(data);
       setLoading(false);
     };
@@ -30,16 +30,14 @@ const AccountsSection: React.FC = () => {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <h3 className="text-xl font-black mb-4 flex items-center gap-2"><Users className="w-5 h-5 text-primary" /> الحسابات والمستخدمين</h3>
-      {loading ? (
-        <div className="animate-pulse">جاري التحميل...</div>
-      ) : (
+      {loading ? <div className="animate-pulse">جاري التحميل...</div> : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr><th className="p-2 text-right">البريد/الهاتف</th><th className="p-2">الدور</th><th className="p-2">تاريخ التسجيل</th></tr>
             </thead>
             <tbody>
-              {users.slice(0, 5).map((u) => (
+              {users.map((u) => (
                 <tr key={u.id} className="border-b">
                   <td className="p-2">{u.email || u.phone}</td>
                   <td className="p-2">{u.role}</td>
@@ -56,7 +54,7 @@ const AccountsSection: React.FC = () => {
 
 // ==================== قسم العمليات والطلبات ====================
 const OperationsSection: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -178,7 +176,7 @@ const ProductsManagementSection: React.FC = () => {
                       <button className="text-blue-500"><Edit className="w-4 h-4" /></button>
                       <button onClick={() => handleDelete(p.id)} className="text-red-500"><Trash2 className="w-4 h-4" /></button>
                     </td>
-                  </tr>
+                  </table>
                 ))}
               </tbody>
             </table>
@@ -196,7 +194,7 @@ const ProductsManagementSection: React.FC = () => {
 
 // ==================== صالة العروض الترويجية ====================
 const PromotionsSection: React.FC = () => {
-  const [banners, setBanners] = useState<any[]>([]);
+  const [banners, setBanners] = useState<Promotion[]>([]);
   useEffect(() => {
     const fetchBanners = async () => {
       const { data } = await supabase.from('promotions').select('*').eq('is_active', true);
@@ -220,7 +218,7 @@ const PromotionsSection: React.FC = () => {
 
 // ==================== الكاش باك والكوبونات ====================
 const CashbackCouponsSection: React.FC = () => {
-  const [coupons, setCoupons] = useState<any[]>([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   useEffect(() => {
     const fetchCoupons = async () => {
       const { data } = await supabase.from('coupons').select('*');
@@ -301,7 +299,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ setPage 
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-3xl font-black">لوحة التحكم العامة</h1>
           <div className="flex gap-4 items-center">
-            <span className="text-sm hidden md:inline">{user?.email || 'Admin'}</span>
+            <span className="text-sm hidden md:inline">مرحباً، {user?.full_name || 'مدير النظام'}</span>
             <button onClick={logout} className="bg-white/20 px-4 py-2 rounded-full text-sm font-bold hover:bg-white/30">تسجيل خروج</button>
           </div>
         </div>
