@@ -34,7 +34,11 @@ const AccountsSection: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr><th className="p-2 text-right">البريد/الهاتف</th><th className="p-2">الدور</th><th className="p-2">تاريخ التسجيل</th></tr>
+              <tr>
+                <th className="p-2 text-right">البريد/الهاتف</th>
+                <th className="p-2">الدور</th>
+                <th className="p-2">تاريخ التسجيل</th>
+              </tr>
             </thead>
             <tbody>
               {users.map((u) => (
@@ -164,7 +168,12 @@ const ProductsManagementSection: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
-                <tr><th>المنتج</th><th>السعر (كجم)</th><th>المخزون</th><th></th></tr>
+                <tr>
+                  <th>المنتج</th>
+                  <th>السعر (كجم)</th>
+                  <th>المخزون</th>
+                  <th></th>
+                </tr>
               </thead>
               <tbody>
                 {products.map((p) => (
@@ -176,7 +185,7 @@ const ProductsManagementSection: React.FC = () => {
                       <button className="text-blue-500"><Edit className="w-4 h-4" /></button>
                       <button onClick={() => handleDelete(p.id)} className="text-red-500"><Trash2 className="w-4 h-4" /></button>
                     </td>
-                  </table>
+                  </tr>
                 ))}
               </tbody>
             </table>
