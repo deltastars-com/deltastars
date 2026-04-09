@@ -1,3 +1,14 @@
+{user?.role === 'admin' && (
+  <button onClick={() => setPage('admin_dashboard')} className="text-sm font-black text-secondary hover:text-primary uppercase tracking-wide">
+    📊 لوحة التحكم
+  </button>
+)}
+{/* زر قسم المطور يظهر فقط إذا كان المستخدم له دور developer */}
+{user?.role === 'developer' && (
+  <button onClick={() => setPage('dev_console')} className="text-sm font-black text-secondary hover:text-primary uppercase tracking-wide">
+    🔧 قسم المطور
+  </button>
+)}
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useCart } from '../src/hooks/useCart';
