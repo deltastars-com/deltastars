@@ -22,7 +22,6 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess, onBac
     if (result.success) {
       if (result.needsPasswordChange) {
         addToast('⚠️ يجب تغيير كلمة المرور الافتراضية فوراً', 'warning');
-        // يمكن توجيه المستخدم إلى صفحة تغيير كلمة المرور
       } else {
         addToast('✅ تم تسجيل الدخول إلى لوحة التحكم', 'success');
         onSuccess();
@@ -39,8 +38,8 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess, onBac
     }
     setIsResetting(true);
     try {
-      await resetAdminPassword();
-      addToast('📧 تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني', 'success');
+      await resetAdminPassword('deltastars777@gmail.com');
+      addToast('📧 تم إرسال رابط إعادة تعيين كلمة المرور إلى البريد الإلكتروني الخاص بالإدارة', 'success');
       setShowResetConfirm(false);
     } catch (error) {
       addToast('فشل إرسال رابط إعادة التعيين', 'error');
@@ -105,7 +104,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess, onBac
             </button>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs text-gray-500">سيتم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني. هل أنت متأكد؟</p>
+              <p className="text-xs text-gray-500">سيتم إرسال رابط إعادة التعيين إلى بريد الإدارة. هل أنت متأكد؟</p>
               <button
                 onClick={handleResetPassword}
                 disabled={isResetting}
