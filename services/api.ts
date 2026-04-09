@@ -1,9 +1,11 @@
 import { supabase } from '../lib/supabaseClient';
 import { Product, User, Order, Coupon, Promotion } from '../types';
 
-const EDGE_FUNCTION_URL = import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL || `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const EDGE_FUNCTION_URL = import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL ||
+  `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
 export const api = {
+  // ==================== Products ====================
   async getProducts(): Promise<Product[]> {
     const { data, error } = await supabase.from('products').select('*').order('id');
     if (error) throw new Error(error.message);
@@ -56,6 +58,7 @@ export const api = {
     if (error) throw new Error(error.message);
   },
 
+  // ==================== OTP (Client) ====================
   async sendOtp(phone: string, purpose: string): Promise<void> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/send-otp`, {
       method: 'POST',
@@ -75,6 +78,7 @@ export const api = {
     return res.json();
   },
 
+  // ==================== Orders ====================
   async createOrder(orderData: any): Promise<{ orderId: string; total: number; trackingNumber?: string }> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/create-order`, {
       method: 'POST',
@@ -102,6 +106,7 @@ export const api = {
     if (error) throw error;
   },
 
+  // ==================== Admin Dashboard Auth ====================
   async loginToAdminDashboard(username: string, password: string): Promise<{ user: User }> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/auth-admin`, {
       method: 'POST',
@@ -130,6 +135,7 @@ export const api = {
     if (!res.ok) throw new Error('Failed to send reset link');
   },
 
+  // ==================== Admin Stats & Management ====================
   async getAdminStats(): Promise<any> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/admin-stats`);
     if (!res.ok) throw new Error('Failed to fetch stats');
@@ -153,6 +159,7 @@ export const api = {
     return data || [];
   },
 
+  // ==================== Promotions & Coupons ====================
   async getPromotions(): Promise<Promotion[]> {
     const { data, error } = await supabase.from('promotions').select('*').eq('is_active', true);
     if (error) throw new Error(error.message);
@@ -187,6 +194,7 @@ export const api = {
     if (error) throw new Error(error.message);
   },
 
+  // ==================== AI Assistant ====================
   async askAssistant(prompt: string, language: string = 'ar'): Promise<string> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/ai-assistant`, {
       method: 'POST',
@@ -197,6 +205,7 @@ export const api = {
     return data.reply;
   },
 
+  // ==================== WebAuthn (Biometrics & Device) ====================
   async initiateBiometricRegistration(userId: string): Promise<any> {
     const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-biometric-reg`, {
       method: 'POST',
