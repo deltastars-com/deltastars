@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { User, Product, ShowroomItem, Page, Invoice, Payment, VipClient, VipTransaction, Promotion } from '../../../types';
+import { User, Product, ShowroomItem, Page, Invoice, Payment, VipClient, VipTransaction, Promotion } from './types';
 import { useI18n } from './I18nContext';
 import { ChartBarIcon, LogoutIcon, PlusIcon, UserIcon, DeliveryIcon, SparklesIcon, PencilIcon, DocumentTextIcon } from './Icons';
-import { AccountsView } from '../../AccountsView';
-import { OperationsView } from '../../OperationsView';
-import { WarehouseView } from '../../WarehouseView';
-import { MarketingView } from '../../MarketingView';
-import { SectionAuthModal } from '../SectionAuthModal';
+import { AccountsView } from './AccountsView';
+import { OperationsView } from './OperationsView';
+import { WarehouseView } from './WarehouseView';
+import { MarketingView } from './MarketingView';
+import { SectionAuthModal } from './SectionAuthModal';
 
 interface DashboardPageProps {
   user: User | null;

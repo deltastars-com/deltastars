@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SparklesIcon, TrendingUpIcon, PackageIcon, MapPinIcon, BotIcon } from './lib/contexts/Icons';
-import { Order, Product, Branch } from '../types';
+import { Order, Product, Branch } from './types';
 import { GoogleGenAI } from '@google/genai';
 import ReactMarkdown from 'react-markdown';
 

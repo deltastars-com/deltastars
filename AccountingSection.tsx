@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChartBarIcon } from 'lucide-react';
-import { Order, Product } from '../types';
+import { Order, Product } from './types';
 
 interface AccountingSectionProps {
     language: 'ar' | 'en';

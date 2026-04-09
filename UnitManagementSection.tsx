@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { ProductUnit } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { ProductUnit } from './types';
+import { useI18n } from './I18nContext';
 import { useToast } from './ToastContext';
 import { db, setDoc, doc, deleteDoc, handleFirestoreError, OperationType } from '@/firebase';
 import { PlusIcon, TrashIcon, PencilIcon, XIcon } from './lib/contexts/Icons';

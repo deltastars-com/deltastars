@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
-import { ToastMessage } from '../../types';
-import { XIcon } from './contexts/Icons';
+import { ToastMessage } from './types';
+import { XIcon } from './Icons';
 
 interface ToastProps {
   toast: ToastMessage;

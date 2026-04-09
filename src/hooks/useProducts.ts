@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api } from '../services/api';
-import { Product } from '../types';
+import api from '../../api';
+import { Product } from '../../types';
 import { useToast } from '../contexts/ToastContext';
 
 const PAGE_SIZE = 20;

@@ -1,6 +1,6 @@
 
 import React, { ErrorInfo, ReactNode } from 'react';
-import { sovereignCore } from './lib/SovereignBackend';
+import { sovereignCore } from './SovereignBackend';
 
 interface Props {
   children?: ReactNode;

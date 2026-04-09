@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Coupon } from '../types';
+import { Coupon } from './types';
 import { useI18n, useToast, useFirebase } from './lib/contexts';
 import { PlusIcon, TrashIcon, PencilIcon, TicketIcon, XIcon } from './lib/contexts/Icons';
 

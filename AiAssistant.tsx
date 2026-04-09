@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useI18n, useGeminiAi } from './lib/contexts/I18nContext';
-import { Product, ChatMessage } from '../types';
+import { useI18n, useGeminiAi } from './I18nContext';
+import { Product, ChatMessage } from './types';
 import { COMPANY_INFO, SOCIAL_LINKS } from './constants';
 import { SparklesIcon, XIcon, QualityIcon, BotIcon, SettingsIcon, CheckCircleIcon } from './lib/contexts/Icons';
 import { GoogleGenAI } from '@google/genai';

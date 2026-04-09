@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFirebase } from './lib/contexts/FirebaseContext';
-import { useI18n } from './lib/contexts/I18nContext';
+import { useI18n } from './I18nContext';
 import { ShieldCheckIcon, FileTextIcon, RefreshCcwIcon, DeliveryIcon, ArrowLeftIcon } from './lib/contexts/Icons';
 
 interface LegalPageProps {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api } from '../services/api';
-import { Product, CartItem } from '../types';
+import api from '../../api';
+import { Product, CartItem } from '../../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Product, Promotion, ShowroomItem, HomeSection, HomeSectionType, CategoryConfig, CategoryKey, ProductUnit, Branch, Order, Coupon, Ad, User } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { Product, Promotion, ShowroomItem, HomeSection, HomeSectionType, CategoryConfig, CategoryKey, ProductUnit, Branch, Order, Coupon, Ad, User } from './types';
+import { useI18n } from './I18nContext';
 import { useToast } from './ToastContext';
 import { 
     PlusIcon, TrashIcon, PencilIcon, SparklesIcon, 
@@ -10,10 +10,10 @@ import {
     DatabaseIcon as Database, BellIcon, MegaphoneIcon, TicketIcon, ShieldCheckIcon,
     LayoutIcon, StarIcon, BotIcon, TrendingUpIcon
 } from './lib/contexts/Icons';
-import api from './lib/api';
+import api from './api';
 import { db, setDoc, doc, deleteDoc, collection, updateDoc, handleFirestoreError, OperationType, query, onSnapshot, orderBy, addDoc, getDocs } from '@/firebase';
 import { useFirebase } from './lib/contexts/FirebaseContext';
-import { REAL_PRODUCTS } from '../src/data/products';
+import { REAL_PRODUCTS } from './products';
 import { COMPANY_INFO } from './constants';
 import { ProductManagementSection } from './ProductManagementSection';
 import { UserManagementSection } from './UserManagementSection';

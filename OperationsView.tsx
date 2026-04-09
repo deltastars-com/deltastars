@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useI18n } from './lib/contexts/I18nContext';
-import { DeliveryAgent } from '../types';
+import { useI18n } from './I18nContext';
+import { DeliveryAgent } from './types';
 import { useToast } from './ToastContext';
 import { PhoneIcon, DeliveryIcon, PlusIcon, TrashIcon, SparklesIcon, PencilIcon, UserIcon } from './lib/contexts/Icons';
 import { useFirebase } from './lib/contexts/FirebaseContext';

@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { COMPANY_INFO } from '../constants';
-import { LogoIcon } from './contexts/Icons';
-import { useI18n } from './contexts/I18nContext';
+import { COMPANY_INFO } from './constants';
+import { LogoIcon } from './Icons';
+import { useI18n } from './I18nContext';
 
 export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const { language } = useI18n();

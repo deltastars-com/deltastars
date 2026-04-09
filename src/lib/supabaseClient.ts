@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabaseClient';
-import { Product, User } from '../types';
+import { Product, User } from '../../types';
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_SUPABASE_EDGE_FUNCTIONS_URL ||
   `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;

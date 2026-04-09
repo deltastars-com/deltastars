@@ -1,7 +1,7 @@
 import React from 'react';
 import { COMPANY_INFO } from './constants';
-import { Ad } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { Ad } from './types';
+import { useI18n } from './I18nContext';
 
 interface HomeProps {
   setCurrentPage: (page: string) => void;

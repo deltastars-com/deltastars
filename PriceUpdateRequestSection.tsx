@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PriceUpdateRequest } from '../types';
+import { PriceUpdateRequest } from './types';
 import { useI18n, useToast, useFirebase } from './lib/contexts';
 import { CheckCircleIcon, XIcon, TrendingUpIcon, ClockIcon } from './lib/contexts/Icons';
 

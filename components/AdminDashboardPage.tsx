@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
-import { supabase } from '../lib/supabaseClient';
-import { Page, Product } from '../../types';
+import { useAuth } from '../src/contexts/AuthContext';
+import { useToast } from '../ToastContext';
+import { supabase } from '../supabaseClient';
+import { Page, Product } from '../types';
 import {
   Users, Package, Truck, MapPin, ShoppingBag, Gift, Ticket, Settings,
   DollarSign, Percent, Image, Eye, Edit, Trash2, PlusCircle, RefreshCw,

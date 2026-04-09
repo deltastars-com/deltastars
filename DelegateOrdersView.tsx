@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Order, User, Branch } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { Order, User, Branch } from './types';
+import { useI18n } from './I18nContext';
 import { useFirebase } from './lib/contexts/FirebaseContext';
 import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { DeliveryIcon, LocationMarkerIcon, QualityIcon, EyeIcon, XIcon, ChartBarIcon } from './lib/contexts/Icons';

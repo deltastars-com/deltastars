@@ -1,5 +1,5 @@
 
-import { Invoice, Payment, VipClient, VipTransaction, Product } from '../../types';
+import { Invoice, Payment, VipClient, VipTransaction, Product } from './types';
 
 /**
  * Delta Accounting Engine v27.0

@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useCallback, useEffect, ReactNode } from 'react';
-import { translations } from '../../../translations';
+import { translations } from './translations';
 import { GoogleGenAI } from '@google/genai';
 
 type Language = 'ar' | 'en';

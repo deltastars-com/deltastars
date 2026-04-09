@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Branch } from '../types';
+import { Branch } from './types';
 import { useI18n, useToast, useFirebase } from './lib/contexts';
 import { PlusIcon, TrashIcon, PencilIcon, MapIcon, XIcon } from './lib/contexts/Icons';
 

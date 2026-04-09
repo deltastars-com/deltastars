@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../src/contexts/AuthContext';
-import { useCart } from '../src/hooks/useCart';
+import { useAuth } from './src/contexts/AuthContext';
+import { useCart } from './src/hooks/useCart';
 import { useI18n } from './lib/contexts';
 import { 
   SearchIcon, UserIcon, HeartIcon, ShoppingCartIcon, 

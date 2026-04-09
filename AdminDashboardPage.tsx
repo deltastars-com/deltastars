@@ -6,7 +6,7 @@ import ShipmentManagement from './ShipmentManagement';
 import DelegatesManagement from './DelegatesManagement';
 import ShippingManagementSection from './ShippingManagementSection';
 import SecuritySection from './SecuritySection';
-import AccountingManagement from './lib/AccountingManagement';
+import AccountingManagement from './AccountingManagement';
 import { DeveloperDashboard } from './DeveloperDashboard';
 import { ProductManagementSection } from './ProductManagementSection';
 import { UserManagementSection } from './UserManagementSection';

@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { HomeSection, HomeSectionType } from '../types';
+import { HomeSection, HomeSectionType } from './types';
 import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, LayoutIcon, XIcon, SaveIcon } from './lib/contexts/Icons';
-import { useI18n } from './lib/contexts/I18nContext';
+import { useI18n } from './I18nContext';
 
 interface HomeSectionManagementSectionProps {
     homeSections: HomeSection[];

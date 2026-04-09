@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { COMPANY_INFO, SOCIAL_LINKS, INSTITUTIONAL_VERIFICATION } from '../constants';
+import { COMPANY_INFO, SOCIAL_LINKS, INSTITUTIONAL_VERIFICATION } from './constants';
 import { 
     FacebookIcon, 
     InstagramIcon, 
@@ -14,9 +14,9 @@ import {
     PhoneIcon,
     LocationMarkerIcon,
     MailIcon
-} from './contexts/Icons';
-import { useI18n } from './contexts/I18nContext';
-import { Page } from '../../types';
+} from './Icons';
+import { useI18n } from './I18nContext';
+import { Page } from './types';
 
 interface FooterProps {
   setPage: (page: Page) => void;

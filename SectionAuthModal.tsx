@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { useI18n } from './contexts/I18nContext';
-import { useToast } from '../ToastContext';
-import { FingerprintIcon, SparklesIcon, EyeIcon } from './contexts/Icons';
-import { isBiometricAvailable, authenticateBiometric } from '../webAuthn';
+import { useI18n } from './I18nContext';
+import { useToast } from './ToastContext';
+import { FingerprintIcon, SparklesIcon, EyeIcon } from './Icons';
+import { isBiometricAvailable, authenticateBiometric } from './webAuthn';
 
 export const SectionAuthModal: React.FC<{
   section: 'gm.portal' | 'accounts' | 'operations' | 'security_hub' | 'warehouse' | 'developer';

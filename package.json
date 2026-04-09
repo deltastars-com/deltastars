@@ -5,18 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "prisma generate && vite build",
+    "build": "vite build",
     "lint": "tsc --noEmit",
     "preview": "vite preview"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@capacitor/core": "^8.1.0",
     "@capacitor/geolocation": "^8.1.0",
     "@google/genai": "latest",
-    "@prisma/client": "^6.2.1",
     "@react-google-maps/api": "^2.20.8",
     "@supabase/supabase-js": "^2.97.0",
     "@tailwindcss/vite": "^4.2.1",
@@ -30,7 +26,6 @@
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.575.0",
     "motion": "^12.38.0",
-    "prisma": "^6.2.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-markdown": "10.1.0",
@@ -48,6 +43,7 @@
     "@types/react-dom": "18.3.1",
     "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "4.3.4",
+    "netlify-plugin-flutter": "file:plugins/netlify-plugin-flutter",
     "typescript": "5.8.2",
     "vite": "6.2.0"
   }

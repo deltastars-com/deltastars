@@ -1,8 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useI18n, useGeminiAi } from './contexts/I18nContext';
-import { useToast } from '../ToastContext';
-import { SparklesIcon, DocumentTextIcon, XIcon } from './contexts/Icons';
+import { useI18n, useGeminiAi } from './I18nContext';
+import { useToast } from './ToastContext';
+import { SparklesIcon, DocumentTextIcon, XIcon } from './Icons';
 import { GoogleGenAI } from '@google/genai';
 
 export const SourcingRequestPage: React.FC = () => {

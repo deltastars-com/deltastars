@@ -1,5 +1,5 @@
 
-import { VipClient, Invoice, Payment, VipTransaction } from '../../../types';
+import { VipClient, Invoice, Payment, VipTransaction } from './types';
 
 export const mockVipClients: VipClient[] = [
     { id: '966558828009', phone: '966558828009', companyName: 'فندق دلتا التجريبي', contactPerson: 'مدير المشتريات', shippingAddress: 'شارع المنار، جدة، المملكة العربية السعودية', creditLimit: 10000, currentBalance: 0 },

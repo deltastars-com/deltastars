@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import { motion, AnimatePresence } from 'framer-motion';
 import { Product, Page } from '@/types';
 import { ShoppingCartIcon, HeartIcon, StarIcon, SparklesIcon, DocumentTextIcon } from './lib/contexts/Icons';
-import { useI18n } from './lib/contexts/I18nContext';
+import { useI18n } from './I18nContext';
 
 interface ProductCardProps {
   product: Product;

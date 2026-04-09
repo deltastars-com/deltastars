@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Product } from '../../../types';
+import { Product } from './types';
 import { SparklesIcon, XIcon, QualityIcon } from './Icons';
 import { useI18n } from './I18nContext';
 
