@@ -90,7 +90,7 @@ export default function DeltaStarsSovereignApp() {
               <p className="text-center text-gray-400 mb-8 text-sm uppercase tracking-widest">Sovereign Access Only</p>
               <input id="email" type="email" placeholder="البريد الإلكتروني" className="w-full p-5 mb-4 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
               <input id="pass" type="password" placeholder="كلمة المرور" className="w-full p-5 mb-8 border-2 rounded-2xl focus:border-yellow-500 outline-none transition-all font-bold" />
-              <button onClick={() => handleLogin(document.getElementById('email').value, document.getElementById('pass').value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
+              <button onClick={() => handleLogin((document.getElementById('email') as HTMLInputElement).value, (document.getElementById('pass') as HTMLInputElement).value)} className="w-full bg-[#1a3a1a] text-white py-5 rounded-2xl font-black text-xl shadow-xl hover:bg-black transition-all">تفعيل الدخول 🔑</button>
             </div>
           </div>
         )}
