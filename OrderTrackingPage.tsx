@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { useI18n } from '../contexts/I18nContext';
-import { useDriverTracking } from '../hooks/useDriverTracking';
-import { supabase } from '../lib/supabaseClient';
-import { DeliveryIcon, LocationMarkerIcon } from '../contexts/Icons';
+import { useI18n } from './I18nContext';
+import { useDriverTracking } from './src/hooks/useDriverTracking';
+import { supabase } from './supabaseClient';
+import { DeliveryIcon, LocationMarkerIcon } from './Icons';
 
 const containerStyle = {
   width: '100%',

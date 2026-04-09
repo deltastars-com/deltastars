@@ -1,0 +1,6 @@
+{
+  "name": "netlify-plugin-flutter",
+  "version": "99.0.0",
+  "main": "index.js",
+  "type": "module"
+}

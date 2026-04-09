@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useToast, useI18n } from './lib/contexts';
-import { useAuth } from '../src/contexts/AuthContext';
+import { useAuth } from './src/contexts/AuthContext';
 import { ShieldCheckIcon, UserIcon, LockIcon, ArrowRightIcon } from './lib/contexts/Icons';
 
 interface VipLoginPageProps {

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { useI18n } from './contexts/I18nContext';
-import { COMPANY_INFO } from '../constants';
-import { XIcon, SparklesIcon, FingerprintIcon, StarIcon, DocumentTextIcon } from './contexts/Icons';
+import { useI18n } from './I18nContext';
+import { COMPANY_INFO } from './constants';
+import { XIcon, SparklesIcon, FingerprintIcon, StarIcon, DocumentTextIcon } from './Icons';
 
 interface PaymentPortalProps {
     amount: number;

@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { CartItem, Page } from '../../../types';
-import { COMPANY_INFO } from '../../constants';
+import { CartItem, Page } from './types';
+import { COMPANY_INFO } from './constants';
 import { TrashIcon, SparklesIcon, PhoneIcon, LocationMarkerIcon, UserIcon, GlobeAltIcon } from './Icons';
 import { useI18n } from './I18nContext';
-import { PaymentPortal } from '../PaymentPortal';
-import { useToast } from '../../ToastContext';
-import api from '../api';
+import { PaymentPortal } from './PaymentPortal';
+import { useToast } from './ToastContext';
+import api from './api';
 
 interface CartPageProps {
   cart: CartItem[];

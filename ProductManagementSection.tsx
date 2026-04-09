@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Product, CategoryConfig, ProductUnit } from '../types';
+import { Product, CategoryConfig, ProductUnit } from './types';
 import { useI18n, useToast, useFirebase } from './lib/contexts';
 import { PlusIcon, TrashIcon, PencilIcon, SearchIcon, FilterIcon } from './lib/contexts/Icons';
 

@@ -1,10 +1,10 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Product, Page, Review } from '../../types';
-import { useI18n } from './contexts/I18nContext';
-import { useToast } from '../ToastContext';
-import { StarIcon, ShoppingCartIcon, SparklesIcon, GlobeAltIcon, QualityIcon, DocumentTextIcon, XIcon, PlusIcon } from './contexts/Icons';
+import { Product, Page, Review } from './types';
+import { useI18n } from './I18nContext';
+import { useToast } from './ToastContext';
+import { StarIcon, ShoppingCartIcon, SparklesIcon, GlobeAltIcon, QualityIcon, DocumentTextIcon, XIcon, PlusIcon } from './Icons';
 import { ArViewerModal } from './ArViewerModal';
 
 interface ProductDetailPageProps {

@@ -16,9 +16,9 @@ import { DevConsolePage } from './DevConsolePage';
 import { DriverDashboardPage } from './DriverDashboardPage';
 import { UnitsPage } from './UnitsPage';
 import { ContactPage } from './ContactPage';
-import { useAuth } from '../src/contexts/AuthContext';
-import { useProducts } from '../src/hooks/useProducts';
-import { useCart } from '../src/hooks/useCart';
+import { useAuth } from './src/contexts/AuthContext';
+import { useProducts } from './src/hooks/useProducts';
+import { useCart } from './src/hooks/useCart';
 import { AiAssistant } from './AiAssistant';
 import { BotIcon } from './lib/contexts/Icons';
 

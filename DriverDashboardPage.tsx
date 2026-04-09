@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useI18n } from './contexts/I18nContext';
-import { DeliveryAgent, Page, Product } from '../../types';
-import { useToast } from '../ToastContext';
-import { useLiveLocation } from './hooks/useLiveLocation';
-import { DeliveryIcon, SparklesIcon, ShieldCheckIcon, PhoneIcon, XIcon, GlobeAltIcon } from './contexts/Icons';
-import { startDriverTracking, stopDriverTracking } from './services/trackingService';
+import { useI18n } from './I18nContext';
+import { DeliveryAgent, Page, Product } from './types';
+import { useToast } from './ToastContext';
+import { useLiveLocation } from './useLiveLocation';
+import { DeliveryIcon, SparklesIcon, ShieldCheckIcon, PhoneIcon, XIcon, GlobeAltIcon } from './Icons';
+import { startDriverTracking, stopDriverTracking } from './trackingService';
 import { sovereignCore } from './SovereignBackend';
 import { db, auth } from '@/firebase';
 import { doc, updateDoc, collection, onSnapshot, query, where, serverTimestamp } from 'firebase/firestore';

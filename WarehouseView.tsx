@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { useI18n } from './lib/contexts/I18nContext';
-import { Product, StockMovement, Invoice } from '../types';
+import { useI18n } from './I18nContext';
+import { Product, StockMovement, Invoice } from './types';
 import { ChartBarIcon, PlusIcon, TrashIcon, PencilIcon, SparklesIcon, DocumentTextIcon } from './lib/contexts/Icons';
 
 interface WarehouseViewProps {

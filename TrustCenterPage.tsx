@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { useI18n } from './contexts/I18nContext';
-import { COMPANY_DOCS, COMPANY_INFO } from '../constants';
-import { SparklesIcon, DocumentTextIcon, QualityIcon } from './contexts/Icons';
+import { useI18n } from './I18nContext';
+import { COMPANY_DOCS, COMPANY_INFO } from './constants';
+import { SparklesIcon, DocumentTextIcon, QualityIcon } from './Icons';
 
 export const TrustCenterPage: React.FC = () => {
     const { language } = useI18n();

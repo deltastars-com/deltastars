@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../src/contexts/AuthContext';
-import { useToast } from '../src/contexts/ToastContext';
+import { useAuth } from './src/contexts/AuthContext';
+import { useToast } from './src/contexts/ToastContext';
 import { LockIcon, ShieldCheckIcon, KeyRoundIcon, RefreshCwIcon } from './lib/contexts/Icons';
 
 export default function SecuritySection() {

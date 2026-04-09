@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { ProductUnit } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { ProductUnit } from './types';
+import { useI18n } from './I18nContext';
 
 export function UnitsPage({ units }: { units: ProductUnit[] }) {
     const { t, language } = useI18n();

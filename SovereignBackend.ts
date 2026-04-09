@@ -5,7 +5,7 @@
  * يدعم التصحيح التلقائي للمسارات (Auto-Path Correction)
  */
 
-import { Product, User, CartItem } from '../../types';
+import { Product, User, CartItem } from './types';
 
 interface SystemAudit {
     status: 'optimal' | 'repaired' | 'critical';

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User } from '../types';
+import { User } from './types';
 import { useI18n, useToast, useFirebase } from './lib/contexts';
 import { ShieldCheckIcon, UserIcon, CheckCircleIcon, XIcon } from './lib/contexts/Icons';
 import { db, collection, getDocs, updateDoc, doc, handleFirestoreError, OperationType } from '@/firebase';

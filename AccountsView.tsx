@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
-import { useI18n } from './lib/contexts/I18nContext';
-import { Invoice, Payment, VipClient, VipTransaction } from '../types';
-import { AccountingEngine, CHART_OF_ACCOUNTS } from './lib/AccountingEngine';
+import { useI18n } from './I18nContext';
+import { Invoice, Payment, VipClient, VipTransaction } from './types';
+import { AccountingEngine, CHART_OF_ACCOUNTS } from './AccountingEngine';
 import { 
     PrintIcon, MailIcon, PencilIcon, TrashIcon, PlusIcon, 
     DocumentTextIcon, ChartBarIcon, SparklesIcon 

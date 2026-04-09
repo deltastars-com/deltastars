@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Order, Branch } from '../types';
-import { useI18n } from './lib/contexts/I18nContext';
+import { Order, Branch } from './types';
+import { useI18n } from './I18nContext';
 import { useToast } from './ToastContext';
 import { db, doc, updateDoc, handleFirestoreError, OperationType } from '@/firebase';
 import { EyeIcon } from './lib/contexts/Icons';

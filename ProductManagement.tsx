@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Product } from '../types';
-import { mockProducts } from './lib/vip/products';
+import { Product } from './types';
+import { mockProducts } from './products';
 
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>(mockProducts);

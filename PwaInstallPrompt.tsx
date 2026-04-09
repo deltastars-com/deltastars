@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { useI18n } from './contexts/I18nContext';
-import { SparklesIcon, XIcon, DownloadIcon } from './contexts/Icons';
+import { useI18n } from './I18nContext';
+import { SparklesIcon, XIcon, DownloadIcon } from './Icons';
 
 export const PwaInstallPrompt: React.FC = () => {
     const { language } = useI18n();

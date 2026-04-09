@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Order, Branch } from '../types';
+import { Order, Branch } from './types';
 import { XIcon, MapPinIcon, ClockIcon, ShoppingBagIcon, UserIcon, PhoneIcon } from './lib/contexts/Icons';
-import { useI18n } from './lib/contexts/I18nContext';
+import { useI18n } from './I18nContext';
 
 interface OrderDetailsModalProps {
     order: Order;

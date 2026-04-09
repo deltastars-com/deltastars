@@ -1,4 +1,4 @@
-import { Product, CategoryKey } from '../../../types';
+import { Product, CategoryKey } from './types';
 
 /**
  * Delta Stars Sovereign Data Engine v102.0
@@ -342,4 +342,4 @@ const generateFullCatalog = (): Product[] => {
   });
 };
 
-export const mockProducts: Product[] = generateFullCatalog();
+export const mockProducts: Product[] = generateFullCatalog();export const REAL_PRODUCTS: any[] = [];

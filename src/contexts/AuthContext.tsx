@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { api } from '../services/api';
-import { User } from '../types';
+import api from '../../api';
+import { User } from '../../types';
 import { supabase } from '../lib/supabaseClient';
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 

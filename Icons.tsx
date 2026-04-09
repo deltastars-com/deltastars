@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { COMPANY_INFO } from '../../constants';
+import { COMPANY_INFO } from './constants';
 
 export const LogoIcon: React.FC<{ className?: string }> = ({ className }) => (
   <img src={COMPANY_INFO.logo_url} alt="Delta Stars Logo" className={className} />
@@ -231,3 +231,35 @@ export const DownloadIcon: React.FC<{ className?: string }> = ({ className }) =>
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
   </svg>
 );
+export const CalendarIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const ClockIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const ArrowLeftIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+
+export const ArrowRightIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const BellIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const BotIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const CheckCircleIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const FilterIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const GlobeIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const KeyRoundIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const LayoutIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const LockIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const MapIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const MapPinIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const MegaphoneIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const MessageCircleIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const PackageIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const RefreshCwIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const SaveIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const SearchIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const SendIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const SettingsIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const ShoppingBagIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const TicketIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const TrendingUpIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const TruckIcon = (props: any) => <svg {...props}><path d=""/></svg>;export const DollarSignIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const EditIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const CreditCardIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const MessageSquareIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const ServerIcon = (props: any) => <svg {...props}><path d=""/></svg>;
+export const CopyIcon = (props: any) => <svg {...props}><path d=""/></svg>;

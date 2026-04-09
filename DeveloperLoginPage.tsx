@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDeveloperAuth } from '../contexts/DeveloperAuthContext';
-import { useToast } from '../contexts/ToastContext';
-import { useI18n } from '../contexts/I18nContext';
+import { useToast } from './ToastContext';
+import { useI18n } from './I18nContext';
 import { Lock, Fingerprint, AlertCircle, ArrowLeft, KeyRound } from 'lucide-react';
 
 interface DeveloperLoginPageProps {

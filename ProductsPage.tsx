@@ -1,9 +1,9 @@
 import React from 'react';
-import { useProducts } from '../hooks/useProducts';
+import { useProducts } from './src/hooks/useProducts';
 import { ProductCard } from './ProductCard';
-import { Page } from '../../types';
+import { Page } from './types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useI18n } from '../contexts/I18nContext';
+import { useI18n } from './I18nContext';
 
 interface ProductsPageProps {
   setPage: (page: Page) => void;
