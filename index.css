@@ -1,42 +1,18 @@
-@import "tailwindcss";
-
-@theme {
-  --color-primary: #1a3a1a;
-  --color-primary-light: #2d5c2d;
-  --color-primary-dark: #0d1f0d;
-  --color-secondary: #FF922B;
-  --color-secondary-dark: #e67e22;
-  --color-accent: #e4e3e0;
-  
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-cairo: "Cairo", sans-serif;
-  --font-arabic: "IBM Plex Sans Arabic", sans-serif;
-  
-  --radius-4xl: 2.5rem;
-  --radius-5xl: 3.5rem;
-  --radius-6xl: 4.5rem;
-  --radius-7xl: 6rem;
-  
-  --shadow-sovereign: 0 60px 120px -30px rgba(0, 0, 0, 0.35);
-  
-  --blur-5xl: 120px;
-  --blur-6xl: 180px;
-}
-
-@layer base {
-  body {
-    @apply font-sans text-primary bg-white;
+/* تحسينات التوافق مع جميع الشاشات (إضافة) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1280px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
-
-@layer utilities {
-  .animate-slow-pan {
-    animation: slow-pan 35s infinite alternate ease-in-out;
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
-}
-
-@keyframes slow-pan {
-  0% { transform: scale(1.05) translateX(0); }
-  50% { transform: scale(1.18) translateX(-3%); }
-  100% { transform: scale(1.05) translateX(0); }
+  nav .flex {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }
