@@ -88,8 +88,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, 
           </div>
 
           {/* Quality Badge */}
-          <div className="absolute bottom-6 left-6 bg-primary/90 backdrop-blur-md text-white text-[9px] font-black px-6 py-2.5 rounded-full shadow-2xl uppercase tracking-[0.4em] border border-white/10 flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+        <button className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] font-black px-2 py-1 rounded-full z-10">
+  AR
+</button>
             Sovereign Standard
           </div>
         </div>
