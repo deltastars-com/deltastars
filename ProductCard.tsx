@@ -45,21 +45,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
         <h3 className="font-bold text-lg text-gray-800 mb-1 line-clamp-1">{product.name_ar}</h3>
         <p className="text-xs text-gray-400 mb-2 line-clamp-1">{product.name_en}</p>
         <div className="flex justify-between items-center mt-2">
-          <div>
-            <span className="text-lg font-black text-primary">{product.price_1kg} ر.س</span>
+          <div>                                                                          
+            <span className="text-lg font-black text-primary">{product.price_1kg} ر.س</span>      
             <span className="text-xs text-gray-400 mr-1">/ كجم</span>
-          </div>
-          <button
+          </div>                                                                    
+          <button                                                                    
             className="bg-secondary hover:bg-secondary-dark text-white px-4 py-2 rounded-xl text-sm font-bold transition-all"
             onClick={(e) => {
               e.stopPropagation();
               // هنا يمكن إضافة منطق إضافة إلى السلة
-            }}
+            }}                                                                    
           >
             أضف للسلة
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+          </button>                                                                    
+        </div>                                                                    
+      </div>                                                                    
+    </div>                                                                    
+  );                                                                    
+};                                                                    
