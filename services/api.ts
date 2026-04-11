@@ -1,3 +1,20 @@
+// جلب جميع المستخدمين
+async getAllUsers(): Promise<User[]> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, email, phone, full_name, role, created_at');
+  if (error) throw new Error(error.message);
+  return data || [];
+},
+
+// تحديث دور المستخدم
+async updateUserRole(userId: string, role: string): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role })
+    .eq('id', userId);
+  if (error) throw new Error(error.message);
+},
 import { supabase } from '../lib/supabaseClient';
 import { Product, User } from '../types';
 
