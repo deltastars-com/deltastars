@@ -1,20 +1,3 @@
-// جلب جميع المستخدمين
-async getAllUsers(): Promise<User[]> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, email, phone, full_name, role, created_at');
-  if (error) throw new Error(error.message);
-  return data || [];
-},
-
-// تحديث دور المستخدم
-async updateUserRole(userId: string, role: string): Promise<void> {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ role })
-    .eq('id', userId);
-  if (error) throw new Error(error.message);
-},
 import { supabase } from '../lib/supabaseClient';
 import { Product, User } from '../types';
 
@@ -83,5 +66,81 @@ export const api = {
     });
     if (!res.ok) throw new Error('Order creation failed');
     return res.json();
+  },
+
+  async updateOrderStatus(orderId: string, status: string): Promise<void> {
+    const { error } = await supabase.from('orders').update({ order_status: status }).eq('id', orderId);
+    if (error) throw error;
+  },
+
+  async loginWithPassword(email: string, password: string): Promise<{ user: User }> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/auth-with-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    return res.json();
+  },
+
+  async changePassword(userId: string, newPassword: string): Promise<void> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/change-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, newPassword }),
+    });
+    if (!res.ok) throw new Error('Failed to change password');
+  },
+
+  async getAdminStats(): Promise<any> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/admin-stats`);
+    if (!res.ok) throw new Error('Failed to fetch stats');
+    return res.json();
+  },
+
+  async askAssistant(prompt: string, language: string = 'ar'): Promise<string> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/ai-assistant`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, language }),
+    });
+    const data = await res.json();
+    return data.reply;
+  },
+
+  async initiateBiometricRegistration(userId: string): Promise<any> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-biometric-reg`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+    return res.json();
+  },
+
+  async registerBiometric(userId: string, credential: any): Promise<void> {
+    await fetch(`${EDGE_FUNCTION_URL}/register-biometric`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, credential }),
+    });
+  },
+
+  async initiateBiometricLogin(userId: string): Promise<any> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/initiate-biometric-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+    return res.json();
+  },
+
+  async verifyBiometricLogin(userId: string, assertion: any): Promise<boolean> {
+    const res = await fetch(`${EDGE_FUNCTION_URL}/verify-biometric`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, assertion }),
+    });
+    const data = await res.json();
+    return data.verified;
   },
 };
