@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { User } from '../types';
+import {public.profiles  } from '../types';
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 
 interface DeveloperAuthContextType {
