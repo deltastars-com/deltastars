@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://deltastars.store/
+View your app in Neitfily: https://deltastars.store/
 
 ## Run Locally
 
