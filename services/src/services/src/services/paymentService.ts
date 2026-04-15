@@ -1,49 +1,86 @@
 import { supabase } from '../lib/supabaseClient';
 
-const STRIPE_API_VERSION = '2025-02-24.acacia';
+const MOYASAR_API_URL = 'https://api.moyasar.com/v1';
 
 export const paymentService = {
-  async initiatePayment(orderId: string, amount: number, currency: string = 'sar') {
-    const { data: stripeKeys } = await supabase
+  async initiatePayment(orderId: string, amount: number, currency: string = 'SAR') {
+    const { data: moyasarKeys } = await supabase
       .from('integration_keys')
-      .select('api_key, api_secret')
+      .select('api_secret')
       .eq('service_name', 'payment_gateway')
       .eq('is_active', true)
       .single();
 
-    if (!stripeKeys?.api_secret) {
-      console.log('Stripe secret key not configured');
+    if (!moyasarKeys?.api_secret) {
+      console.log('Moyasar secret key not configured');
       return { success: false, message: 'بوابة الدفع غير متاحة حالياً' };
     }
 
-    const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    const amountInHalalas = Math.round(amount * 100);
+    const auth = btoa(`${moyasarKeys.api_secret}:`);
+
+    const response = await fetch(`${MOYASAR_API_URL}/payments`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${stripeKeys.api_secret}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
       },
-      body: new URLSearchParams({
-        'payment_method_types[]': 'card',
-        'line_items[0][price_data][currency]': currency.toLowerCase(),
-        'line_items[0][price_data][product_data][name]': `طلب رقم ${orderId.slice(-8)}`,
-        'line_items[0][price_data][unit_amount]': Math.round(amount * 100).toString(),
-        'line_items[0][quantity]': '1',
-        'mode': 'payment',
-        'success_url': `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-        'cancel_url': `${window.location.origin}/cart`,
-        'metadata[order_id]': orderId
+      body: JSON.stringify({
+        amount: amountInHalalas,
+        currency: currency.toLowerCase(),
+        description: `طلب رقم ${orderId.slice(-8)}`,
+        source: { type: 'creditcard' },
+        callback_url: `${window.location.origin}/payment-callback`,
+        metadata: { order_id: orderId }
       })
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error?.message);
+    if (!response.ok) throw new Error(data.message || 'Payment failed');
 
-    await supabase.from('orders').update({ stripe_session_id: data.id }).eq('id', orderId);
-    return { success: true, paymentUrl: data.url, sessionId: data.id };
+    await supabase.from('orders').update({ payment_transaction_id: data.id }).eq('id', orderId);
+
+    return { 
+      success: true, 
+      paymentUrl: data.source?.transaction_url || data.checkout_url,
+      paymentId: data.id 
+    };
   },
 
-  async getPaymentStatus(orderId: string) {
-    const { data } = await supabase.from('orders').select('payment_status, stripe_session_id').eq('id', orderId).single();
-    return data;
+  async getPaymentStatus(paymentId: string) {
+    const { data: moyasarKeys } = await supabase
+      .from('integration_keys')
+      .select('api_secret')
+      .eq('service_name', 'payment_gateway')
+      .eq('is_active', true)
+      .single();
+
+    if (!moyasarKeys?.api_secret) return null;
+
+    const auth = btoa(`${moyasarKeys.api_secret}:`);
+    const response = await fetch(`${MOYASAR_API_URL}/payments/${paymentId}`, {
+      headers: { 'Authorization': `Basic ${auth}` }
+    });
+
+    const data = await response.json();
+    return { status: data.status, paid: data.status === 'paid' };
+  },
+
+  async handleWebhook(payload: any) {
+    const { id, status, metadata } = payload;
+    if (status === 'paid') {
+      await supabase.from('orders').update({ 
+        payment_status: 'paid', 
+        payment_transaction_id: id 
+      }).eq('id', metadata.order_id);
+      
+      await supabase.from('invoices').update({ 
+        status: 'paid', 
+        payment_date: new Date().toISOString() 
+      }).eq('order_id', metadata.order_id);
+      
+      return true;
+    }
+    return false;
   }
 };
