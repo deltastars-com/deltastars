@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/aba8a22e-f091-4cf9-b967-d32263bc6dcc
+View your app in AI Studio: https://deltastars.store/
 
 ## Run Locally
 
