@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import { Package, MapPin, CheckCircle, Clock, Truck, Bell, RefreshCw } from 'lucide-react';
+import { Package, MapPin, CheckCircle, Clock, Truck, RefreshCw } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -19,28 +18,18 @@ interface Order {
 export const OrderReceivingDashboard: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const { user } = useAuth();
   const { addToast } = useToast();
 
   useEffect(() => {
     loadOrders();
-
-    // الاشتراك في الإشعارات المباشرة للطلبات الجديدة
     const channel = supabase.channel('orders-receiving');
-    channel
-      .on('broadcast', { event: 'new-order' }, (payload) => {
-        addToast(`طلب جديد رقم ${payload.payload.orderId.slice(-8)}`, 'info');
-        loadOrders();
-        // تشغيل صوت التنبيه
-        const audio = new Audio('/notification.mp3');
-        audio.play();
-      })
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
+    channel.on('broadcast', { event: 'new-order' }, (payload) => {
+      addToast(`طلب جديد رقم ${payload.payload.orderId.slice(-8)}`, 'info');
+      loadOrders();
+      const audio = new Audio('/notification.mp3');
+      audio.play();
+    }).subscribe();
+    return () => { channel.unsubscribe(); };
   }, []);
 
   const loadOrders = async () => {
@@ -59,27 +48,9 @@ export const OrderReceivingDashboard: React.FC = () => {
       .from('orders')
       .update({ order_status: status, updated_at: new Date().toISOString() })
       .eq('id', orderId);
-    
-    if (error) {
-      addToast('فشل تحديث حالة الطلب', 'error');
-    } else {
-      addToast(`تم تحديث حالة الطلب إلى ${status}`, 'success');
-      loadOrders();
-    }
-  };
-
-  const assignDriver = async (orderId: string, driverId: string) => {
-    const { error } = await supabase
-      .from('orders')
-      .update({ driver_id: driverId, order_status: 'assigned_to_driver' })
-      .eq('id', orderId);
-    
-    if (error) {
-      addToast('فشل تعيين المندوب', 'error');
-    } else {
-      addToast('تم تعيين المندوب بنجاح', 'success');
-      loadOrders();
-    }
+    if (error) addToast('فشل تحديث حالة الطلب', 'error');
+    else addToast(`تم تحديث حالة الطلب`, 'success');
+    loadOrders();
   };
 
   const getStatusBadge = (status: string) => {
@@ -94,9 +65,7 @@ export const OrderReceivingDashboard: React.FC = () => {
     return badges[status] || { color: 'bg-gray-100 text-gray-600', text: status };
   };
 
-  if (loading) {
-    return <div className="animate-pulse p-8 text-center">جاري تحميل الطلبات...</div>;
-  }
+  if (loading) return <div className="animate-pulse p-8 text-center">جاري تحميل الطلبات...</div>;
 
   return (
     <div className="space-y-6">
@@ -127,13 +96,11 @@ export const OrderReceivingDashboard: React.FC = () => {
                   </span>
                 </div>
               </div>
-
               <div className="p-5 space-y-3">
                 <div className="flex items-start gap-2 text-sm">
                   <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
                   <p className="text-gray-600">{order.delivery_address?.city}، {order.delivery_address?.district}</p>
                 </div>
-
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-gray-400" />
@@ -141,55 +108,27 @@ export const OrderReceivingDashboard: React.FC = () => {
                   </div>
                   <p className="font-bold text-primary">{order.total_amount.toLocaleString()} ر.س</p>
                 </div>
-
                 {order.order_status === 'assigned_to_branch' && (
-                  <div className="pt-3">
-                    <button
-                      onClick={() => updateOrderStatus(order.id, 'preparing')}
-                      className="w-full bg-primary text-white py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
-                    >
-                      <Package className="w-4 h-4" />
-                      بدء التجهيز
-                    </button>
-                  </div>
+                  <button onClick={() => updateOrderStatus(order.id, 'preparing')} className="w-full bg-primary text-white py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                    <Package className="w-4 h-4" /> بدء التجهيز
+                  </button>
                 )}
-
                 {order.order_status === 'preparing' && (
-                  <div className="pt-3">
-                    <button
-                      onClick={() => updateOrderStatus(order.id, 'ready_for_pickup')}
-                      className="w-full bg-secondary text-white py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      جاهز للاستلام
-                    </button>
-                  </div>
+                  <button onClick={() => updateOrderStatus(order.id, 'ready_for_pickup')} className="w-full bg-secondary text-white py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                    <CheckCircle className="w-4 h-4" /> جاهز للاستلام
+                  </button>
                 )}
-
-                {order.order_status === 'ready_for_pickup' && !order.driver_id && (
-                  <div className="pt-3">
-                    <select
-                      onChange={(e) => assignDriver(order.id, e.target.value)}
-                      className="w-full p-2 border rounded-xl text-sm"
-                      defaultValue=""                    
-                    >  
-                      <option value="" disabled>اختر مندوب التوصيل</option>
-                      {/* خيارات المندوبين ستجلب من قاعدة البيانات */}
-                    </select>                  
-                  </div>                  
-                )}                  
-              </div>                  
-            </div>                  
-          );                  
-        })}                  
-
+              </div>
+            </div>
+          );
+        })}
         {orders.length === 0 && (
           <div className="col-span-full text-center py-16 text-gray-400">
             <Package className="w-16 h-16 mx-auto mb-4 opacity-30" />
             <p>لا توجد طلبات حالياً</p>
-          </div>                  
-        )}                  
-      </div>                  
-    </div>                  
-  );                  
-};                  
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
