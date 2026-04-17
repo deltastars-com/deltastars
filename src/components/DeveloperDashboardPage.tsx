@@ -218,3 +218,16 @@ export const DeveloperDashboardPage: React.FC<DeveloperDashboardPageProps> = ({ 
     </div>
   );
 };
+// بعد تأكيد الدفع
+if (status === 'paid') {
+  // استدعاء دالة معالجة الطلب
+  await fetch(`${EDGE_FUNCTION_URL}/process-order`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      orderId,
+      customerLocation: { lat: customerLat, lng: customerLng },
+      paymentConfirmed: true
+    })
+  });
+}
