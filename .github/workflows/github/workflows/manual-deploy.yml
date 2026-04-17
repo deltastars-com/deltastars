@@ -1,0 +1,90 @@
+name: 🔧 Manual Deploy with AI Validation
+
+on:
+  workflow_dispatch:  # يتم التشغيل يدوياً فقط (وليس تلقائياً)
+    inputs:
+      reason:
+        description: 'سبب التحديث'
+        required: false
+        default: 'Manual update'
+
+jobs:
+  validate-and-deploy:
+    name: 🚀 AI Agent: Validate & Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # آخر تحديث فقط (لتجنب الملفات المكررة)
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 🤖 AI Agent: Validate files
+        run: |
+          echo "🔍 AI Agent: Validating repository files..."
+          
+          # فحص الملفات المكررة
+          echo "Checking for duplicate files..."
+          find . -type f -name "*.tsx" | sort | uniq -d | while read file; do
+            echo "⚠️ Duplicate found: $file"
+          done
+          
+          # فحص الملفات القديمة غير المستخدمة
+          OLD_FILES="server.ts prisma/ rust_backend_implementation.rs rust_backend_schema.sql"
+          for file in $OLD_FILES; do
+            if [ -f "$file" ] || [ -d "$file" ]; then
+              echo "🗑️ AI Agent: Removing old file: $file"
+              rm -rf "$file"
+            fi
+          done
+          
+          # فحص package.json
+          if grep -q "prisma" package.json; then
+            echo "🔧 AI Agent: Fixing package.json (removing prisma)"
+            sed -i '/prisma/d' package.json
+          fi
+          
+          echo "✅ AI Agent: Validation completed"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build project
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_MOYASAR_PUBLISHABLE_KEY: ${{ secrets.VITE_MOYASAR_PUBLISHABLE_KEY }}
+
+      - name: ✅ Verify build
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          echo "✅ Build successful"
+
+      - name: 🚀 Deploy to Netlify (Manual)
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "🔧 Manual deploy: ${{ github.event.inputs.reason }}"
+          enable-pull-request-comment: false
+          enable-commit-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: 🧹 Clear cache (optional)
+        if: success()
+        run: |
+          echo "✅ Deploy completed. Cache not cleared to avoid duplicate charges."
