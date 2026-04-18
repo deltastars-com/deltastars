@@ -1,7 +1,3 @@
-// جلب المستخدمين
-const { data: users } = await supabase
-  .from('profiles')
-  .select('id, email, phone, full_name, role, created_at');
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
