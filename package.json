@@ -1,41 +1,41 @@
-{
-  "name": "delta-stars",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "build:force": "vite build --emptyOutDir",
-    "lint": "tsc --noEmit",
-    "preview": "vite preview",
-    "clean": "rm -rf node_modules dist .cache",
-    "reset": "npm run clean && npm install && npm run build"
-  },
-  "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
-    "@capacitor/ios": "^6.0.0",
-    "@capacitor/splash-screen": "^6.0.0",
-    "@react-google-maps/api": "^2.19.3",
-    "@simplewebauthn/browser": "^10.0.0",
-    "@simplewebauthn/server": "^10.0.0",
-    "@supabase/supabase-js": "^2.45.0",
-    "clsx": "^2.1.1",
-    "framer-motion": "^11.11.17",
-    "lucide-react": "^0.460.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.0",
-    "tailwind-merge": "^2.5.2",
-    "tailwindcss": "^4.0.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.6.3",
-    "vite": "^6.0.0"
-  }
-}
+# =====================================================
+# Netlify Configuration - الإعدادات النهائية
+# =====================================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# =====================================================
+# تثبيت الـ Plugin المخصص
+# =====================================================
+[[plugins]]
+  package = "./netlify-plugin-ai-validator.js"
+
+# =====================================================
+# إعدادات المعالجة
+# =====================================================
+[processing]
+  skip_processing = false
+  css = {}
+  html = {}
+  images = {}
+  js = {}
+
+# =====================================================
+# إعدادات التحليلات (اختياري)
+# =====================================================
+[analytics]
+  enabled = false
+
+# =====================================================
+# إعدادات إعادة التوجيه (اختياري)
+# =====================================================
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
