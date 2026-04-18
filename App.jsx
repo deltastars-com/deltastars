@@ -22,3 +22,17 @@ function App() {
 }
 
 export default App;
+import { registerForPush, listenForPush } from "./lib/push-notifications";
+import { supabase } from "./lib/supabaseClient";
+
+// حط هالكود داخل الـ App function
+useEffect(() => {
+  const setup = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await registerForPush(user.id);
+      listenForPush();
+    }
+  };
+  setup();
+}, []);
