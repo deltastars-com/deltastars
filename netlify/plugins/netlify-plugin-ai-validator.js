@@ -112,3 +112,20 @@ module.exports = {
     console.log('✅ AI Agent: Deploy ready!');
   }
 };
+module.exports = {
+  name: 'netlify-plugin-ai-validator',
+  async onPreBuild({ utils }) {
+    console.log('🤖 AI Agent: Validating files...');
+    const pkg = await utils.build.readPackageJson();
+    let modified = false;
+    const invalidDeps = ['prisma', '@prisma/client', 'express', 'cors'];
+    for (const dep of invalidDeps) {
+      if (pkg.dependencies?.[dep]) {
+        delete pkg.dependencies[dep];
+        modified = true;
+      }
+    }
+    if (modified) await utils.build.writePackageJson(pkg);
+    console.log('✅ AI Agent: Validation complete');
+  }
+};
