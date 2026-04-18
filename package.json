@@ -1,41 +1,23 @@
-# =====================================================
-# Netlify Configuration - الإعدادات النهائية
-# =====================================================
-
-[build]
-  command = "npm run build"
-  publish = "dist"
-
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
-
-# =====================================================
-# تثبيت الـ Plugin المخصص
-# =====================================================
-[[plugins]]
-  package = "./netlify-plugin-ai-validator.js"
-
-# =====================================================
-# إعدادات المعالجة
-# =====================================================
-[processing]
-  skip_processing = false
-  css = {}
-  html = {}
-  images = {}
-  js = {}
-
-# =====================================================
-# إعدادات التحليلات (اختياري)
-# =====================================================
-[analytics]
-  enabled = false
-
-# =====================================================
-# إعدادات إعادة التوجيه (اختياري)
-# =====================================================
-# [[redirects]]
-#   from = "/*"
-#   to = "/index.html"
-#   status = 200
+{
+  "name": "deltastars-store",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "firebase": "^10.8.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.2.0",
+    "vite": "^5.0.0"
+  }
+}
