@@ -40,7 +40,7 @@ export const smsService = {
     }
   },
 
-  // التحقق من رصيد خدمة Authentica
+  // ✅ إضافة: التحقق من رصيد خدمة Authentica
   async getBalance(): Promise<number | null> {
     try {
       const { data: authKey } = await supabase
@@ -76,7 +76,7 @@ export const smsService = {
     }
   },
 
-  // تسجيل جهاز العميل بعد أول عملية شراء ناجحة
+  // ✅ إضافة: تسجيل جهاز العميل بعد أول عملية شراء ناجحة
   async recordDeviceAfterPurchase(userId: string): Promise<void> {
     try {
       await supabase
