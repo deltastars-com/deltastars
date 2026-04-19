@@ -4,14 +4,14 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // النقطة والسلاش تضمن أن المتصفح يجد ملفات الـ CSS والـ JS في أي بيئة استضافة
+  // النقطة والسلاش تضمن أن المتجر يفتح في أي بيئة دون صفحات بيضاء
   base: './', 
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    // تحسين البناء لتقليل حجم الملفات وزيادة السرعة
+    // استخدام esbuild بدلاً من terser لضمان نجاح البناء من الهاتف وتجنب نقص المكتبات
+    minify: 'esbuild',
     sourcemap: false,
-    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
