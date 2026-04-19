@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🌟 شركة نجوم دلتا للتجارة | Deltastars Trading Store
+> المنصة الإلكترونية الرائدة لتجارة التمور والمنتجات الغذائية في المملكة العربية السعودية.
 
-# Run and deploy your Nietfily app
+![Deltastars Banner](https://deltastars.store/logo.png) ## 📝 نبذة عن المشروع
+متجر **نجوم دلتا** هو منصة تجارة إلكترونية متكاملة مصممة بأحدث التقنيات لخدمة سوق التجزئة والجملة في جدة وكافة أنحاء المملكة. يركز المشروع على تقديم تجربة مستخدم فاخرة وسريعة تعكس جودة منتجاتنا.
 
-This contains everything you need to run your app locally.
+## 🚀 التقنيات المستخدمة (Tech Stack)
+* **Frontend:** React.js + Vite (لضمان أقصى سرعة تحميل).
+* **Styling:** Tailwind CSS (تصميم عصري ومتجاوب).
+* **Backend:** Firebase / Supabase (إدارة قاعدة البيانات والمنتجات).
+* **Payment:** Moyasar / PayTabs (بوابات دفع محلية آمنة).
+* **AI Integration:** مدعوم بواسطة Gemini AI لتخصيص تجربة التسوق.
 
-View your app in Neitfily: https://deltastars.store/
+---
 
-## Run Locally
+## 🛠 تعليمات التشغيل والتطوير (للتقنيين)
 
-**Prerequisites:**  Node.js
+### المتطلبات الأساسية
+* نظام Node.js (الإصدار 18 أو أحدث).
+* حساب مطور على Netlify.
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### خطوات التشغيل المحلي
+1. **تحميل المكتبات:**
+   ```bash
+   npm install
