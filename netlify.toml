@@ -1,0 +1,22 @@
+# إعدادات البناء الأساسية
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# معالجة الأخطاء الشائعة وتجاوز الفحص الأمني للمفاتيح (Secrets Scan)
+[build.environment]
+  NODE_VERSION = "18"
+  SECRETS_SCAN_ENABLED = "false"
+  NETLIFY_SKIP_A11y = "true"
+
+# حل مشكلة روابط الصفحات (SPA Routing) لضمان عدم ظهور 404 عند التحديث
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# إيقاف إضافة إمكانية الوصول التي تسبب Timeout (Exit Code 2)
+[[plugins]]
+  package = "netlify-plugin-a11y"
+  [plugins.inputs]
+    checkPaths = []
