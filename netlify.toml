@@ -1,24 +1,13 @@
-# إعدادات البناء الأساسية لمتجر نجوم دلتا
 [build]
   command = "npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"
-  # إيقاف فحص المفاتيح السرية لتجنب الفشل بسبب رموز Firebase و Gemini
   SECRETS_SCAN_ENABLED = "false"
-  # إيقاف إضافات الفحص البصري لتسريع البناء وتجنب أخطاء المهلة (Timeout)
   NETLIFY_SKIP_A11Y = "true"
-  A11Y_FAIL_BUILD = "false"
 
-# حل مشكلة الروابط عند تحديث الصفحة (Refresh)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# تعطيل إضافة الفحص التي سببت خطأ Exit Code 2
-[[plugins]]
-  package = "netlify-plugin-a11y"
-  [plugins.inputs]
-    checkPaths = []
