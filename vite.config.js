@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   // النقطة والسلاش تضمن أن المتجر يفتح في أي بيئة دون صفحات بيضاء
-  base: './', 
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
