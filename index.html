@@ -3,34 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نجوم دلتا للتجارة | Deltastars Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>نجوم دلتا للتجارة | Deltastars</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f9fafb; margin: 0; color: #111827; }
+        .nav { background: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        .hero { text-align: center; padding: 3rem 1rem; background: linear-gradient(135deg, #065f46 0%, #064e3b 100%); color: white; border-radius: 1rem; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .btn { background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; width: 100%; font-size: 1rem; font-weight: bold; }
+        .price { color: #059669; font-size: 1.25rem; font-weight: bold; margin: 1rem 0; }
+        .badge { background: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.875rem; }
+    </style>
 </head>
-<body class="bg-gray-50 text-right">
-    <div id="root">
-        <nav class="bg-white shadow-md p-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-green-700">نجوم دلتا للتجارة</h1>
-            <div class="space-x-4 space-x-reverse">
-                <a href="#" class="text-gray-600">الرئيسية</a>
-                <a href="#" class="text-gray-600">التمور</a>
+<body>
+    <nav class="nav">
+        <div style="font-size: 1.5rem; font-weight: 800; color: #065f46;">نجوم دلتا ⭐</div>
+        <div>
+            <span style="margin-left: 1rem;">الرئيسية</span>
+            <span style="background: #065f46; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;">السلة (0)</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>مرحباً بك في نجوم دلتا للتجارة</h1>
+            <p>أجود أنواع التمور والمنتجات الغذائية السعودية بين يديك</p>
+        </div>
+
+        <h2 style="margin-bottom: 1.5rem;">الأكثر مبيعاً 🔥</h2>
+        <div class="grid">
+            <div class="card">
+                <span class="badge">ممتاز</span>
+                <h3>تمر سكري مفتل فاخر</h3>
+                <p style="color: #6b7280;">وزن 1 كجم - إنتاج القصيم</p>
+                <div class="price">45.00 ر.س</div>
+                <button class="btn">إضافة للسلة 🛒</button>
             </div>
-        </nav>
-        
-        <main class="max-w-6xl mx-auto mt-10 p-4 text-center">
-            <h2 class="text-3xl font-extrabold mb-4">أهلاً بك في عالم التمور الفاخرة</h2>
-            <p class="text-gray-600 mb-8">نحن نقوم الآن بتحديث قائمة المنتجات لتناسب تطلعاتكم.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <div class="h-48 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-400">صورة المنتج</div>
-                    <h3 class="font-bold">تمور سكري فاخر</h3>
-                    <p class="text-green-600 font-bold">45 ر.س</p>
-                    <button class="mt-4 bg-green-700 text-white px-4 py-2 rounded w-full">أضف للسلة</button>
-                </div>
+            <div class="card">
+                <span class="badge">جديد</span>
+                <h3>تمر خلاص ملكي</h3>
+                <p style="color: #6b7280;">وزن 1 كجم - إنتاج الأحساء</p>
+                <div class="price">38.00 ر.س</div>
+                <button class="btn">إضافة للسلة 🛒</button>
             </div>
-        </main>
+            <div class="card">
+                <span class="badge">عضوي</span>
+                <h3>تمر عجوة المدينة</h3>
+                <p style="color: #6b7280;">وزن 500 جرام - درجة أولى</p>
+                <div class="price :">70.00 ر.س</div>
+                <button class="btn">إضافة للسلة 🛒</button>
+            </div>
+        </div>
     </div>
 
-    <script type="module" src="/src/main.jsx"></script>
+    <footer style="text-align: center; padding: 2rem; color: #9ca3af;">
+        © 2026 شركة نجوم دلتا للتجارة - جميع الحقوق محفوظة
+    </footer>
 </body>
 </html>
