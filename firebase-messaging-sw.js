@@ -4,7 +4,6 @@ importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging-comp
 
 // يتم أخذ هذه البيانات من لوحة تحكم Firebase (Project Settings)
 const firebaseConfig = {
-  apiKey: "AIzaSyDq63A6ob2MfTudOfnZN94DQCNl3pi0bA0",
   authDomain: "gen-lang-client-0049556086.firebaseapp.com",
   projectId: "gen-lang-client-0049556086",
   storageBucket: "gen-lang-client-0049556086.firebasestorage.app",
