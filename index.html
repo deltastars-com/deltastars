@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>نجوم دلتا للتجارة | Deltastars</title>
-  </head>
-  <body>
-    <div id="root"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نجوم دلتا للتجارة | Deltastars Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-right">
+    <div id="root">
+        <nav class="bg-white shadow-md p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-green-700">نجوم دلتا للتجارة</h1>
+            <div class="space-x-4 space-x-reverse">
+                <a href="#" class="text-gray-600">الرئيسية</a>
+                <a href="#" class="text-gray-600">التمور</a>
+            </div>
+        </nav>
+        
+        <main class="max-w-6xl mx-auto mt-10 p-4 text-center">
+            <h2 class="text-3xl font-extrabold mb-4">أهلاً بك في عالم التمور الفاخرة</h2>
+            <p class="text-gray-600 mb-8">نحن نقوم الآن بتحديث قائمة المنتجات لتناسب تطلعاتكم.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="h-48 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-400">صورة المنتج</div>
+                    <h3 class="font-bold">تمور سكري فاخر</h3>
+                    <p class="text-green-600 font-bold">45 ر.س</p>
+                    <button class="mt-4 bg-green-700 text-white px-4 py-2 rounded w-full">أضف للسلة</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+</body>
 </html>
