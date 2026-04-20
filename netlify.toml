@@ -1,20 +1,18 @@
 [build]
   command = "npm run build"
-  publish = "dist"
+  publish = "dist" # هذا هو المجلد الذي يحتوي على المتجر الفعلي بعد البناء
 
 [build.environment]
   NODE_VERSION = "18"
-  # تعطيل الفحص الأمني لكي لا يعترض Netlify على مفتاح Firebase العلني
-  SECRETS_SCAN_ENABLED = "false"
-
-[[headers]]
-  for = "/firebase-messaging-sw.js"
-  [headers.values]
-    Service-Worker-Allowed = "/"
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Content-Type = "application/javascript"
+  SECRETS_SCAN_ENABLED = "false" # لمنع تعطيل النشر بسبب مفاتيح Firebase
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/firebase-messaging-sw.js"
+  [headers.values]
+    Service-Worker-Allowed = "/"
+    Content-Type = "application/javascript"
