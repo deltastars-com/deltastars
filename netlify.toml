@@ -4,8 +4,15 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # تعطيل الفحص الأمني لكي لا يعترض Netlify على مفتاح Firebase العلني
   SECRETS_SCAN_ENABLED = "false"
-  NETLIFY_SKIP_A11Y = "true"
+
+[[headers]]
+  for = "/firebase-messaging-sw.js"
+  [headers.values]
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Content-Type = "application/javascript"
 
 [[redirects]]
   from = "/*"
