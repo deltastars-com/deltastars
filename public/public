@@ -1,1 +1,23 @@
-/* /index.html   200
+importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging-compat.js");
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDq63A6ob2MfTudOfnZN94DQCNl3pi0bA0",
+  authDomain: "gen-lang-client-0049556086.firebaseapp.com",
+  projectId: "gen-lang-client-0049556086",
+  storageBucket: "gen-lang-client-0049556086.firebasestorage.app",
+  messagingSenderId: "906381862795",
+  appId: "1:906381862795:web:ef22df39bcbdc6ccbfb18e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const notificationTitle = payload.notification.title || 'عرض جديد من نجوم دلتا';
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: '/icon.png'
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
