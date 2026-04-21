@@ -3,63 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نجوم دلتا للتجارة | Deltastars</title>
+    <title>نظام نجوم دلتا المتكامل | DeltaStars ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f9fafb; margin: 0; color: #111827; }
-        .nav { background: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-        .hero { text-align: center; padding: 3rem 1rem; background: linear-gradient(135deg, #065f46 0%, #064e3b 100%); color: white; border-radius: 1rem; margin-bottom: 2rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .card { background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); }
-        .btn { background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; width: 100%; font-size: 1rem; font-weight: bold; }
-        .price { color: #059669; font-size: 1.25rem; font-weight: bold; margin: 1rem 0; }
-        .badge { background: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.875rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        body { font-family: 'Tajawal', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
-<body>
-    <nav class="nav">
-        <div style="font-size: 1.5rem; font-weight: 800; color: #065f46;">نجوم دلتا ⭐</div>
-        <div>
-            <span style="margin-left: 1rem;">الرئيسية</span>
-            <span style="background: #065f46; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;">السلة (0)</span>
+<body class="bg-gray-50">
+
+    <nav class="bg-green-800 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-white text-green-800 p-1 rounded-full font-black text-xl">DS</div>
+                <span class="text-xl font-bold tracking-tighter">نجوم دلتا للتجارة</span>
+            </div>
+            <div class="flex gap-4 text-sm font-medium">
+                <button onclick="showTab('store')" class="hover:text-green-200">المتجر</button>
+                <button onclick="showTab('admin')" class="hover:text-green-200 border-r pr-4">لوحة التحكم</button>
+                <button onclick="showTab('ops')" class="hover:text-green-200 border-r pr-4">العمليات والمناديب</button>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="hero">
-            <h1>مرحباً بك في نجوم دلتا للتجارة</h1>
-            <p>أجود أنواع التمور والمنتجات الغذائية السعودية بين يديك</p>
+    <div id="store" class="tab-content active p-6 max-w-7xl mx-auto">
+        <div class="bg-white rounded-3xl p-8 mb-8 text-center border-2 border-green-100 shadow-sm">
+            <h1 class="text-4xl font-black text-green-900 mb-2">أفخر أنواع التمور السعودية</h1>
+            <p class="text-gray-600">من مزارعنا إليكم مباشرة بأعلى معايير الجودة</p>
         </div>
 
-        <h2 style="margin-bottom: 1.5rem;">الأكثر مبيعاً 🔥</h2>
-        <div class="grid">
-            <div class="card">
-                <span class="badge">ممتاز</span>
-                <h3>تمر سكري مفتل فاخر</h3>
-                <p style="color: #6b7280;">وزن 1 كجم - إنتاج القصيم</p>
-                <div class="price">45.00 ر.س</div>
-                <button class="btn">إضافة للسلة 🛒</button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="products-list">
             </div>
-            <div class="card">
-                <span class="badge">جديد</span>
-                <h3>تمر خلاص ملكي</h3>
-                <p style="color: #6b7280;">وزن 1 كجم - إنتاج الأحساء</p>
-                <div class="price">38.00 ر.س</div>
-                <button class="btn">إضافة للسلة 🛒</button>
+    </div>
+
+    <div id="admin" class="tab-content p-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-xl shadow-sm border-r-4 border-blue-500">
+                <p class="text-sm text-gray-500">إجمالي المخزون</p>
+                <p class="text-2xl font-bold" id="total-stock">540 كجم</p>
             </div>
-            <div class="card">
-                <span class="badge">عضوي</span>
-                <h3>تمر عجوة المدينة</h3>
-                <p style="color: #6b7280;">وزن 500 جرام - درجة أولى</p>
-                <div class="price :">70.00 ر.س</div>
-                <button class="btn">إضافة للسلة 🛒</button>
+            <div class="bg-white p-4 rounded-xl shadow-sm border-r-4 border-green-500">
+                <p class="text-sm text-gray-500">طلبات اليوم</p>
+                <p class="text-2xl font-bold">12 طلب</p>
             </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-4 bg-gray-100 font-bold border-b">إدارة المخازن (قسم المطور)</div>
+            <table class="w-full text-right text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-3">المنتج</th>
+                        <th class="p-3">الكمية المتاحة</th>
+                        <th class="p-3">الحالة</th>
+                        <th class="p-3">الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table"></tbody>
+            </table>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 2rem; color: #9ca3af;">
-        © 2026 شركة نجوم دلتا للتجارة - جميع الحقوق محفوظة
-    </footer>
+    <div id="ops" class="tab-content p-6 max-w-7xl mx-auto">
+        <h2 class="text-2xl font-bold mb-6 text-green-900 flex items-center gap-2">
+            <i data-lucide="truck"></i> نظام إدارة المناديب والطلبات
+        </h2>
+        <div class="grid gap-4" id="orders-list">
+            </div>
+    </div>
+
+    <script>
+        // بيانات النظام (قاعدة بيانات مصغرة مؤقتة)
+        const products = [
+            { id: 1, name: "سكري مفتل ملكي", price: 45, stock: 120, status: "متوفر" },
+            { id: 2, name: "عجوة المدينة فاخر", price: 85, stock: 50, status: "كمية محدودة" },
+            { id: 3, name: "خلاص الأحساء", price: 35, stock: 200, status: "متوفر" }
+        ];
+
+        const orders = [
+            { id: 101, customer: "أحمد محمد", total: 135, status: "قيد التوصيل", location: "حي الروضة، جدة" },
+            { id: 102, customer: "سارة علي", total: 85, status: "بانتظار الشحن", location: "حي المرجان، جدة" }
+        ];
+
+        // وظيفة التبديل بين الأقسام
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // رندر المتجر
+        function renderStore() {
+            const list = document.getElementById('products-list');
+            list.innerHTML = products.map(p => `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="h-40 bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-400 font-bold">صورة المنتج</div>
+                    <h3 class="font-bold text-lg">${p.name}</h3>
+                    <p class="text-green-700 font-black text-xl my-2">${p.price} ر.س</p>
+                    <button class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">أضف للسلة 🛒</button>
+                </div>
+            `).join('');
+        }
+
+        // رندر المخازن (للمطور والمدير)
+        function renderInventory() {
+            const table = document.getElementById('inventory-table');
+            table.innerHTML = products.map(p => `
+                <tr class="border-b">
+                    <td class="p-3">${p.name}</td>
+                    <td class="p-3">${p.stock} كجم</td>
+                    <td class="p-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">${p.status}</span></td>
+                    <td class="p-3"><button class="text-blue-600 font-bold">تعديل</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // رندر العمليات للمناديب
+        function renderOrders() {
+            const list = document.getElementById('orders-list');
+            list.innerHTML = orders.map(o => `
+                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center border-l-4 border-orange-500">
+                    <div>
+                        <p class="font-bold">طلب #${o.id} - ${o.customer}</p>
+                        <p class="text-sm text-gray-500 italic">${o.location}</p>
+                    </div>
+                    <div class="text-left">
+                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold">${o.status}</span>
+                        <button class="block mt-2 text-green-700 text-sm font-black underline">تحديث الحالة</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // تشغيل كل شيء
+        renderStore();
+        renderInventory();
+        renderOrders();
+        lucide.createIcons();
+    </script>
 </body>
 </html>
