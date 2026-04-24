@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { COMPANY_INFO, SOCIAL_LINKS, INSTITUTIONAL_VERIFICATION } from '../constants';
 import { 
