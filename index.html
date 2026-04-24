@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نجوم دلتا | معاينة التصميم الماسي v350 (235 صنف)</title>
+    <title>نجوم دلتا | معاينة التصميم الماسي v350</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -24,14 +24,12 @@
         .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #FF922B; border-radius: 10px; }
         .glass-panel { background: rgba(34, 68, 34, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
-        /* Toast Animation */
         .toast-enter { animation: slideIn 0.3s ease forwards; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body class="text-slate-800 overflow-x-hidden custom-scrollbar">
 
-<!-- شريط الإعلانات العلوي -->
 <div class="fixed top-0 left-0 w-full z-[9000] shadow-md bg-white">
     <div class="bg-[#FF922B] text-[#1a3a1a] h-8 flex items-center overflow-hidden border-b border-white/20 px-4">
         <div class="flex items-center gap-8 font-bold text-xs uppercase whitespace-nowrap">
@@ -40,7 +38,6 @@
         </div>
     </div>
     
-    <!-- شريط التنقل (الهيدر) -->
     <nav class="px-4 lg:px-12 py-3 flex justify-between items-center h-20 border-b-2 border-[#FF922B]">
         <div class="flex items-center gap-3">
             <button onclick="switchView('home')" class="flex items-center gap-3 group">
@@ -67,12 +64,9 @@
     </nav>
 </div>
 
-<!-- المحتوى الرئيسي -->
 <main class="pt-28 min-h-screen" id="main-content">
     
-    <!-- واجهة الرئيسية -->
     <div id="view-home" class="view-section">
-        <!-- Hero Section -->
         <section class="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center lg:justify-start overflow-hidden border-b-[8px] border-[#FF922B] bg-[#224422]">
             <img src="https://lh3.googleusercontent.com/d/1ZWjxs6KsDuYkm7czc3pq_tbHujwWYQZq" class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-screen">
             <div class="absolute inset-0 bg-gradient-to-l from-transparent via-[#224422]/70 to-[#224422]/95"></div>
@@ -86,9 +80,7 @@
             </div>
         </section>
 
-        <!-- Glassmorphism Categories Section -->
         <section class="relative py-16 px-4 overflow-hidden">
-            <!-- الخلفية الزجاجية الخضراء الفاتحة -->
             <div class="absolute inset-0 z-0">
                 <img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover opacity-20 grayscale">
                 <div class="absolute inset-0 glass-panel"></div>
@@ -98,10 +90,8 @@
                 <h2 class="text-3xl md:text-4xl font-black text-white text-center mb-12 underline decoration-[#FF922B] underline-offset-[10px] tracking-tighter">أقسامنا المتخصصة</h2>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-16" id="categories-grid-home">
-                    <!-- سيتم حقن الأقسام هنا بواسطة JS -->
-                </div>
+                    </div>
 
-                <!-- المنصات الرقمية -->
                 <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 text-center mb-16 shadow-inner">
                     <h2 class="text-2xl md:text-4xl font-black text-white mb-8 tracking-tighter uppercase">منصاتنا الرقمية لمتابعة كل جديد</h2>
                     <div class="flex flex-wrap justify-center gap-4">
@@ -124,21 +114,16 @@
         </section>
     </div>
 
-    <!-- واجهة السوق المركزي -->
     <div id="view-shop" class="view-section hidden py-12 px-4 md:px-8 max-w-7xl mx-auto">
-        <h2 class="text-3xl md:text-4xl font-black text-[#1a3a1a] tracking-tighter uppercase mb-8 border-b-4 border-gray-100 pb-4">السوق المركزي <span class="text-sm text-[#FF922B]">(235 صنف أصلي)</span></h2>
+        <h2 class="text-3xl md:text-4xl font-black text-[#1a3a1a] tracking-tighter uppercase mb-8 border-b-4 border-gray-100 pb-4">السوق المركزي</h2>
         
-        <!-- أزرار الفلترة -->
         <div class="flex flex-nowrap overflow-x-auto custom-scrollbar gap-3 mb-8 pb-4" id="categories-filter-bar">
-            <!-- سيتم حقن أزرار الفلترة هنا -->
-        </div>
+            </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" id="products-grid">
-            <!-- سيتم حقن المنتجات هنا -->
-        </div>
+            </div>
     </div>
 
-    <!-- واجهة بوابة الشركات -->
     <div id="view-vip" class="view-section hidden min-h-[60vh] flex items-center justify-center p-4">
         <div class="bg-white p-10 md:p-16 rounded-3xl border border-gray-100 max-w-md w-full text-center shadow-lg">
             <i data-lucide="briefcase" class="w-16 h-16 text-[#1a3a1a] mx-auto mb-6 opacity-30"></i>
@@ -151,7 +136,6 @@
 
 </main>
 
-<!-- الفوتر -->
 <footer class="bg-[#1a3a1a] border-t-[8px] border-[#FF922B] py-12 px-6 lg:px-16 text-white relative font-tajawal text-right">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         <div class="space-y-4">
@@ -165,12 +149,12 @@
         <div class="space-y-4">
             <h4 class="text-sm font-black border-b border-white/10 pb-2 text-[#FF922B] tracking-tighter">مواقع التواصل الاجتماعي</h4>
             <div class="flex flex-wrap gap-3">
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-600 hover:bg-white transition-all"><i data-lucide="facebook"></i></a>
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-400 hover:bg-white transition-all"><i data-lucide="users"></i></a>
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-pink-600 hover:bg-white transition-all"><i data-lucide="instagram"></i></a>
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-yellow-400 hover:bg-white transition-all"><i data-lucide="ghost"></i></a>
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-red-600 hover:bg-white transition-all"><i data-lucide="youtube"></i></a>
-                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white hover:bg-black transition-all"><i data-lucide="music"></i></a>
+                <a href="https://www.facebook.com/share/1DNx4PiyLU/" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-600 hover:bg-white transition-all"><i data-lucide="facebook"></i></a>
+                <a href="https://facebook.com/groups/814288629749436/" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-400 hover:bg-white transition-all"><i data-lucide="users"></i></a>
+                <a href="https://www.instagram.com/delta__stars" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-pink-600 hover:bg-white transition-all"><i data-lucide="instagram"></i></a>
+                <a href="https://www.snapchat.com/add/deltastars25" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-yellow-400 hover:bg-white transition-all"><i data-lucide="ghost"></i></a>
+                <a href="https://youtube.com/@deltastarss" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-red-600 hover:bg-white transition-all"><i data-lucide="youtube"></i></a>
+                <a href="https://vm.tiktok.com/ZS9NFDcNvk4Wh-dpFdg/" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white hover:bg-black transition-all"><i data-lucide="music"></i></a>
             </div>
         </div>
 
@@ -193,7 +177,6 @@
     </div>
 </footer>
 
-<!-- المساعد الذكي (في اليسار فقط، بدون الشارات القديمة) -->
 <div class="fixed bottom-6 left-6 z-[11000]">
     <button onclick="toggleChat()" class="w-14 h-14 bg-[#1a3a1a] text-white rounded-full shadow-xl flex items-center justify-center hover:bg-[#FF922B] transition-all border-2 border-white">
         <i data-lucide="bot"></i>
@@ -215,7 +198,6 @@
     </div>
 </div>
 
-<!-- Modal التصفح الداخلي -->
 <div id="iframe-modal" class="hidden fixed inset-0 z-[12000] bg-black/90 backdrop-blur-md p-4 md:p-10 flex flex-col">
     <div class="flex justify-between items-center mb-4 text-white">
         <h3 class="text-lg font-black tracking-tighter" id="iframe-title">منصاتنا</h3>
@@ -226,7 +208,6 @@
     </div>
 </div>
 
-<!-- Toast Container -->
 <div id="toast-container" class="fixed top-28 left-4 z-[12000] space-y-3 pointer-events-none"></div>
 
 <script>
@@ -245,10 +226,10 @@
         { id: 'ورود', name: 'الورود والهدايا', img: getDriveImg('1hOA1amN2-KnX24zrAj09Ldt8gnf563k0') }
     ];
 
-    // --- قاعدة بيانات المنتجات الـ 235 (الأصلية من ملف JSON.txt) ---
+    // المنتجات الحقيقية
     const rawProductsJSON = [
   { "id": 1, "sku": "MSH001", "name_ar": "فطر شميجي بني تايلندي", "category_ar": "فطر", "description_ar": "فطر شميجي بني طازج مستورد من تايلاند", "unit_type": "kg", "price_1kg": 48.0, "image_url": "https://i.ibb.co/F41772NQ/Brown-shmegey-Mushroom.jpg" },
-  { "id": 2, "sku": "MSH002", "name_ar": "فطر بلوفوت", "category_ar": "فطر", "description_ar": "فطر بلوفوت فاخر بطعم مميز", "unit_type": "kg", "price_1kg": 150.0, "image_url": "https://i.ibb.co/9mGgSXnX/233-Bluefoot-Mushroom.png" },
+  { "id": 2, "sku": "MSH002", "name_ar": "فطر بلوفوت", "category_ar": "فطر", "description_ar": "فطر بلوفوت فاخر بطعم مميز للأطباق الراقية", "unit_type": "kg", "price_1kg": 150.0, "image_url": "https://i.ibb.co/9mGgSXnX/233-Bluefoot-Mushroom.png" },
   { "id": 3, "sku": "MSH003", "name_ar": "فطر جيرول صغير", "category_ar": "فطر", "description_ar": "فطر جيرول صغير الحجم", "unit_type": "kg", "price_1kg": 90.0, "image_url": "https://i.ibb.co/h11LYVyz/234-Small-Girolle-Mushroom-Kg.png" },
   { "id": 4, "sku": "FRU001", "name_ar": "توت أسود طائفي", "category_ar": "فواكه", "description_ar": "توت أسود طائفي طازج", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/qYDp8MwH/235-Taifi-Blackberries-Kg.png" },
   { "id": 5, "sku": "VEG001", "name_ar": "باذنجان طويل", "category_ar": "خضروات", "description_ar": "باذنجان طويل محلي", "unit_type": "kg", "price_1kg": 5.0, "image_url": "https://i.ibb.co/KjDydmBZ/Eggplant-Long-Kg5.png" },
@@ -481,158 +462,370 @@
   { "id": 232, "sku": "VEG095", "name_ar": "خيار محلي", "category_ar": "خضروات", "description_ar": "خيار محلي", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/nNZ88pJZ/4-Cucumber-Local-Kg-4-5.png" },
   { "id": 233, "sku": "VEG096", "name_ar": "جزر محلي", "category_ar": "خضروات", "description_ar": "جزر محلي", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/XxFJFjQd/5-Carrot-Local-Kg4-5.png" },
   { "id": 234, "sku": "HER050", "name_ar": "شيكوري أصفر", "category_ar": "أعشاب", "description_ar": "شيكوري أصفر إيطالي", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/84M4rXkW/176-Yellow-Chicory-Kg-38.png" },
-  { "id": 235, "sku": "FRU065", "name_ar": "أناناس بيبي", "category_ar": "فواكه", "description_ar": "أناناس بيبي صغير حلو", "unit_type": "kg", "price_1kg": 25.0, "image_url": "https://i.ibb.co/DDC0tTLy/154-Baby-Pineapple-Kg-25.png" }
+  { "id": 235, "sku": "FRU065", "name_ar": "أناناس بيبي", "category_ar": "فواكه", "description_ar": "أناناس بيبي صغير حلو", "unit_type": "piece", "price_1kg": 25.0, "image_url": "https://i.ibb.co/DDC0tTLy/154-Baby-Pineapple-Kg-25.png" }
 ];
 
-    // تفعيل الأيقونات
-    lucide.createIcons();
+export default function DeltaStarsApp() {
+  const [lang, setLang] = useState('ar');
+  const t = dict[lang];
+  const [view, setView] = useState('home');
+  const [cart, setCart] = useState([]);
+  const [activeCat, setActiveCat] = useState('all');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeIframe, setActiveIframe] = useState(null);
 
-    // حقن الأقسام (الفلاتر)
-    const filterBar = document.getElementById('categories-filter-bar');
-    const catGridHome = document.getElementById('categories-grid-home');
-    
-    categoriesData.forEach(cat => {
-        // في الصفحة الرئيسية
-        if(cat.id !== 'all') {
-            catGridHome.innerHTML += `
-                <button onclick="renderProducts('${cat.id}'); switchView('shop');" class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all flex flex-col items-center gap-3 shadow-lg">
-                    <img src="${cat.img}" class="w-16 h-16 object-contain" alt="${cat.name}">
-                    <span class="font-black text-sm text-white text-center tracking-tighter">${cat.name}</span>
-                </button>
-            `;
-        }
-        
-        // في السوق المركزي
-        filterBar.innerHTML += `
-            <button id="cat-btn-${cat.id}" onclick="renderProducts('${cat.id}')" class="cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-white text-gray-500 border-gray-200 hover:border-[#FF922B]">
-                <div class="w-8 h-8 bg-slate-50 rounded-full p-1"><img src="${cat.img}" class="w-full h-full object-contain" alt=""></div>
-                ${cat.name}
-            </button>
-        `;
+  // States for preview interactions
+  const [toastMsg, setToastMsg] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'ai', text: lang === 'ar' ? 'أهلاً بك! أنا مساعد نجوم دلتا، كيف أخدمك اليوم؟ ✨' : 'Hello! I am Delta Stars Assistant. How can I help? ✨' }
+  ]);
+
+  const formatCurrency = useCallback((val) => `${Number(val).toFixed(2)} ${t.sar}`, [t]);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3000);
+  };
+
+  const filteredProducts = useMemo(() => {
+    if (activeCat === 'all') return PRODUCTS_DATABASE;
+    return PRODUCTS_DATABASE.filter(p => {
+        if(activeCat === 'خضروات') return p.category === 'خضروات' || p.category === 'فطر';
+        if(activeCat === 'فواكه') return p.category === 'فواكه';
+        if(activeCat === 'ورقيات') return p.category === 'أعشاب';
+        if(activeCat === 'تمور') return p.category === 'تمور';
+        if(activeCat === 'منتجات القصيم') return p.name_ar.includes('قصيم') || (p.description_ar && p.description_ar.includes('قصيم'));
+        if(activeCat === 'مغلفات') return p.category === 'سلال' || p.category === 'بيض';
+        if(activeCat === 'ورود') return p.category === 'ورود';
+        return p.category === activeCat;
     });
+  }, [activeCat]);
 
-    let cartCount = 0;
+  const cartTotal = useMemo(() => cart.reduce((acc, item) => acc + (item.price_1kg * item.quantity), 0), [cart]);
 
-    // دالة الفلترة والرندر للمنتجات الحقيقية
-    function renderProducts(catId = 'all') {
-        // تحديث أزرار الفلتر
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.className = 'cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-white text-gray-500 border-gray-200 hover:border-[#FF922B]';
-        });
-        const activeBtn = document.getElementById('cat-btn-' + catId);
-        if(activeBtn) {
-            activeBtn.className = 'cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-[#1a3a1a] text-[#FF922B] border-[#1a3a1a]';
-        }
+  const updateCartQty = (cartId, newQty) => {
+    if (newQty < 1) return;
+    setCart(cart.map(item => item.cartId === cartId ? { ...item, quantity: newQty } : item));
+  };
 
-        const grid = document.getElementById('products-grid');
-        grid.innerHTML = '';
-        
-        let filtered = rawProductsJSON;
-        if (catId !== 'all') {
-            filtered = rawProductsJSON.filter(p => {
-                if(catId === 'خضروات') return p.category_ar === 'خضروات' || p.category_ar === 'فطر';
-                if(catId === 'فواكه') return p.category_ar === 'فواكه';
-                if(catId === 'ورقيات') return p.category_ar === 'أعشاب';
-                if(catId === 'تمور') return p.category_ar === 'تمور';
-                if(catId === 'منتجات القصيم') return p.name_ar.includes('قصيم') || p.description_ar.includes('قصيم');
-                if(catId === 'مغلفات') return p.category_ar === 'سلال' || p.category_ar === 'بيض';
-                if(catId === 'ورود') return p.category_ar === 'ورود';
-                return false; // منتجات موسمية ومكسرات (فارغة حاليا بالداتا)
-            });
-        }
+  const handleChat = () => {
+    if (!chatInput.trim()) return;
+    const msg = chatInput;
+    setChatInput("");
+    setChatMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setTimeout(() => {
+        setChatMessages(prev => [...prev, { role: 'ai', text: lang === 'ar' ? 'هذه نسخة معاينة. سيتم ربط الذكاء الاصطناعي في النسخة النهائية.' : 'This is a preview. AI will be connected in the final build.' }]);
+    }, 800);
+  };
 
-        filtered.forEach(p => {
-            // استخراج المنشأ
-            let origin = 'مزارع وطنية';
-            const txt = (p.name_ar + " " + p.description_ar).toLowerCase();
-            if(txt.includes('مستورد') || txt.includes('امريكي') || txt.includes('تايلند') || txt.includes('هولند') || txt.includes('ايطال') || txt.includes('فرنس') || txt.includes('اسيوي') || txt.includes('هند')) {
-                origin = 'مستورد فاخر';
-            } else if (txt.includes('قصيم')) {
-                origin = 'مزارع القصيم';
-            }
-
-            // استخراج الوحدة
-            let unit = 'كجم';
-            if(p.unit_type === 'piece') unit = 'حبة';
-            if(p.unit_type === 'pack') unit = 'باكت';
-            if(p.unit_type === 'basket') unit = 'سلة';
-            if(p.unit_type === 'box') unit = 'كرتون';
-
-            grid.innerHTML += `
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col group hover:-translate-y-1 transition-all relative overflow-hidden">
-                    <div class="h-32 flex items-center justify-center mb-4 p-2">
-                        <img src="${p.image_url}" class="h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="mt-auto">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1 w-fit"><i data-lucide="map-pin" class="w-3 h-3"></i> ${origin}</span>
-                            <span class="text-[9px] font-black text-gray-400 bg-slate-100 px-2 py-1 rounded-md">${p.category_ar}</span>
-                        </div>
-                        <h3 class="text-sm md:text-base font-black text-[#1a3a1a] leading-tight mb-2 tracking-tighter line-clamp-1" title="${p.name_ar}">${p.name_ar}</h3>
-                        <p class="text-lg md:text-xl font-black text-[#FF922B] font-mono mb-4 tracking-tighter">${p.price_1kg.toFixed(2)} <span class="text-[10px] font-bold text-gray-400">/ ${unit}</span></p>
-                        <button onclick="addToCart('${p.name_ar}')" class="w-full bg-slate-100 text-[#1a3a1a] py-2.5 rounded-lg font-black text-xs flex justify-center items-center gap-2 hover:bg-[#FF922B] hover:text-white transition-all tracking-tighter">
-                            <i data-lucide="shopping-cart" class="w-4 h-4"></i> إضافة للسلة
-                        </button>
-                    </div>
+  return (
+    <div className={`min-h-screen bg-slate-50 font-tajawal text-slate-800 ${lang === 'ar' ? 'text-right' : 'text-left'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      
+      {/* HEADER */}
+      <header className="fixed top-0 left-0 w-full z-[9000] shadow-md bg-white">
+        <div className="bg-[#FF922B] text-[#1a3a1a] h-8 flex items-center overflow-hidden border-b border-white/20 px-4">
+          <div className="whitespace-nowrap animate-marquee flex items-center gap-12 font-bold text-[10px] sm:text-xs uppercase">
+            <span>🌟 عروض حصرية للشركات VIP 🌟 طزاجة يومية من مزارعنا الوطنية 🌟</span>
+            <span>🌟 عروض حصرية للشركات VIP 🌟 طزاجة يومية من مزارعنا الوطنية 🌟</span>
+          </div>
+        </div>
+        <nav className="px-4 lg:px-12 py-3 flex justify-between items-center h-20 border-b-2 border-[#FF922B]">
+          <div className="flex items-center gap-3">
+             <button onClick={() => {setView('home'); window.scrollTo(0,0);}} className="flex items-center gap-3 group">
+                <img src={GLOBAL_CONFIG.LOGO_URL} className="w-12 h-12 bg-white rounded-xl p-1 shadow-sm" alt="Logo" />
+                <div className={`text-${lang === 'ar' ? 'right' : 'left'} hidden sm:block`}>
+                   {/* EXACT FONT MATCH FOR TITLE */}
+                   <h1 className="text-xl sm:text-2xl font-black text-[#1a3a1a] tracking-tighter uppercase">{t.title}</h1>
                 </div>
-            `;
-        });
-        lucide.createIcons();
-    }
+             </button>
+          </div>
 
-    // تهيئة المنتجات عند التحميل
-    window.onload = () => {
-        renderProducts('all');
-    }
+          <div className="hidden lg:flex items-center gap-1 bg-slate-50 p-1 rounded-full border border-gray-100">
+             {['home', 'shop', 'vip_portal'].map(v => (
+                <button key={v} onClick={() => {setView(v); window.scrollTo(0,0);}} className={`px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all ${view === v ? 'bg-[#FF922B] text-white shadow-sm' : 'text-gray-500 hover:text-black'}`}>
+                   {v === 'home' ? t.title : v === 'shop' ? t.central_market : t.vip_portal}
+                </button>
+             ))}
+          </div>
 
-    // وظائف الواجهة
-    function switchView(target) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-        document.getElementById(`view-${target}`).classList.remove('hidden');
-        
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            if(btn.dataset.target === target) {
-                btn.className = 'nav-btn bg-[#FF922B] text-white px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all shadow-sm';
-            } else {
-                btn.className = 'nav-btn text-gray-500 hover:text-black px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all';
-            }
-        });
-        window.scrollTo(0,0);
-        
-        if(target === 'shop') renderProducts('all');
-    }
+          <div className="flex items-center gap-3">
+             <button onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} className="p-2 text-[#1a3a1a] hover:bg-slate-100 rounded-lg transition-all font-bold text-xs flex items-center gap-1">
+               <Globe size={16} /> {lang === 'ar' ? 'EN' : 'عربي'}
+             </button>
+             <button onClick={() => {setView('cart'); window.scrollTo(0,0);}} className="relative p-2.5 bg-[#FF922B] text-white rounded-lg shadow-sm hover:scale-105 transition-all">
+                <ShoppingCart size={20} />
+                {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border border-white">{cart.length}</span>}
+             </button>
+             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-2 text-gray-600"><Menu size={20}/></button>
+          </div>
+        </nav>
+      </header>
 
-    function addToCart(itemName) {
-        cartCount++;
-        const badge = document.getElementById('cart-badge');
-        badge.innerText = cartCount;
-        badge.classList.remove('hidden');
-        showToast('تم إضافة ' + itemName + ' للسلة');
-    }
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="fixed top-28 left-0 w-full bg-white border-b border-gray-200 shadow-xl lg:hidden flex flex-col p-4 gap-2 z-[8000]">
+             {['home', 'shop', 'vip_portal'].map(v => (
+                <button key={`mob-${v}`} onClick={() => { setView(v); setIsMenuOpen(false); window.scrollTo(0,0); }} className={`text-sm font-black tracking-tighter text-${lang === 'ar' ? 'right' : 'left'} px-6 py-3 rounded-xl ${view === v ? 'bg-[#FF922B] text-white' : 'text-gray-600 hover:bg-slate-50'}`}>
+                   {v === 'home' ? t.title : v === 'shop' ? t.central_market : t.vip_portal}
+                </button>
+             ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    function showToast(message) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'p-4 rounded-xl bg-white text-[#1a3a1a] shadow-lg flex items-center gap-3 border border-gray-100 toast-enter';
-        toast.innerHTML = `<i data-lucide="check-circle-2" class="text-emerald-500 w-5 h-5 shrink-0"></i><p class="font-bold text-sm tracking-tighter">${message}</p>`;
-        container.appendChild(toast);
-        lucide.createIcons();
-        setTimeout(() => toast.remove(), 3000);
-    }
+      {/* IFRAME MODAL (WhatsApp/Telegram) */}
+      <AnimatePresence>
+        {activeIframe && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[10000] bg-black/90 backdrop-blur-md p-4 md:p-10 flex flex-col">
+            <div className="flex justify-between items-center mb-4 text-white">
+              <h3 className="text-lg font-black tracking-tighter">{lang === 'ar' ? activeIframe.name_ar : activeIframe.name_en}</h3>
+              <button onClick={() => setActiveIframe(null)} className="p-2 bg-white/10 rounded-full hover:bg-red-500 transition-all"><X size={20} /></button>
+            </div>
+            <div className="flex-1 bg-white rounded-3xl overflow-hidden shadow-2xl">
+               <iframe src={activeIframe.url} className="w-full h-full border-none" title="Internal View" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    function toggleChat() {
-        document.getElementById('chat-modal').classList.toggle('hidden');
-    }
+      {/* TOAST NOTIFICATION */}
+      <AnimatePresence>
+        {toastMsg && (
+          <motion.div initial={{ x: lang === 'ar' ? -50 : 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: lang === 'ar' ? -50 : 50, opacity: 0 }} className={`fixed top-32 ${lang === 'ar' ? 'left-4 border-r-4' : 'right-4 border-l-4'} border-[#FF922B] z-[12000] p-4 rounded-xl bg-white text-[#1a3a1a] shadow-lg flex items-center gap-3`}>
+             <CheckCircle2 className="text-emerald-500 w-5 h-5 shrink-0" />
+             <p className="font-bold text-sm tracking-tighter">{toastMsg}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    function openModal(url) {
-        document.getElementById('iframe-content').src = url;
-        document.getElementById('iframe-modal').classList.remove('hidden');
-    }
+      <main className="min-h-screen pt-28">
+         {/* --- HOME VIEW --- */}
+         {view === 'home' && (
+           <div className="animate-in fade-in duration-500">
+              {/* HERO SECTION */}
+              <section className="relative w-full min-h-[60vh] flex items-center justify-center lg:justify-end overflow-hidden border-b-[8px] border-[#FF922B] bg-[#224422]">
+                 <img src={GLOBAL_CONFIG.MAIN_BANNER} className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-screen" alt="Banner" />
+                 <div className={`absolute inset-0 bg-gradient-to-${lang === 'ar' ? 'r' : 'l'} from-transparent via-[#224422]/70 to-[#224422]/95`}></div>
+                 <div className={`relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-16 text-center lg:text-${lang === 'ar' ? 'right' : 'left'}`}>
+                    <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-4 tracking-tighter uppercase italic">{t.title}</h1>
+                    <p className="text-lg lg:text-2xl text-slate-200 font-bold mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">{t.subtitle}</p>
+                    <div className={`flex flex-wrap gap-4 justify-center lg:justify-${lang === 'ar' ? 'end' : 'start'}`}>
+                       <button onClick={() => {setView('vip_portal'); window.scrollTo(0,0);}} className="bg-[#FF922B] text-[#1a3a1a] px-6 py-3 rounded-full font-black text-sm shadow-lg hover:scale-105 transition-all flex items-center gap-2 tracking-tighter uppercase">{t.vip_portal}</button>
+                       <button onClick={() => {setView('shop'); window.scrollTo(0,0);}} className="bg-white text-[#1a3a1a] px-8 py-3 rounded-full font-black text-sm shadow-lg hover:scale-105 transition-all tracking-tighter uppercase">{t.shop_now}</button>
+                    </div>
+                 </div>
+              </section>
 
-    function closeModal() {
-        document.getElementById('iframe-modal').classList.add('hidden');
-        document.getElementById('iframe-content').src = '';
-    }
-</script>
-</body>
-</html>
+              {/* 💎 GLASSMORPHISM CATEGORIES SECTION */}
+              <section className="relative py-16 px-4 overflow-hidden">
+                 <div className="absolute inset-0 z-0">
+                    <img src={GLOBAL_CONFIG.GLASS_BG} className="w-full h-full object-cover opacity-20 grayscale" alt="Glass BG" />
+                    <div className="absolute inset-0 bg-[#224422]/90 backdrop-blur-[60px]"></div>
+                 </div>
+
+                 <div className="relative z-10 max-w-7xl mx-auto">
+                    <h2 className="text-3xl md:text-5xl font-black text-white text-center mb-12 underline decoration-[#FF922B] underline-offset-[15px] tracking-tighter uppercase">{t.categories}</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-16">
+                       {CATEGORIES_DATA.filter(c => c.id !== 'all').map(cat => (
+                         <button key={cat.id} onClick={() => { setActiveCat(cat.id); setView('shop'); window.scrollTo(0,0); }} className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all flex flex-col items-center gap-3 group shadow-lg">
+                            <img src={cat.image} className="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300" alt={cat.name_ar} />
+                            <span className="font-black text-sm md:text-base text-white text-center tracking-tighter">{lang === 'ar' ? cat.name_ar : cat.name_en}</span>
+                         </button>
+                       ))}
+                    </div>
+
+                    {/* DIGITAL PLATFORMS */}
+                    <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 text-center mb-16 shadow-inner">
+                        <h2 className="text-2xl md:text-4xl font-black text-white mb-8 tracking-tighter uppercase">{t.digital_platforms}</h2>
+                        <div className="flex flex-wrap justify-center gap-4">
+                           {DIGITAL_PLATFORMS.map(platform => { const PIcon = platform.icon; return (
+                             <button key={platform.id} onClick={() => setActiveIframe(platform)} className={`${platform.color} px-8 py-4 rounded-2xl text-white flex items-center gap-3 font-black text-sm md:text-lg hover:scale-105 transition-all shadow-lg border-b-[6px] border-black/20`}>
+                               <PIcon size={20} /> {lang === 'ar' ? platform.name_ar : platform.name_en}
+                             </button>
+                           )})}
+                        </div>
+                    </div>
+
+                    {/* TRUST SECTION */}
+                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 text-center">
+                       <div className="max-w-xl mx-auto mb-6 bg-white rounded-2xl p-4 shadow-inner"><img src={GLOBAL_CONFIG.TRUST_IMAGE} className="w-full h-auto max-h-48 object-contain" alt="Trust" /></div>
+                       <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter italic leading-none">{t.trust_title}</h2>
+                    </div>
+                 </div>
+              </section>
+           </div>
+         )}
+
+         {/* --- SHOP VIEW (235 ITEMS) --- */}
+         {view === 'shop' && (
+           <div className="py-12 px-4 md:px-8 max-w-7xl mx-auto animate-in fade-in">
+              <h2 className="text-3xl md:text-5xl font-black text-[#1a3a1a] tracking-tighter uppercase italic mb-8 border-b-[4px] border-gray-100 pb-4">{t.central_market}</h2>
+              
+              <div className="flex flex-nowrap overflow-x-auto custom-scrollbar gap-3 mb-10 pb-4">
+                  {CATEGORIES_DATA.map(cat => (
+                     <button key={cat.id} onClick={() => setActiveCat(cat.id)} className={`flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 ${activeCat === cat.id ? 'bg-[#1a3a1a] text-[#FF922B] border-[#1a3a1a]' : 'bg-white text-gray-500 border-gray-200 hover:border-[#FF922B]'}`}>
+                        <div className="w-8 h-8 bg-slate-50 rounded-full p-1"><img src={cat.image} className="w-full h-full object-contain" alt="" /></div>
+                        {lang === 'ar' ? cat.name_ar : cat.name_en}
+                     </button>
+                  ))}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {filteredProducts.map(p => {
+                    let originLabel = p.origin || (lang === 'ar' ? 'مزارع وطنية' : 'National Farms');
+                    if(p.name_ar.includes('مستورد')) originLabel = lang === 'ar' ? 'مستورد فاخر' : 'Imported';
+                    if(p.name_ar.includes('قصيم')) originLabel = lang === 'ar' ? 'مزارع القصيم' : 'Qassim Farms';
+
+                    return (
+                      <motion.div layout key={p.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col group hover:-translate-y-1 transition-all relative overflow-hidden">
+                          <div className="h-32 md:h-40 flex items-center justify-center mb-4 p-2"><img src={p.img} className="h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" alt={p.name_ar} /></div>
+                          <div className="mt-auto">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1 w-fit"><MapPin size={10} /> {originLabel}</span>
+                              </div>
+                              <h3 className="text-sm md:text-base font-black text-[#1a3a1a] leading-tight mb-2 tracking-tighter line-clamp-1">{lang === 'ar' ? p.name_ar : p.name_en}</h3>
+                              <p className="text-lg md:text-xl font-black text-[#FF922B] font-mono italic mb-4 tracking-tighter">{p.price.toFixed(2)} <span className="text-[10px] font-bold text-gray-400">/ {p.unit || 'كجم'}</span></p>
+                              <button onClick={() => { setCart([...cart, {...p, quantity: 1, cartId: Date.now()}]); showToast(lang === 'ar' ? `تم إضافة ${p.name_ar}` : 'Added to cart'); }} className="w-full bg-slate-100 text-[#1a3a1a] py-2.5 rounded-lg font-black text-xs flex justify-center items-center gap-2 hover:bg-[#FF922B] hover:text-white transition-all tracking-tighter">
+                                <ShoppingCart size={14}/> {t.add_to_cart}
+                              </button>
+                          </div>
+                      </motion.div>
+                    )
+                  })}
+              </div>
+           </div>
+         )}
+
+         {/* --- CART VIEW --- */}
+         {view === 'cart' && (
+           <div className="py-10 px-4 max-w-4xl mx-auto animate-in fade-in">
+              <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
+                  <h2 className="text-2xl md:text-3xl font-black text-[#1a3a1a] mb-6 border-b pb-4 flex items-center gap-3 tracking-tighter"><ShoppingCart className="text-[#FF922B]" /> {t.cart}</h2>
+                  {cart.length === 0 ? <div className="py-16 text-center text-gray-400 font-bold text-lg tracking-tighter">{t.empty_cart}</div> : (
+                     <div className="space-y-3">
+                        {cart.map((item, idx) => (
+                          <div key={item.cartId || idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-gray-100">
+                             <div className="flex items-center gap-3">
+                                <img src={item.img} className="w-12 h-12 object-contain bg-white rounded-lg border p-1" />
+                                <div>
+                                   <h4 className="font-black text-xs md:text-sm tracking-tighter">{lang === 'ar' ? item.name_ar : item.name_en}</h4>
+                                   <p className="text-[#FF922B] font-bold text-xs font-mono">{item.price}</p>
+                                </div>
+                             </div>
+                             <div className="flex items-center gap-1 bg-white p-1 rounded-lg border">
+                                <button onClick={() => updateCartQty(item.cartId, item.quantity + 1)} className="w-6 h-6 bg-slate-100 rounded text-sm font-bold hover:bg-[#FF922B] hover:text-[#1a3a1a]">+</button>
+                                <span className="font-bold text-xs w-6 text-center">{item.quantity}</span>
+                                <button onClick={() => updateCartQty(item.cartId, Math.max(1, item.quantity - 1))} className="w-6 h-6 bg-slate-100 rounded text-sm font-bold hover:bg-[#FF922B] hover:text-[#1a3a1a]">-</button>
+                                <button onClick={() => setCart(cart.filter((_, i) => i !== idx))} className="ml-2 text-red-500 hover:text-red-700 p-1"><Trash2 size={16}/></button>
+                             </div>
+                          </div>
+                        ))}
+                        <div className="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                           <div className={`text-center sm:text-${lang === 'ar' ? 'right' : 'left'}`}><p className="text-gray-400 font-bold text-[10px] uppercase tracking-tighter">{t.total}</p><p className="text-2xl font-black text-[#1a3a1a] font-mono tracking-tighter">{formatCurrency(cartTotal)}</p></div>
+                           <button className="w-full sm:w-auto bg-[#1a3a1a] text-[#FF922B] px-8 py-3 rounded-xl font-black text-sm hover:bg-[#FF922B] hover:text-[#1a3a1a] transition-all tracking-tighter">{t.checkout}</button>
+                        </div>
+                     </div>
+                  )}
+              </div>
+           </div>
+         )}
+
+         {/* --- VIP PORTAL --- */}
+         {view === 'vip_portal' && (
+            <div className="min-h-[50vh] flex items-center justify-center p-4">
+               <div className="bg-white p-10 rounded-3xl border border-gray-100 max-w-sm w-full text-center shadow-lg">
+                  <Briefcase className="w-12 h-12 text-[#1a3a1a] mx-auto mb-4 opacity-30" />
+                  <h2 className="text-2xl font-black text-[#1a3a1a] mb-4 tracking-tighter uppercase">{t.vip_portal}</h2>
+                  <input type="tel" placeholder="05XXXXXXXX" className="w-full bg-slate-50 border border-gray-200 p-3 rounded-xl font-bold text-center text-sm outline-none mb-4" dir="ltr" />
+                  <button onClick={() => showToast(lang === 'ar' ? 'تم إرسال الرمز' : 'Code Sent')} className="w-full bg-[#1a3a1a] text-white py-3 rounded-xl font-black text-sm hover:bg-[#FF922B] transition-all tracking-tighter">إرسال الرمز</button>
+               </div>
+            </div>
+         )}
+
+      </main>
+
+      {/* SOVEREIGN FOOTER */}
+      <footer className="bg-[#1a3a1a] border-t-[8px] border-[#FF922B] py-16 px-6 lg:px-20 text-white relative font-tajawal">
+         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-right">
+            <div className="space-y-6">
+               <div className="flex items-center justify-center md:justify-start gap-4">
+                  <img src={GLOBAL_CONFIG.LOGO_URL} className="w-12 h-12 bg-white rounded-xl p-1 shadow-sm" alt="Logo" />
+                  <h2 className="text-2xl font-black uppercase tracking-tighter">{t.title}</h2>
+               </div>
+               <p className="text-gray-400 font-bold text-xs leading-relaxed border-r-2 border-[#FF922B] pr-3 mx-auto md:mx-0 max-w-xs">{t.subtitle}</p>
+            </div>
+            
+            <div className="space-y-6">
+               <h4 className="text-sm font-black border-b border-white/10 pb-2 uppercase tracking-widest text-[#FF922B]">مواقع التواصل</h4>
+               <div className="flex flex-wrap justify-center md:justify-start gap-3">
+                  {SOCIAL_LINKS.map(s => (
+                    <a key={s.id} href={s.url} target="_blank" rel="noreferrer" title={s.title} className={`w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center ${s.color} hover:bg-white hover:text-primary transition-all`}><s.icon size={20} /></a>
+                  ))}
+               </div>
+            </div>
+
+            <div className="space-y-4">
+               <div className="bg-white/5 p-4 rounded-2xl flex items-center justify-center md:justify-start gap-4">
+                  <Phone className="text-[#FF922B] w-6 h-6" />
+                  <div className={`text-${lang === 'ar' ? 'right' : 'left'}`}>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t.unified_num}</p>
+                    <p className="text-xl font-black text-white font-mono tracking-tighter">920023204</p>
+                  </div>
+               </div>
+               <div className="bg-white/5 p-4 rounded-2xl flex items-center justify-center md:justify-start gap-4 border border-emerald-500/20">
+                  <MessageSquare className="text-emerald-500 w-6 h-6" />
+                  <div className={`text-${lang === 'ar' ? 'right' : 'left'}`}>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t.sales_wa}</p>
+                    <p className="text-xl font-black text-white font-mono tracking-tighter">0558828009</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div className="max-w-6xl mx-auto mt-12 pt-6 border-t border-white/10 text-center flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold text-gray-500 uppercase">
+            <p>© {new Date().getFullYear()} شركة نجوم دلتا للتجارة • v350</p>
+         </div>
+      </footer>
+
+      {/* BOT - BOTTOM LEFT ONLY */}
+      <div className={`fixed bottom-6 ${lang === 'ar' ? 'left-6' : 'right-6'} z-[11000]`}>
+         <button onClick={() => setIsChatOpen(!isChatOpen)} className="w-14 h-14 bg-[#1a3a1a] text-white rounded-full shadow-xl flex items-center justify-center hover:bg-[#FF922B] transition-all relative border-2 border-white">
+            <Bot size={24} />
+         </button>
+         <AnimatePresence>
+            {isChatOpen && (
+              <motion.div initial={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}} className={`absolute bottom-16 ${lang === 'ar' ? 'left-0' : 'right-0'} w-[300px] h-[400px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden text-${lang === 'ar' ? 'right' : 'left'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                 <div className="bg-[#1a3a1a] p-4 text-white flex justify-between items-center border-b-2 border-[#FF922B]">
+                    <div className="flex items-center gap-2 font-black text-sm tracking-tighter"><Sparkles size={16} className="text-[#FF922B]"/> المساعد الذكي</div>
+                    <button onClick={() => setIsChatOpen(false)}><X size={18} /></button>
+                 </div>
+                 <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 text-xs font-bold custom-scrollbar">
+                    {chatMessages.map((m, idx) => (
+                       <div key={idx} className={`flex ${m.role === 'user' ? 'justify-start' : 'justify-end'}`}>
+                          <div className={`max-w-[85%] p-3 rounded-xl ${m.role === 'user' ? 'bg-white text-gray-800 border' : 'bg-[#1a3a1a] text-white'}`}>
+                             {m.text}
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+                 <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+                    <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleChat()} placeholder="اسأل..." className="flex-1 bg-slate-100 p-2 rounded-lg text-xs font-bold outline-none" />
+                    <button onClick={handleChat} className="p-2 bg-[#FF922B] text-white rounded-lg"><SendHorizontal size={16}/></button>
+                 </div>
+              </motion.div>
+            )}
+         </AnimatePresence>
+      </div>
+
+      <style>{`
+        .animate-marquee { animation: marquee 35s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #FF922B; border-radius: 10px; }
+        input::placeholder { color: #888; opacity: 0.6; }
+      `}</style>
+    </div>
+  );
+}
