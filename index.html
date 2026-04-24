@@ -3,145 +3,636 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام نجوم دلتا المتكامل | DeltaStars ERP</title>
+    <title>نجوم دلتا | معاينة التصميم الماسي v350 (235 صنف)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1a3a1a', secondary: '#FF922B', gold: '#ca8a04' },
+                    fontFamily: { tajawal: ['Tajawal', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: #f8fafc; }
+        .shadow-sovereign { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5); }
+        .shadow-4xl { box-shadow: 0 80px 160px -40px rgba(0,0,0,0.8); }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #FF922B; border-radius: 10px; }
+        .glass-panel { background: rgba(34, 68, 34, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
+        /* Toast Animation */
+        .toast-enter { animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="text-slate-800 overflow-x-hidden custom-scrollbar">
 
-    <nav class="bg-green-800 text-white shadow-xl sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-white text-green-800 p-1 rounded-full font-black text-xl">DS</div>
-                <span class="text-xl font-bold tracking-tighter">نجوم دلتا للتجارة</span>
-            </div>
-            <div class="flex gap-4 text-sm font-medium">
-                <button onclick="showTab('store')" class="hover:text-green-200">المتجر</button>
-                <button onclick="showTab('admin')" class="hover:text-green-200 border-r pr-4">لوحة التحكم</button>
-                <button onclick="showTab('ops')" class="hover:text-green-200 border-r pr-4">العمليات والمناديب</button>
-            </div>
+<!-- شريط الإعلانات العلوي -->
+<div class="fixed top-0 left-0 w-full z-[9000] shadow-md bg-white">
+    <div class="bg-[#FF922B] text-[#1a3a1a] h-8 flex items-center overflow-hidden border-b border-white/20 px-4">
+        <div class="flex items-center gap-8 font-bold text-xs uppercase whitespace-nowrap">
+            <span>🌟 عروض حصرية للشركات VIP 🌟 طزاجة يومية من مزارعنا الوطنية 🌟</span>
+            <span>🌟 عروض حصرية للشركات VIP 🌟 طزاجة يومية من مزارعنا الوطنية 🌟</span>
+        </div>
+    </div>
+    
+    <!-- شريط التنقل (الهيدر) -->
+    <nav class="px-4 lg:px-12 py-3 flex justify-between items-center h-20 border-b-2 border-[#FF922B]">
+        <div class="flex items-center gap-3">
+            <button onclick="switchView('home')" class="flex items-center gap-3 group">
+                <img src="https://lh3.googleusercontent.com/d/1G_3GgQsTrruAyJLmkkJZuO6151q3nctq" class="w-12 h-12 bg-white rounded-xl p-1 shadow-sm" alt="Logo">
+                <h1 class="text-xl sm:text-2xl font-black text-[#1a3a1a] tracking-tighter uppercase">نجوم دلتا</h1>
+            </button>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-1 bg-slate-50 p-1 rounded-full border border-gray-100">
+            <button onclick="switchView('home')" class="nav-btn bg-[#FF922B] text-white px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all shadow-sm" data-target="home">نجوم دلتا</button>
+            <button onclick="switchView('shop')" class="nav-btn text-gray-500 hover:text-black px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all" data-target="shop">السوق المركزي</button>
+            <button onclick="switchView('vip')" class="nav-btn text-gray-500 hover:text-black px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all" data-target="vip">بوابة الشركات</button>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button class="p-2 text-[#1a3a1a] hover:bg-slate-100 rounded-lg transition-all font-bold text-xs flex items-center gap-1">
+                <i data-lucide="globe" class="w-4 h-4"></i> EN
+            </button>
+            <button class="relative p-2.5 bg-[#FF922B] text-white rounded-lg shadow-sm hover:scale-105 transition-all">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                <span id="cart-badge" class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border border-white hidden">0</span>
+            </button>
         </div>
     </nav>
+</div>
 
-    <div id="store" class="tab-content active p-6 max-w-7xl mx-auto">
-        <div class="bg-white rounded-3xl p-8 mb-8 text-center border-2 border-green-100 shadow-sm">
-            <h1 class="text-4xl font-black text-green-900 mb-2">أفخر أنواع التمور السعودية</h1>
-            <p class="text-gray-600">من مزارعنا إليكم مباشرة بأعلى معايير الجودة</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="products-list">
-            </div>
-    </div>
-
-    <div id="admin" class="tab-content p-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-4 rounded-xl shadow-sm border-r-4 border-blue-500">
-                <p class="text-sm text-gray-500">إجمالي المخزون</p>
-                <p class="text-2xl font-bold" id="total-stock">540 كجم</p>
-            </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border-r-4 border-green-500">
-                <p class="text-sm text-gray-500">طلبات اليوم</p>
-                <p class="text-2xl font-bold">12 طلب</p>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="p-4 bg-gray-100 font-bold border-b">إدارة المخازن (قسم المطور)</div>
-            <table class="w-full text-right text-sm">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="p-3">المنتج</th>
-                        <th class="p-3">الكمية المتاحة</th>
-                        <th class="p-3">الحالة</th>
-                        <th class="p-3">الإجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="inventory-table"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="ops" class="tab-content p-6 max-w-7xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6 text-green-900 flex items-center gap-2">
-            <i data-lucide="truck"></i> نظام إدارة المناديب والطلبات
-        </h2>
-        <div class="grid gap-4" id="orders-list">
-            </div>
-    </div>
-
-    <script>
-        // بيانات النظام (قاعدة بيانات مصغرة مؤقتة)
-        const products = [
-            { id: 1, name: "سكري مفتل ملكي", price: 45, stock: 120, status: "متوفر" },
-            { id: 2, name: "عجوة المدينة فاخر", price: 85, stock: 50, status: "كمية محدودة" },
-            { id: 3, name: "خلاص الأحساء", price: 35, stock: 200, status: "متوفر" }
-        ];
-
-        const orders = [
-            { id: 101, customer: "أحمد محمد", total: 135, status: "قيد التوصيل", location: "حي الروضة، جدة" },
-            { id: 102, customer: "سارة علي", total: 85, status: "بانتظار الشحن", location: "حي المرجان، جدة" }
-        ];
-
-        // وظيفة التبديل بين الأقسام
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        // رندر المتجر
-        function renderStore() {
-            const list = document.getElementById('products-list');
-            list.innerHTML = products.map(p => `
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="h-40 bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-400 font-bold">صورة المنتج</div>
-                    <h3 class="font-bold text-lg">${p.name}</h3>
-                    <p class="text-green-700 font-black text-xl my-2">${p.price} ر.س</p>
-                    <button class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">أضف للسلة 🛒</button>
+<!-- المحتوى الرئيسي -->
+<main class="pt-28 min-h-screen" id="main-content">
+    
+    <!-- واجهة الرئيسية -->
+    <div id="view-home" class="view-section">
+        <!-- Hero Section -->
+        <section class="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center lg:justify-start overflow-hidden border-b-[8px] border-[#FF922B] bg-[#224422]">
+            <img src="https://lh3.googleusercontent.com/d/1ZWjxs6KsDuYkm7czc3pq_tbHujwWYQZq" class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-screen">
+            <div class="absolute inset-0 bg-gradient-to-l from-transparent via-[#224422]/70 to-[#224422]/95"></div>
+            <div class="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-16 text-center lg:text-right pt-8">
+                <h1 class="text-5xl lg:text-7xl font-black text-white leading-tight mb-4 tracking-tighter uppercase">نجوم دلتا</h1>
+                <p class="text-lg lg:text-2xl text-slate-200 font-bold mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">شريكك الأمثل للخضروات والفواكة والتمور عالية الجودة.</p>
+                <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                    <button onclick="switchView('vip')" class="bg-[#FF922B] text-[#1a3a1a] px-6 py-3 rounded-full font-black text-sm shadow-lg hover:scale-105 transition-all flex items-center gap-2 tracking-tighter uppercase">بوابة الشركات</button>
+                    <button onclick="switchView('shop')" class="bg-white text-[#1a3a1a] px-8 py-3 rounded-full font-black text-sm shadow-lg hover:scale-105 transition-all tracking-tighter uppercase">ابدأ جولة التسوق</button>
                 </div>
-            `).join('');
-        }
+            </div>
+        </section>
 
-        // رندر المخازن (للمطور والمدير)
-        function renderInventory() {
-            const table = document.getElementById('inventory-table');
-            table.innerHTML = products.map(p => `
-                <tr class="border-b">
-                    <td class="p-3">${p.name}</td>
-                    <td class="p-3">${p.stock} كجم</td>
-                    <td class="p-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">${p.status}</span></td>
-                    <td class="p-3"><button class="text-blue-600 font-bold">تعديل</button></td>
-                </tr>
-            `).join('');
-        }
+        <!-- Glassmorphism Categories Section -->
+        <section class="relative py-16 px-4 overflow-hidden">
+            <!-- الخلفية الزجاجية الخضراء الفاتحة -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover opacity-20 grayscale">
+                <div class="absolute inset-0 glass-panel"></div>
+            </div>
 
-        // رندر العمليات للمناديب
-        function renderOrders() {
-            const list = document.getElementById('orders-list');
-            list.innerHTML = orders.map(o => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center border-l-4 border-orange-500">
-                    <div>
-                        <p class="font-bold">طلب #${o.id} - ${o.customer}</p>
-                        <p class="text-sm text-gray-500 italic">${o.location}</p>
-                    </div>
-                    <div class="text-left">
-                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold">${o.status}</span>
-                        <button class="block mt-2 text-green-700 text-sm font-black underline">تحديث الحالة</button>
+            <div class="relative z-10 max-w-6xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-black text-white text-center mb-12 underline decoration-[#FF922B] underline-offset-[10px] tracking-tighter">أقسامنا المتخصصة</h2>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mb-16" id="categories-grid-home">
+                    <!-- سيتم حقن الأقسام هنا بواسطة JS -->
+                </div>
+
+                <!-- المنصات الرقمية -->
+                <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 text-center mb-16 shadow-inner">
+                    <h2 class="text-2xl md:text-4xl font-black text-white mb-8 tracking-tighter uppercase">منصاتنا الرقمية لمتابعة كل جديد</h2>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="openModal('https://chat.whatsapp.com/J1mZCFjYprmFHveSyTjpMw')" class="bg-emerald-500 px-8 py-4 rounded-2xl text-white flex items-center gap-3 font-black text-sm md:text-lg hover:scale-105 transition-all shadow-lg active:scale-95 border-b-[6px] border-black/20">
+                            <i data-lucide="message-circle"></i> قناة الواتساب
+                        </button>
+                        <button onclick="openModal('https://t.me/deltastars1')" class="bg-blue-500 px-8 py-4 rounded-2xl text-white flex items-center gap-3 font-black text-sm md:text-lg hover:scale-105 transition-all shadow-lg active:scale-95 border-b-[6px] border-black/20">
+                            <i data-lucide="send"></i> قناة التلجرام
+                        </button>
                     </div>
                 </div>
-            `).join('');
+
+                <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 text-center shadow-xl">
+                    <div class="max-w-xl mx-auto mb-6 bg-white rounded-2xl p-4 shadow-inner">
+                        <img src="https://lh3.googleusercontent.com/d/1CRZwMRmKNFx9GtNhWYYGxmRkZ8dZPXJk" class="w-full h-auto max-h-48 object-contain">
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter italic leading-none">نحن نقدر ثقتكم عملائنا الكرام</h2>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- واجهة السوق المركزي -->
+    <div id="view-shop" class="view-section hidden py-12 px-4 md:px-8 max-w-7xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-black text-[#1a3a1a] tracking-tighter uppercase mb-8 border-b-4 border-gray-100 pb-4">السوق المركزي <span class="text-sm text-[#FF922B]">(235 صنف أصلي)</span></h2>
+        
+        <!-- أزرار الفلترة -->
+        <div class="flex flex-nowrap overflow-x-auto custom-scrollbar gap-3 mb-8 pb-4" id="categories-filter-bar">
+            <!-- سيتم حقن أزرار الفلترة هنا -->
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" id="products-grid">
+            <!-- سيتم حقن المنتجات هنا -->
+        </div>
+    </div>
+
+    <!-- واجهة بوابة الشركات -->
+    <div id="view-vip" class="view-section hidden min-h-[60vh] flex items-center justify-center p-4">
+        <div class="bg-white p-10 md:p-16 rounded-3xl border border-gray-100 max-w-md w-full text-center shadow-lg">
+            <i data-lucide="briefcase" class="w-16 h-16 text-[#1a3a1a] mx-auto mb-6 opacity-30"></i>
+            <h2 class="text-3xl font-black text-[#1a3a1a] mb-4 tracking-tighter uppercase">بوابة الشركات</h2>
+            <p class="text-sm text-gray-500 font-bold mb-8">نظام حسابات الآجل للشركات. ادخل رقم الجوال المسجل.</p>
+            <input type="tel" placeholder="05XXXXXXXX" class="w-full bg-slate-50 border border-gray-200 p-4 rounded-xl font-bold text-center outline-none focus:border-[#FF922B] mb-6" dir="ltr">
+            <button class="w-full bg-[#1a3a1a] text-white py-4 rounded-xl font-black text-lg hover:bg-[#FF922B] transition-all">إرسال الرمز</button>
+        </div>
+    </div>
+
+</main>
+
+<!-- الفوتر -->
+<footer class="bg-[#1a3a1a] border-t-[8px] border-[#FF922B] py-12 px-6 lg:px-16 text-white relative font-tajawal text-right">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="space-y-4">
+            <div class="flex items-center gap-3">
+                <img src="https://lh3.googleusercontent.com/d/1G_3GgQsTrruAyJLmkkJZuO6151q3nctq" class="w-10 h-10 bg-white rounded-lg p-1 shadow-sm">
+                <h2 class="text-xl font-black tracking-tighter uppercase">نجوم دلتا</h2>
+            </div>
+            <p class="text-gray-400 font-bold text-xs leading-relaxed border-r-2 border-[#FF922B] pr-3">شريكك الأمثل للخضروات والفواكة والتمور عالية الجودة.</p>
+        </div>
+        
+        <div class="space-y-4">
+            <h4 class="text-sm font-black border-b border-white/10 pb-2 text-[#FF922B] tracking-tighter">مواقع التواصل الاجتماعي</h4>
+            <div class="flex flex-wrap gap-3">
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-600 hover:bg-white transition-all"><i data-lucide="facebook"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-blue-400 hover:bg-white transition-all"><i data-lucide="users"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-pink-600 hover:bg-white transition-all"><i data-lucide="instagram"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-yellow-400 hover:bg-white transition-all"><i data-lucide="ghost"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-red-600 hover:bg-white transition-all"><i data-lucide="youtube"></i></a>
+                <a href="#" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-white hover:bg-black transition-all"><i data-lucide="music"></i></a>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white/5 p-4 rounded-2xl flex items-center gap-4">
+                <i data-lucide="phone" class="text-[#FF922B] w-6 h-6"></i>
+                <div>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">الرقم الموحد المركزي</p>
+                    <p class="text-xl font-black text-white font-mono tracking-tighter">920023204</p>
+                </div>
+            </div>
+            <div class="bg-white/5 p-4 rounded-2xl flex items-center gap-4 border border-emerald-500/20">
+                <i data-lucide="message-square" class="text-emerald-500 w-6 h-6"></i>
+                <div>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">واتساب المبيعات المباشر</p>
+                    <p class="text-xl font-black text-white font-mono tracking-tighter">0558828009</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- المساعد الذكي (في اليسار فقط، بدون الشارات القديمة) -->
+<div class="fixed bottom-6 left-6 z-[11000]">
+    <button onclick="toggleChat()" class="w-14 h-14 bg-[#1a3a1a] text-white rounded-full shadow-xl flex items-center justify-center hover:bg-[#FF922B] transition-all border-2 border-white">
+        <i data-lucide="bot"></i>
+    </button>
+    <div id="chat-modal" class="hidden absolute bottom-16 left-0 w-[300px] h-[400px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden text-right">
+        <div class="bg-[#1a3a1a] p-4 text-white flex justify-between items-center border-b-2 border-[#FF922B]">
+            <div class="flex items-center gap-2 font-black text-sm tracking-tighter"><i data-lucide="sparkles" class="w-4 h-4 text-[#FF922B]"></i> المساعد الذكي</div>
+            <button onclick="toggleChat()"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="flex-1 p-4 bg-slate-50 text-xs font-bold">
+            <div class="bg-white text-gray-800 border p-3 rounded-xl max-w-[85%] rounded-tr-none mb-3">
+                أهلاً بك! أنا مساعد نجوم دلتا، كيف أخدمك اليوم؟ ✨
+            </div>
+        </div>
+        <div class="p-3 bg-white border-t border-gray-100 flex gap-2">
+            <input placeholder="اسأل..." class="flex-1 bg-slate-100 p-2 rounded-lg text-xs font-bold outline-none">
+            <button class="p-2 bg-[#FF922B] text-white rounded-lg"><i data-lucide="send-horizontal" class="w-4 h-4"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal التصفح الداخلي -->
+<div id="iframe-modal" class="hidden fixed inset-0 z-[12000] bg-black/90 backdrop-blur-md p-4 md:p-10 flex flex-col">
+    <div class="flex justify-between items-center mb-4 text-white">
+        <h3 class="text-lg font-black tracking-tighter" id="iframe-title">منصاتنا</h3>
+        <button onclick="closeModal()" class="p-2 bg-white/10 rounded-full hover:bg-red-500 transition-all"><i data-lucide="x"></i></button>
+    </div>
+    <div class="flex-1 bg-white rounded-3xl overflow-hidden shadow-2xl">
+        <iframe id="iframe-content" src="" class="w-full h-full border-none"></iframe>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed top-28 left-4 z-[12000] space-y-3 pointer-events-none"></div>
+
+<script>
+    const getDriveImg = (id) => `https://drive.google.com/uc?export=view&id=${id}`;
+    
+    const categoriesData = [
+        { id: 'all', name: 'الكل', img: 'https://cdn-icons-png.flaticon.com/512/5695/5695123.png' },
+        { id: 'خضروات', name: 'خضروات وطنية', img: getDriveImg('1X7Dx44sE2u9sg6Y7JRiF-Lysde0Po3aw') },
+        { id: 'فواكه', name: 'فواكه طازجة', img: getDriveImg('1Z6Z9j4LDb-AO7Oht434f51OdtSd-Pr7C') },
+        { id: 'ورقيات', name: 'ورقيات وأعشاب', img: getDriveImg('1L1xtlAZBq1zAoeMCvPciBHWn1iq-XmK7') },
+        { id: 'تمور', name: 'تمور ملكية', img: getDriveImg('1ybK8hgqbsTa3nEeABVMPu_CghlR4LlCq') },
+        { id: 'منتجات القصيم', name: 'منتجات القصيم', img: getDriveImg('1ygHtcN_IZZn9h5bWxkcgUYFx2NKBwV8O') },
+        { id: 'مغلفات', name: 'مغلفات جاهزة', img: getDriveImg('1TMRsT2A59Cf2R-DMiQKSdbHpjGTywlO5') },
+        { id: 'منتجات موسمية', name: 'منتجات موسمية', img: getDriveImg('1cltZrcmcrfoSujfLxttvbw_WGOhokH1s') },
+        { id: 'مكسرات', name: 'مكسرات فاخرة', img: getDriveImg('198nfibYeKNTz3q1ndTdnOh0uw8etRn12') },
+        { id: 'ورود', name: 'الورود والهدايا', img: getDriveImg('1hOA1amN2-KnX24zrAj09Ldt8gnf563k0') }
+    ];
+
+    // --- قاعدة بيانات المنتجات الـ 235 (الأصلية من ملف JSON.txt) ---
+    const rawProductsJSON = [
+  { "id": 1, "sku": "MSH001", "name_ar": "فطر شميجي بني تايلندي", "category_ar": "فطر", "description_ar": "فطر شميجي بني طازج مستورد من تايلاند", "unit_type": "kg", "price_1kg": 48.0, "image_url": "https://i.ibb.co/F41772NQ/Brown-shmegey-Mushroom.jpg" },
+  { "id": 2, "sku": "MSH002", "name_ar": "فطر بلوفوت", "category_ar": "فطر", "description_ar": "فطر بلوفوت فاخر بطعم مميز", "unit_type": "kg", "price_1kg": 150.0, "image_url": "https://i.ibb.co/9mGgSXnX/233-Bluefoot-Mushroom.png" },
+  { "id": 3, "sku": "MSH003", "name_ar": "فطر جيرول صغير", "category_ar": "فطر", "description_ar": "فطر جيرول صغير الحجم", "unit_type": "kg", "price_1kg": 90.0, "image_url": "https://i.ibb.co/h11LYVyz/234-Small-Girolle-Mushroom-Kg.png" },
+  { "id": 4, "sku": "FRU001", "name_ar": "توت أسود طائفي", "category_ar": "فواكه", "description_ar": "توت أسود طائفي طازج", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/qYDp8MwH/235-Taifi-Blackberries-Kg.png" },
+  { "id": 5, "sku": "VEG001", "name_ar": "باذنجان طويل", "category_ar": "خضروات", "description_ar": "باذنجان طويل محلي", "unit_type": "kg", "price_1kg": 5.0, "image_url": "https://i.ibb.co/KjDydmBZ/Eggplant-Long-Kg5.png" },
+  { "id": 6, "sku": "VEG002", "name_ar": "بصل القصيم", "category_ar": "خضروات", "description_ar": "بصل القصيم درجة أولى", "unit_type": "kg", "price_1kg": 4.0, "image_url": "https://i.ibb.co/d4FZzq2y/Qassim-Onion-Kg-4.png" },
+  { "id": 7, "sku": "EGG001", "name_ar": "بيض الغربية علبة", "category_ar": "بيض", "description_ar": "بيض طازج من مزارع الغربية", "unit_type": "pack", "price_1kg": 18.5, "image_url": "https://i.ibb.co/fz3nX6dg/228-Gharbia-Eggs-Box-185.png" },
+  { "id": 8, "sku": "HER001", "name_ar": "زهور صالحة للأكل", "category_ar": "أعشاب", "description_ar": "زهور صالحة للأكل لتزيين الأطباق", "unit_type": "kg", "price_1kg": 170.0, "image_url": "https://i.ibb.co/W4XSf2sL/229-Edible-Flowers-Kg-170.png" },
+  { "id": 9, "sku": "FRU002", "name_ar": "جوز الهند حبة", "category_ar": "فواكه", "description_ar": "جوز هند طازج حبة واحدة", "unit_type": "piece", "price_1kg": 8.0, "image_url": "https://i.ibb.co/XkrP8LDV/230-Coconut-PC-8.png" },
+  { "id": 10, "sku": "VEG003", "name_ar": "قصب السكر", "category_ar": "خضروات", "description_ar": "قصب سكر طازج للعصير", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/7dHCpPp8/231-Sugar-Cane-Kg-20.png" },
+  { "id": 11, "sku": "MSH004", "name_ar": "فطر ترمبيت أسود", "category_ar": "فطر", "description_ar": "فطر ترمبيت أسود فاخر", "unit_type": "kg", "price_1kg": 120.0, "image_url": "https://i.ibb.co/jk7ndFCg/232-Black-Trumpet-Mushroom-Kg.png" },
+  { "id": 12, "sku": "BAS001", "name_ar": "سلة الورقيات كبيرة", "category_ar": "سلال", "description_ar": "سلة متنوعة من الخضار الورقية", "unit_type": "basket", "price_1kg": 30.0, "image_url": "https://i.ibb.co/LLK0w5T/223-Leafy-Greens-Basket-L-30.png" },
+  { "id": 13, "sku": "DATE001", "name_ar": "عجوة ملكي", "category_ar": "تمور", "description_ar": "تمر عجوة ملكي فاخر", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/PsX695RX/223-Royal-Ajwa-Kg-80.png" },
+  { "id": 14, "sku": "DATE002", "name_ar": "رطب سكري", "category_ar": "تمور", "description_ar": "رطب سكري طازج", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/DP8JW9yC/224-Sukari-Rutab-Ctn-45.png" },
+  { "id": 15, "sku": "BAS002", "name_ar": "سلة الفواكه صغيرة", "category_ar": "سلال", "description_ar": "سلة فواكه متنوعة طازجة", "unit_type": "basket", "price_1kg": 50.0, "image_url": "https://i.ibb.co/qLTW9G0n/225-S-50-Fruit-Basket.png" },
+  { "id": 16, "sku": "BAS003", "name_ar": "صندوق الخضار متوسط", "category_ar": "سلال", "description_ar": "صندوق خضار متنوع", "unit_type": "box", "price_1kg": 75.0, "image_url": "https://i.ibb.co/LzX3fdWG/226-Vegetable-Box-M-M-75.png" },
+  { "id": 17, "sku": "DATE003", "name_ar": "سكري مفتل 3 كجم", "category_ar": "تمور", "description_ar": "تمر سكري مفتل فاخر كرتون", "unit_type": "pack", "price_1kg": 120.0, "image_url": "https://i.ibb.co/RkgcY2FB/217-120-Sukari-Muftal-3-Kg.png" },
+  { "id": 18, "sku": "DATE004", "name_ar": "تمور صقعي القصيم", "category_ar": "تمور", "description_ar": "تمر صقعي عالي الجودة", "unit_type": "kg", "price_1kg": 55.0, "image_url": "https://i.ibb.co/sdvxvp3N/219-Qassim-Sagai-Kg-55.png" },
+  { "id": 19, "sku": "DATE005", "name_ar": "تمور مبروم المدينة", "category_ar": "تمور", "description_ar": "تمر مبروم من المدينة", "unit_type": "kg", "price_1kg": 70.0, "image_url": "https://i.ibb.co/S4VLZ5YV/220-Madinah-Mabroom-Kg-70.png" },
+  { "id": 20, "sku": "DATE006", "name_ar": "صفاوي المدينة", "category_ar": "تمور", "description_ar": "تمر صفاوي داكن", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/7dYCmP4L/221-Madinah-Safawi-Kg-45.png" },
+  { "id": 21, "sku": "DATE007", "name_ar": "تمور عنبر المدينة", "category_ar": "تمور", "description_ar": "تمر عنبر المدينة", "unit_type": "kg", "price_1kg": 90.0, "image_url": "https://i.ibb.co/sJVby2CB/222-Madinah-Amber-Kg-90.png" },
+  { "id": 22, "sku": "VEG004", "name_ar": "بصل القصيم", "category_ar": "خضروات", "description_ar": "بصل القصيم طازج درجة أولى", "unit_type": "kg", "price_1kg": 4.0, "image_url": "https://i.ibb.co/FkN5Zf5Q/213-Qassim-Onion-Kg-4.png" },
+  { "id": 23, "sku": "VEG005", "name_ar": "قرع أخضر طويل", "category_ar": "خضروات", "description_ar": "قرع أخضر طويل محلي", "unit_type": "kg", "price_1kg": 5.5, "image_url": "https://i.ibb.co/xStR8718/214-Long-Green-Squash-Kg-5-5.png" },
+  { "id": 24, "sku": "VEG006", "name_ar": "بصل أخضر القصيم", "category_ar": "خضروات", "description_ar": "بصل أخضر طازج من القصيم", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/1ttvxJTg/215-Qassim-Spring-onion-Kg-4-5.jpg" },
+  { "id": 25, "sku": "VEG007", "name_ar": "كراث القصيم", "category_ar": "خضروات", "description_ar": "كراث القصيم حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/3nPjN8x/216-Qassim-Leek-PC-1-5.png" },
+  { "id": 26, "sku": "HER002", "name_ar": "زعتر بري طازج", "category_ar": "أعشاب", "description_ar": "زعتر بري طازج", "unit_type": "kg", "price_1kg": 58.0, "image_url": "https://i.ibb.co/vCmgT14N/208-Fresh-Wild-Thyme-Kg-58.png" },
+  { "id": 27, "sku": "VEG008", "name_ar": "رواند مستورد", "category_ar": "خضروات", "description_ar": "رواند مستورد طازج للحلويات", "unit_type": "kg", "price_1kg": 26.0, "image_url": "https://i.ibb.co/ycmJ8MTP/209-Imported-Rhubarb-Kg-26.png" },
+  { "id": 28, "sku": "VEG009", "name_ar": "كرفس أمريكي طازج", "category_ar": "خضروات", "description_ar": "كرفس طازج مستورد", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/N2QRHD2y/210-Fresh-Celery-USA-Kg-18.png" },
+  { "id": 29, "sku": "VEG010", "name_ar": "يقطين القصيم", "category_ar": "خضروات", "description_ar": "يقطين القصيم طازج", "unit_type": "kg", "price_1kg": 5.5, "image_url": "https://i.ibb.co/jkGKJSTb/211-Qassim-Pumpkin-Kg-5-5.png" },
+  { "id": 30, "sku": "VEG011", "name_ar": "فلفل شقراء حار", "category_ar": "خضروات", "description_ar": "فلفل شقراء حار محلي", "unit_type": "kg", "price_1kg": 12.0, "image_url": "https://i.ibb.co/qYxQb52p/212-Shaqra-Chili-Kg-12.png" },
+  { "id": 31, "sku": "HER003", "name_ar": "بقدونس مجعد", "category_ar": "أعشاب", "description_ar": "بقدونس مجعد طازج", "unit_type": "kg", "price_1kg": 29.0, "image_url": "https://i.ibb.co/dJskJWrN/203-Curly-Parsley-Kg-29.png" },
+  { "id": 32, "sku": "HER004", "name_ar": "ساكورا ميكس كريس", "category_ar": "أعشاب", "description_ar": "براعم ساكورا ميكس فاخرة", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/BVyPcKQP/204-Sakura-Mix-Cress-Kg-80.png" },
+  { "id": 33, "sku": "HER005", "name_ar": "شيسو ميكس", "category_ar": "أعشاب", "description_ar": "شيسو ميكس ياباني", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/wrg9zMxP/205-Shiso-Mix-Kg-80.png" },
+  { "id": 34, "sku": "HER006", "name_ar": "براعم ساكورا ميكس", "category_ar": "أعشاب", "description_ar": "براعم ساكورا ميكس طازجة", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/d0yWcbcL/206-Sakura-Mix-Sprouts-Kg-80.png" },
+  { "id": 35, "sku": "HER007", "name_ar": "أوراق الزعتر", "category_ar": "أعشاب", "description_ar": "أوراق زعتر طازجة مجففة", "unit_type": "kg", "price_1kg": 58.0, "image_url": "https://i.ibb.co/3yKkP8b5/207-Thyme-Leaves-Kg-58.png" },
+  { "id": 36, "sku": "HER008", "name_ar": "جرجير بيبي", "category_ar": "أعشاب", "description_ar": "جرجير بيبي طازج", "unit_type": "kg", "price_1kg": 65.0, "image_url": "https://i.ibb.co/FkGjmCby/197-Baby-Rocket-Kg-65.png" },
+  { "id": 37, "sku": "HER009", "name_ar": "ورق لايم كافير", "category_ar": "أعشاب", "description_ar": "أوراق لايم كافير", "unit_type": "kg", "price_1kg": 48.0, "image_url": "https://i.ibb.co/RGShtxVq/199-Kaffir-Lime-Leaves-Kg-48.png" },
+  { "id": 38, "sku": "HER010", "name_ar": "أعشاب مايكرو", "category_ar": "أعشاب", "description_ar": "أعشاب مايكرو متنوعة", "unit_type": "kg", "price_1kg": 75.0, "image_url": "https://i.ibb.co/ycRy3NQh/200-Micro-Herbs-Kg-75.png" },
+  { "id": 39, "sku": "HER011", "name_ar": "أوريغانو طازج", "category_ar": "أعشاب", "description_ar": "أوريغانو طازج", "unit_type": "kg", "price_1kg": 68.0, "image_url": "https://i.ibb.co/svHBLwr9/201-Fresh-Oregano-Kg-68.png" },
+  { "id": 40, "sku": "HER012", "name_ar": "بقدونس فرنسي", "category_ar": "أعشاب", "description_ar": "بقدونس فرنسي ناعم الملمس", "unit_type": "kg", "price_1kg": 28.0, "image_url": "https://i.ibb.co/G4Tm1jMx/202-French-Parsley-Kg-28.png" },
+  { "id": 41, "sku": "HER013", "name_ar": "خس جم بيبي", "category_ar": "أعشاب", "description_ar": "خس جم بيبي صغير", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/kghpqW0q/192-Baby-Gem-Lettuce-Kg-35.png" },
+  { "id": 42, "sku": "HER014", "name_ar": "خس لولو بيوندي", "category_ar": "أعشاب", "description_ar": "خس لولو بيوندي", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/tpGXLhnj/194-Lollo-Bionda-Lettuce-Kg-35.png" },
+  { "id": 43, "sku": "HER015", "name_ar": "خس لولو روسو", "category_ar": "أعشاب", "description_ar": "خس لولو روسو أحمر فاتح", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/7NLPvQPD/195-Lollo-Rosso-Lettuce-Kg-35.png" },
+  { "id": 44, "sku": "HER016", "name_ar": "خس أوراق بلوط", "category_ar": "أعشاب", "description_ar": "خس أوراق بلوط مقرمش", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/S7MBpKLj/196-Oak-Leaf-Lettuce-Kg-35.png" },
+  { "id": 45, "sku": "HER017", "name_ar": "خس بوسطن", "category_ar": "أعشاب", "description_ar": "خس بوسطن طري", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/Z1k1vd51/188-Boston-Lettuce-Kg-35.png" },
+  { "id": 46, "sku": "HER018", "name_ar": "بوك تشوي", "category_ar": "أعشاب", "description_ar": "بوك تشوي آسيوي", "unit_type": "kg", "price_1kg": 23.0, "image_url": "https://i.ibb.co/zTgz2z5G/193-Bok-Choy-Kg-23.png" },
+  { "id": 47, "sku": "HER019", "name_ar": "خس فريس أخضر", "category_ar": "أعشاب", "description_ar": "خس فريس أخضر", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/pr098r7Z/189-Green-Frisee-Lettuce-Kg-35.png" },
+  { "id": 48, "sku": "HER020", "name_ar": "خس فريس أصفر", "category_ar": "أعشاب", "description_ar": "خس فريس أصفر", "unit_type": "kg", "price_1kg": 48.0, "image_url": "https://i.ibb.co/1yByYj1/190-Yellow-Frisee-Lettuce-Kg-48.png" },
+  { "id": 49, "sku": "HER021", "name_ar": "خس راديكيو", "category_ar": "أعشاب", "description_ar": "خس راديكيو أحمر", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/DDvTs5DF/191-Radicchio-Lettuce-Kg-35.png" },
+  { "id": 50, "sku": "HER022", "name_ar": "كيل هولندا", "category_ar": "أعشاب", "description_ar": "كيل أخضر هولندي", "unit_type": "kg", "price_1kg": 32.0, "image_url": "https://i.ibb.co/QvtD9wxw/184-Kale-Holland-Kg-32.png" },
+  { "id": 51, "sku": "HER023", "name_ar": "كراث مستورد", "category_ar": "أعشاب", "description_ar": "كراث أبيض مستورد", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/rKyrPBm5/185-Leeks-Imported-Kg-18.png" },
+  { "id": 52, "sku": "HER024", "name_ar": "ليمون غراس", "category_ar": "أعشاب", "description_ar": "ليمون غراس آسيوي", "unit_type": "kg", "price_1kg": 33.0, "image_url": "https://i.ibb.co/5xcRfPDW/186-Lemon-Grass-Kg-33.png" },
+  { "id": 53, "sku": "HER025", "name_ar": "ورق ليمون", "category_ar": "أعشاب", "description_ar": "أوراق ليمون", "unit_type": "kg", "price_1kg": 43.0, "image_url": "https://i.ibb.co/ccxWfh0G/187-Lemon-Leaves-Kg-43.png" },
+  { "id": 54, "sku": "HER026", "name_ar": "أعشاب طرخون", "category_ar": "أعشاب", "description_ar": "أعشاب طرخون فرنسية", "unit_type": "kg", "price_1kg": 88.0, "image_url": "https://i.ibb.co/jkwgpwC0/188-Tarragon-Herbs-Kg-88.png" },
+  { "id": 55, "sku": "HER027", "name_ar": "إنديف مستورد", "category_ar": "أعشاب", "description_ar": "إنديف أبيض مستورد", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/9HMSGHq8/178-Imported-Endive-Kg-35.png" },
+  { "id": 56, "sku": "HER028", "name_ar": "إنديف أصفر", "category_ar": "أعشاب", "description_ar": "إنديف أصفر", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/v4Jw9hbr/179-Yellow-Endive-Kg-35.png" },
+  { "id": 57, "sku": "HER029", "name_ar": "ريحان تاي أرجواني", "category_ar": "أعشاب", "description_ar": "ريحان تاي أرجواني", "unit_type": "kg", "price_1kg": 86.0, "image_url": "https://i.ibb.co/dwCf61bV/180-Purple-Thai-Basil-Kg-86.png" },
+  { "id": 58, "sku": "HER030", "name_ar": "روزماري مستورد", "category_ar": "أعشاب", "description_ar": "روزماري مستورد", "unit_type": "kg", "price_1kg": 58.0, "image_url": "https://i.ibb.co/xqNN8hQQ/181-Imported-Rosemary-Kg-58.png" },
+  { "id": 59, "sku": "HER031", "name_ar": "ميرمية أعشاب", "category_ar": "أعشاب", "description_ar": "أعشاب ميرمية", "unit_type": "kg", "price_1kg": 65.0, "image_url": "https://i.ibb.co/fYbFRt2R/182-Sage-Herbs-Kg-65.png" },
+  { "id": 60, "sku": "HER032", "name_ar": "ريحان مستورد", "category_ar": "أعشاب", "description_ar": "ريحان أخضر مستورد", "unit_type": "kg", "price_1kg": 58.0, "image_url": "https://i.ibb.co/Q3vccT52/174-Imported-Basil-Kg-58.png" },
+  { "id": 61, "sku": "HER033", "name_ar": "شيكوري أحمر", "category_ar": "أعشاب", "description_ar": "شيكوري أحمر إيطالي", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/cXwQfgxp/175-Red-Chicory-Kg-38.png" },
+  { "id": 62, "sku": "HER034", "name_ar": "شيكوري أصفر", "category_ar": "أعشاب", "description_ar": "شيكوري أصفر نادر", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/xSn5GBB2/176-Yellow-Chicory-Kg-38.png" },
+  { "id": 63, "sku": "HER035", "name_ar": "ثوم معمر", "category_ar": "أعشاب", "description_ar": "ثوم معمر طازج", "unit_type": "kg", "price_1kg": 70.0, "image_url": "https://i.ibb.co/C5M8y2f6/177-Chives-Kg-70.png" },
+  { "id": 64, "sku": "VEG012", "name_ar": "فجل أبيض", "category_ar": "خضروات", "description_ar": "فجل أبيض", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/FZjpRVG/169-White-Radish-Kg-1-5.png" },
+  { "id": 65, "sku": "VEG013", "name_ar": "كرفس محلي", "category_ar": "خضروات", "description_ar": "كرفس محلي طازج", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/nsbzkr9j/170-Local-Celery-Kg-18.png" },
+  { "id": 66, "sku": "HER036", "name_ar": "براعم ألفالفا", "category_ar": "أعشاب", "description_ar": "براعم ألفالفا عضوية", "unit_type": "pack", "price_1kg": 11.0, "image_url": "https://i.ibb.co/PzFGk7mp/171-AAlfalfa-Sprouts-PC-11.png" },
+  { "id": 67, "sku": "HER037", "name_ar": "أوراق خيزران", "category_ar": "أعشاب", "description_ar": "أوراق خيزران آسيوية", "unit_type": "kg", "price_1kg": 32.0, "image_url": "https://i.ibb.co/Xfvw0Tw6/172-Bamboo-Leaves-Kg-32.png" },
+  { "id": 68, "sku": "HER038", "name_ar": "أوراق موز", "category_ar": "أعشاب", "description_ar": "أوراق موز", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/CKNBDPTJ/173-Banana-Leaves-Kg-35.png" },
+  { "id": 69, "sku": "HER039", "name_ar": "شبت", "category_ar": "أعشاب", "description_ar": "شبت طازج حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/4HM52Yc/164-Dill-PC-1-5.png" },
+  { "id": 70, "sku": "HER040", "name_ar": "كراث محلي", "category_ar": "أعشاب", "description_ar": "كراث محلي حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/8DRNVBxy/165-Local-Leek-PC-1-5.png" },
+  { "id": 71, "sku": "HER041", "name_ar": "خس طويل محلي", "category_ar": "أعشاب", "description_ar": "خس طويل محلي", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/359FHvMW/166-Lettuce-Local-Kg-7.png" },
+  { "id": 72, "sku": "HER042", "name_ar": "رجلة", "category_ar": "أعشاب", "description_ar": "رجلة طازجة حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/dJW48xmc/167-Pursaane-PC-1-5.png" },
+  { "id": 73, "sku": "VEG014", "name_ar": "فجل أحمر", "category_ar": "خضروات", "description_ar": "فجل أحمر حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/Ndkyk1t3/168-Red-Radish-PC-1-5.png" },
+  { "id": 74, "sku": "HER043", "name_ar": "جرجير محلي", "category_ar": "أعشاب", "description_ar": "جرجير محلي حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/ZpF098rf/159-Rocket-Local-PC-1-5.png" },
+  { "id": 75, "sku": "HER044", "name_ar": "نعناع", "category_ar": "أعشاب", "description_ar": "نعناع محلي حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/JFcvs60n/160-Mint-PC-1-5.png" },
+  { "id": 76, "sku": "VEG015", "name_ar": "ملوخية", "category_ar": "خضروات", "description_ar": "ملوخية طازجة", "unit_type": "kg", "price_1kg": 6.0, "image_url": "https://i.ibb.co/39fqPkpC/161-Molokhia-Kg-6.png" },
+  { "id": 77, "sku": "HER045", "name_ar": "خس مدور محلي", "category_ar": "أعشاب", "description_ar": "خس مدور محلي", "unit_type": "kg", "price_1kg": 9.0, "image_url": "https://i.ibb.co/35fDPVLh/162-Round-Lettuce-Local-Kg-9.png" },
+  { "id": 78, "sku": "HER046", "name_ar": "سبانخ محلي", "category_ar": "أعشاب", "description_ar": "سبانخ محلي حزمة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/WpV5ZqTy/163-Local-Spinach-PC-1-5.png" },
+  { "id": 79, "sku": "VEG016", "name_ar": "بطيخ طويل محلي", "category_ar": "خضروات", "description_ar": "بطيخ طويل محلي", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/sd3wDs0D/155-Long-Watermelon-Kg-3-5.png" },
+  { "id": 80, "sku": "FRU003", "name_ar": "ليم أخضر", "category_ar": "فواكه", "description_ar": "ليم أخضر طازج", "unit_type": "kg", "price_1kg": 10.0, "image_url": "https://i.ibb.co/yrQQ5Mr/156-Green-Lime-Kg-10.png" },
+  { "id": 81, "sku": "HER047", "name_ar": "كزبرة", "category_ar": "أعشاب", "description_ar": "كزبرة طازجة", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/G4KZpJ8q/157-Coriander-PC-1-5.png" },
+  { "id": 82, "sku": "HER048", "name_ar": "بقدونس محلي", "category_ar": "أعشاب", "description_ar": "بقدونس محلي", "unit_type": "pack", "price_1kg": 1.5, "image_url": "https://i.ibb.co/S4RKPy2T/158-Parsley-Local-PC-1-5.png" },
+  { "id": 83, "sku": "FRU004", "name_ar": "جوافة وردية", "category_ar": "فواكه", "description_ar": "جوافة تايلاند وردية", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/RTjVgWtq/149-Guava-Kg-18.png" },
+  { "id": 84, "sku": "FRU005", "name_ar": "كاكا", "category_ar": "فواكه", "description_ar": "كاكا طازج", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/kzNd609/150-Persimmon-Kg-18.png" },
+  { "id": 85, "sku": "FRU006", "name_ar": "أفندي", "category_ar": "فواكه", "description_ar": "أفندي برتقال", "unit_type": "kg", "price_1kg": 9.0, "image_url": "https://i.ibb.co/WNrP5fNp/151-Mandarin-Kg-9.png" },
+  { "id": 86, "sku": "FRU007", "name_ar": "بابايا محلي", "category_ar": "فواكه", "description_ar": "بابايا محلي طازجة", "unit_type": "kg", "price_1kg": 8.0, "image_url": "https://i.ibb.co/9HmLxRwV/152-Local-Papaya-Kg-8.png" },
+  { "id": 87, "sku": "FRU008", "name_ar": "خوخ محلي", "category_ar": "فواكه", "description_ar": "خوخ محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/cGJCkqH/153-Local-Peach-Kg-13.png" },
+  { "id": 88, "sku": "FRU009", "name_ar": "تين محلي", "category_ar": "فواكه", "description_ar": "تين محلي طازج", "unit_type": "kg", "price_1kg": 23.0, "image_url": "https://i.ibb.co/QjJJTNwC/144-Local-Fig-Kg-23.png" },
+  { "id": 89, "sku": "FRU010", "name_ar": "جريب فروت محلي", "category_ar": "فواكه", "description_ar": "جريب فروت محلي", "unit_type": "kg", "price_1kg": 6.5, "image_url": "https://i.ibb.co/0y9XW4L9/145-Local-Grapefruit-Kg-6-5.png" },
+  { "id": 90, "sku": "FRU011", "name_ar": "عنب أسود محلي", "category_ar": "فواكه", "description_ar": "عنب أسود محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/HpB3L0b9/146-Local-Black-Grapes-Kg-13.png" },
+  { "id": 91, "sku": "FRU012", "name_ar": "عنب أحمر محلي", "category_ar": "فواكه", "description_ar": "عنب أحمر محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/MkXnFtGM/147-Local-Red-Grapes-Kg-13.png" },
+  { "id": 92, "sku": "FRU013", "name_ar": "عنب أبيض محلي", "category_ar": "فواكه", "description_ar": "عنب أبيض محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/kshDcLvx/148-Local-White-Grapes-Kg-13.png" },
+  { "id": 93, "sku": "FRU014", "name_ar": "بخارة حمراء", "category_ar": "فواكه", "description_ar": "بخارة حمراء", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/RXbkR6f/139-Red-Plum-Kg-13.png" },
+  { "id": 94, "sku": "FRU015", "name_ar": "تفاح أصفر", "category_ar": "فواكه", "description_ar": "تفاح أصفر", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/202ndPpf/140-Yellow-Apple-Kg-7.png" },
+  { "id": 95, "sku": "FRU016", "name_ar": "مشمش محلي", "category_ar": "فواكه", "description_ar": "مشمش محلي", "unit_type": "kg", "price_1kg": 16.0, "image_url": "https://i.ibb.co/zWz2mB7r/141-Local-Apricot-Kg-16.png" },
+  { "id": 96, "sku": "FRU017", "name_ar": "تين شوكي", "category_ar": "فواكه", "description_ar": "تين شوكي محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/C5QBbpgy/142-Prickly-pear-Kg-13.png" },
+  { "id": 97, "sku": "FRU018", "name_ar": "كسترد أبل", "category_ar": "فواكه", "description_ar": "كسترد أبل", "unit_type": "kg", "price_1kg": 11.0, "image_url": "https://i.ibb.co/ndLLS95/144-Custard-Apple-Kg-11.png" },
+  { "id": 98, "sku": "FRU019", "name_ar": "فاكهة النجمة", "category_ar": "فواكه", "description_ar": "فاكهة النجمة", "unit_type": "kg", "price_1kg": 90.0, "image_url": "https://i.ibb.co/LhkwF4qb/134-Star-Fruit-Kg-90.png" },
+  { "id": 99, "sku": "FRU020", "name_ar": "فراولة أمريكي", "category_ar": "فواكه", "description_ar": "فراولة أمريكية", "unit_type": "kg", "price_1kg": 47.0, "image_url": "https://i.ibb.co/Wp2CtZp1/135-Strawberry-USA-Kg-47.png" },
+  { "id": 100, "sku": "FRU021", "name_ar": "نكتارين محلي", "category_ar": "فواكه", "description_ar": "نكتارين محلي", "unit_type": "kg", "price_1kg": 53.0, "image_url": "https://i.ibb.co/mfn59br/137-Local-Nectarine-Kg-53.png" },
+  { "id": 101, "sku": "FRU022", "name_ar": "بخارة أسود", "category_ar": "فواكه", "description_ar": "بخارة سوداء", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/2TfdJfY/138-Black-Plum-Kg-13.png" },
+  { "id": 102, "sku": "FRU023", "name_ar": "تاماريلو مستورد", "category_ar": "فواكه", "description_ar": "تاماريلو أحمر", "unit_type": "kg", "price_1kg": 53.0, "image_url": "https://i.ibb.co/Vcmfk1t0/138-Imported-Tamarillo-Kg-53.png" },
+  { "id": 103, "sku": "FRU024", "name_ar": "خوخ مستورد", "category_ar": "فواكه", "description_ar": "خوخ مستورد", "unit_type": "kg", "price_1kg": 32.0, "image_url": "https://i.ibb.co/RG0W1z4j/129-Imported-Peach-Kg-32.png" },
+  { "id": 104, "sku": "FRU025", "name_ar": "فيزاليس حرنكش", "category_ar": "فواكه", "description_ar": "حرنكش فاخر", "unit_type": "kg", "price_1kg": 65.0, "image_url": "https://i.ibb.co/JjZSYhKQ/130-Physalis-Kg-65.png" },
+  { "id": 105, "sku": "FRU026", "name_ar": "لونغان مستورد", "category_ar": "فواكه", "description_ar": "لونغان آسيوي", "unit_type": "kg", "price_1kg": 37.0, "image_url": "https://i.ibb.co/JjZSYhKQ/124-Imported-Longan-Kg-37.png" },
+  { "id": 106, "sku": "FRU027", "name_ar": "ليتشي مستورد", "category_ar": "فواكه", "description_ar": "ليتشي صيني", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/CrMq0qK/125-Imported-Lychee-Kg-45.png" },
+  { "id": 107, "sku": "FRU028", "name_ar": "مانغوستين مستورد", "category_ar": "فواكه", "description_ar": "مانغوستين", "unit_type": "kg", "price_1kg": 36.0, "image_url": "https://i.ibb.co/h1gxfTDv/126-Imported-Mangosteen-Kg36.png" },
+  { "id": 108, "sku": "FRU029", "name_ar": "نكتارين أمريكي", "category_ar": "فواكه", "description_ar": "نكتارين أمريكي", "unit_type": "kg", "price_1kg": 32.0, "image_url": "https://i.ibb.co/mVQ4wszm/127-Nectarine-USA-Kg32.png" },
+  { "id": 109, "sku": "FRU030", "name_ar": "باسيون فروت", "category_ar": "فواكه", "description_ar": "باسيون فروت", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/cG2dcWC/128-Passion-Fruit-Kg-35.png" },
+  { "id": 110, "sku": "FRU031", "name_ar": "رامبوتان مستورد", "category_ar": "فواكه", "description_ar": "رامبوتان آسيوي", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/MwGmwtm/131-Imported-Rambutan-Kg-35.png" },
+  { "id": 111, "sku": "FRU032", "name_ar": "توت أحمر مستورد", "category_ar": "فواكه", "description_ar": "توت أحمر", "unit_type": "pack", "price_1kg": 15.0, "image_url": "https://i.ibb.co/Ld31Z5ZS/132-Red-Raspberries-PC-15.png" },
+  { "id": 112, "sku": "FRU033", "name_ar": "كشمش أحمر", "category_ar": "فواكه", "description_ar": "كشمش أحمر", "unit_type": "pack", "price_1kg": 17.0, "image_url": "https://i.ibb.co/mCvfYCq0/133-Red-Currants-PC-17.png" },
+  { "id": 113, "sku": "FRU034", "name_ar": "غرانديلا مستوردة", "category_ar": "فواكه", "description_ar": "غرانديلا", "unit_type": "kg", "price_1kg": 33.0, "image_url": "https://i.ibb.co/qZ8w9zV/119-Imported-Granadilla-Kg-33.png" },
+  { "id": 114, "sku": "FRU035", "name_ar": "جريب فروت وردي", "category_ar": "فواكه", "description_ar": "جريب فروت وردي", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/RpRWqDcg/120-Pink-Grapefruit-Kg-20.png" },
+  { "id": 115, "sku": "FRU036", "name_ar": "شمام هوني ديو", "category_ar": "فواكه", "description_ar": "شمام هوني ديو", "unit_type": "kg", "price_1kg": 22.0, "image_url": "https://i.ibb.co/JW45xXt9/121-Honeydew-Melon-Kg-22.png" },
+  { "id": 116, "sku": "FRU037", "name_ar": "كيوانو هولندا", "category_ar": "فواكه", "description_ar": "كيوانو", "unit_type": "kg", "price_1kg": 60.0, "image_url": "https://i.ibb.co/rR0Tv8CL/122-Kiwano-Holland-Kg-60.png" },
+  { "id": 117, "sku": "FRU038", "name_ar": "كومكوات مستورد", "category_ar": "فواكه", "description_ar": "كومكوات", "unit_type": "kg", "price_1kg": 52.0, "image_url": "https://i.ibb.co/FkNXSdTs/123-Imported-Kumquat-Kg-52.jpg" },
+  { "id": 118, "sku": "FRU039", "name_ar": "كرانبيري طازج", "category_ar": "فواكه", "description_ar": "كرانبيري", "unit_type": "kg", "price_1kg": 60.0, "image_url": "https://i.ibb.co/F4JyPwBq/115-Fresh-Cranberry-Kg-60.png" },
+  { "id": 119, "sku": "FRU040", "name_ar": "ثمرة التنين", "category_ar": "فواكه", "description_ar": "ثمرة التنين وردية", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/wZBQ8BzK/116-Dragon-Fruit-Kg-38.png" },
+  { "id": 120, "sku": "FRU041", "name_ar": "دوريان مستورد", "category_ar": "فواكه", "description_ar": "دوريان", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/x8rttNMs/117-imported-Durian-Kg-38.png" },
+  { "id": 121, "sku": "FRU042", "name_ar": "كمثرى فوريل", "category_ar": "فواكه", "description_ar": "كمثرى", "unit_type": "kg", "price_1kg": 10.0, "image_url": "https://i.ibb.co/QvTVpKH6/118-Forelle-Peagr-Kg-10.png" },
+  { "id": 122, "sku": "DATE008", "name_ar": "مجدول القصيم", "category_ar": "تمور", "description_ar": "مجدول", "unit_type": "kg", "price_1kg": 60.0, "image_url": "https://i.ibb.co/TMsHQGGY/118-Qassim-Majdool-Kg-60.png" },
+  { "id": 123, "sku": "FRU043", "name_ar": "توت أسود أمريكي", "category_ar": "فواكه", "description_ar": "توت أسود", "unit_type": "pack", "price_1kg": 15.0, "image_url": "https://i.ibb.co/np1NFp6/110-Blackberries-PC-15.png" },
+  { "id": 124, "sku": "FRU044", "name_ar": "توت أزرق مستورد", "category_ar": "فواكه", "description_ar": "توت أزرق", "unit_type": "pack", "price_1kg": 14.0, "image_url": "https://i.ibb.co/PvGJMyw6/111-Blueberries-PC-14.png" },
+  { "id": 125, "sku": "FRU045", "name_ar": "شمام كانتالوب", "category_ar": "فواكه", "description_ar": "شمام كانتالوب", "unit_type": "kg", "price_1kg": 22.0, "image_url": "https://i.ibb.co/ycMdnPSg/112-Cantaloupe-Melon-Kg-22.png" },
+  { "id": 126, "sku": "FRU046", "name_ar": "كرز أمريكي", "category_ar": "فواكه", "description_ar": "كرز", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/ycMdnPSg/113-USA-Sherry-Kg-80.png" },
+  { "id": 127, "sku": "FRU047", "name_ar": "كرز أسترالي", "category_ar": "فواكه", "description_ar": "كرز أسترالي", "unit_type": "kg", "price_1kg": 50.0, "image_url": "https://i.ibb.co/p6X3x5Xp/114-Australian-Cherry-Kg-50.png" },
+  { "id": 128, "sku": "FRU048", "name_ar": "شمام حلو", "category_ar": "فواكه", "description_ar": "شمام حلو", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/5WtDJjCg/105-Sweet-Melon-Kg-3-5.png" },
+  { "id": 129, "sku": "FRU049", "name_ar": "بطيخ مدور محلي", "category_ar": "فواكه", "description_ar": "بطيخ", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/5X6rcLhp/106-Round-Watermelon-Kg3-5.png" },
+  { "id": 130, "sku": "FRU050", "name_ar": "ليمون كبير محلي", "category_ar": "فواكه", "description_ar": "ليمون كبير", "unit_type": "kg", "price_1kg": 9.0, "image_url": "https://i.ibb.co/jZyXFRf3/107-Large-Local-Lemon-Kg9.png" },
+  { "id": 131, "sku": "FRU051", "name_ar": "ليمون صغير محلي", "category_ar": "فواكه", "description_ar": "ليمون صغير", "unit_type": "pack", "price_1kg": 4.0, "image_url": "https://i.ibb.co/rG8L3szH/108-Small-Local-Lemon-PC4.png" },
+  { "id": 132, "sku": "FRU052", "name_ar": "مشمش مستورد أمريكي", "category_ar": "فواكه", "description_ar": "مشمش أمريكي", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/rG8L3szH/109-USA-Imported-Apricot-Kg-35.png" },
+  { "id": 133, "sku": "FRU053", "name_ar": "فراولة مصري", "category_ar": "فواكه", "description_ar": "فراولة مصرية", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/PZ697sZR/100-Egyptian-Strawberry-Kg20.jpg" },
+  { "id": 134, "sku": "FRU054", "name_ar": "كيوي", "category_ar": "فواكه", "description_ar": "كيوي", "unit_type": "kg", "price_1kg": 12.0, "image_url": "https://i.ibb.co/xKyCZKVz/101-Kiwi-Kg12.jpg" },
+  { "id": 135, "sku": "FRU055", "name_ar": "عنب أخضر محلي", "category_ar": "فواكه", "description_ar": "عنب أخضر", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/2YWCmfTJ/102-Local-Green-Grapes-Kg13.png" },
+  { "id": 136, "sku": "FRU056", "name_ar": "أناناس كبير", "category_ar": "فواكه", "description_ar": "أناناس", "unit_type": "kg", "price_1kg": 10.0, "image_url": "https://i.ibb.co/bMCZHn6Q/103-Large-Pineapple-Kg10.png" },
+  { "id": 137, "sku": "FRU057", "name_ar": "رمان محلي", "category_ar": "فواكه", "description_ar": "رمان محلي", "unit_type": "kg", "price_1kg": 13.0, "image_url": "https://i.ibb.co/fYKj3hbn/104-Local-Pomegranate-Kg13.png" },
+  { "id": 138, "sku": "FRU058", "name_ar": "تفاح أخضر", "category_ar": "فواكه", "description_ar": "تفاح أخضر", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/yczsJk1j/95-Green-Apple-Kg-7.png" },
+  { "id": 139, "sku": "FRU059", "name_ar": "تفاح أحمر", "category_ar": "فواكه", "description_ar": "تفاح أحمر", "unit_type": "kg", "price_1kg": 7.5, "image_url": "https://i.ibb.co/DgHyL87b/96-Red-Apple-Kg7-5.png" },
+  { "id": 140, "sku": "FRU060", "name_ar": "برتقال عصير", "category_ar": "فواكه", "description_ar": "برتقال عصير", "unit_type": "kg", "price_1kg": 5.0, "image_url": "https://i.ibb.co/qZJNzb1/97-Juice-Orange-Kg5.png" },
+  { "id": 141, "sku": "FRU061", "name_ar": "برتقال أبو سورة", "category_ar": "فواكه", "description_ar": "برتقال أبو سورة", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/DDQBNCFB/98-Navel-Orange-Kg7.png" },
+  { "id": 142, "sku": "FRU062", "name_ar": "مانجو تيمور", "category_ar": "فواكه", "description_ar": "مانجو", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/qLYbFL1w/99-Mango-Taimur-Kg-18.png" },
+  { "id": 143, "sku": "VEG017", "name_ar": "كركم طازج", "category_ar": "خضروات", "description_ar": "كركم طازج", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/gMsJcWRk/90-Fresh-Turmeric-Kg-20.png" },
+  { "id": 144, "sku": "VEG018", "name_ar": "لفت ميني مستورد", "category_ar": "خضروات", "description_ar": "لفت", "unit_type": "kg", "price_1kg": 122.0, "image_url": "https://i.ibb.co/zW1rdJcC/91-Imported-Mini-Turnip-Kg122.png" },
+  { "id": 145, "sku": "VEG019", "name_ar": "كوسا بيبي مع الزهرة", "category_ar": "خضروات", "description_ar": "كوسا بيبي", "unit_type": "kg", "price_1kg": 27.0, "image_url": "https://i.ibb.co/Z1vZXsWN/92-Baby-Zucchini-With-Flower-Kg27.png" },
+  { "id": 146, "sku": "FRU063", "name_ar": "موز", "category_ar": "فواكه", "description_ar": "موز", "unit_type": "kg", "price_1kg": 6.5, "image_url": "https://i.ibb.co/fzDY3NVb/93-Banana-Kg6-5.png" },
+  { "id": 147, "sku": "FRU064", "name_ar": "تفاح سكري", "category_ar": "فواكه", "description_ar": "تفاح سكري", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/BHvYtKK6/94-Sukari-Apple-Kg-7.png" },
+  { "id": 148, "sku": "VEG020", "name_ar": "طماطم كومب حمراء", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/ZR36V7jX/85-Red-Kumquat-Tomato-Kg35.png" },
+  { "id": 149, "sku": "VEG021", "name_ar": "طماطم كرزية صفراء", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/MbZcw0N/86-Yellow-Cherry-Tomato-Kg35.png" },
+  { "id": 150, "sku": "VEG022", "name_ar": "طماطم هيرلوم", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 37.0, "image_url": "https://i.ibb.co/nqfx9cVg/87-Heirloom-Tomato-Kg37.jpg" },
+  { "id": 151, "sku": "VEG023", "name_ar": "طماطم مارماند", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 40.0, "image_url": "https://i.ibb.co/x88RjdJD/88-Marmande-Tomato-Kg40.png" },
+  { "id": 152, "sku": "VEG024", "name_ar": "طماطم روما بلوم", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/tTb3SkQM/89-Roma-Plum-Tomato-Kg20.png" },
+  { "id": 153, "sku": "VEG025", "name_ar": "كرنب سافوي", "category_ar": "خضروات", "description_ar": "كرنب", "unit_type": "kg", "price_1kg": 22.0, "image_url": "https://i.ibb.co/zhnVyYGQ/80-Savoy-Cabbage-Kg22.png" },
+  { "id": 154, "sku": "VEG026", "name_ar": "بازلاء الثلج", "category_ar": "خضروات", "description_ar": "بازلاء", "unit_type": "kg", "price_1kg": 37.0, "image_url": "https://i.ibb.co/nM9J8d5L/81-Snow-Peas-Kg37.png" },
+  { "id": 155, "sku": "VEG027", "name_ar": "قرع أكرون أخضر", "category_ar": "خضروات", "description_ar": "قرع", "unit_type": "kg", "price_1kg": 26.0, "image_url": "https://i.ibb.co/hJFgV0gW/82-Green-Akron-Squash-Kg26.png" },
+  { "id": 156, "sku": "VEG028", "name_ar": "قرع باترن", "category_ar": "خضروات", "description_ar": "قرع", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/WNP2jyTm/83-Butternut-squash-Kg21.png" },
+  { "id": 157, "sku": "VEG029", "name_ar": "طماطم كومب برتقالي", "category_ar": "خضروات", "description_ar": "طماطم", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/b5HBYJRd/84-Orange-Kumquat-Tomato-Kg38.png" },
+  { "id": 158, "sku": "VEG030", "name_ar": "بطاطس بيبي", "category_ar": "خضروات", "description_ar": "بطاطس بيبي", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/R4MnrXvq/75-Baby-Potato-Kg21.png" },
+  { "id": 159, "sku": "VEG031", "name_ar": "بطاطس بيبي حمراء", "category_ar": "خضروات", "description_ar": "بطاطس بيبي", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/fGQQBjXD/76-Red-baby-potato-Kg21.jpg" },
+  { "id": 160, "sku": "VEG032", "name_ar": "بطاطس بيبي بيضاء", "category_ar": "خضروات", "description_ar": "بطاطس بيبي", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/Xx4VNS1j/77-White-baby-potato-Kg21.png" },
+  { "id": 161, "sku": "VEG033", "name_ar": "بطاطس حلوة أمريكية", "category_ar": "خضروات", "description_ar": "بطاطس حلوة", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/TMqm4bQk/78-Sweet-potato-USA-Kg21.png" },
+  { "id": 162, "sku": "VEG034", "name_ar": "رومانيسكو ميني", "category_ar": "خضروات", "description_ar": "رومانيسكو", "unit_type": "kg", "price_1kg": 37.0, "image_url": "https://i.ibb.co/jkgW7wpc/79-Mini-Romanesco-Kg37.png" },
+  { "id": 163, "sku": "VEG035", "name_ar": "بصل أحمر جومبو", "category_ar": "خضروات", "description_ar": "بصل أحمر جومبو", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/VW4zv8jz/71-Jumbo-Red-Onion-Kg-21.png" },
+  { "id": 164, "sku": "VEG036", "name_ar": "بصل شالوت", "category_ar": "خضروات", "description_ar": "بصل شالوت", "unit_type": "kg", "price_1kg": 42.0, "image_url": "https://i.ibb.co/XZ8WQSSs/72-Shallots-Kg42.jpg" },
+  { "id": 165, "sku": "VEG037", "name_ar": "بصل أبيض مستورد", "category_ar": "خضروات", "description_ar": "بصل أبيض مستورد", "unit_type": "kg", "price_1kg": 15.0, "image_url": "https://i.ibb.co/4npF3Q3c/73-Imported-White-Onion-Kg15.png" },
+  { "id": 166, "sku": "VEG038", "name_ar": "بازلاء خضراء", "category_ar": "خضروات", "description_ar": "بازلاء خضراء", "unit_type": "kg", "price_1kg": 29.0, "image_url": "https://i.ibb.co/qMP3Fwtk/74-Green-Peas-Kg29.png" },
+  { "id": 167, "sku": "MSH005", "name_ar": "فطر إنوكي", "category_ar": "فطر", "description_ar": "فطر إنوكي", "unit_type": "pack", "price_1kg": 20.0, "image_url": "https://i.ibb.co/vCwgTZMy/67-Enoki-Mushroom-PC20.png" },
+  { "id": 168, "sku": "MSH006", "name_ar": "فطر شيتاكي", "category_ar": "فطر", "description_ar": "فطر شيتاكي", "unit_type": "kg", "price_1kg": 74.0, "image_url": "https://i.ibb.co/vCh8Dtc4/67-Shiitake-Mushroom-Kg74.png" },
+  { "id": 169, "sku": "MSH007", "name_ar": "فطر شيميجي أبيض", "category_ar": "فطر", "description_ar": "فطر شيميجي أبيض", "unit_type": "kg", "price_1kg": 48.0, "image_url": "https://i.ibb.co/BKg0XYyr/68-white-Shimeji-Mushroom-Kg48.png" },
+  { "id": 170, "sku": "VEG039", "name_ar": "بصل لؤلؤي أحمر", "category_ar": "خضروات", "description_ar": "بصل لؤلؤي أحمر", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/nqN1hkfq/69-Red-Pearl-Onion-Kg21.png" },
+  { "id": 171, "sku": "VEG040", "name_ar": "بصل لؤلؤي أبيض", "category_ar": "خضروات", "description_ar": "بصل لؤلؤي أبيض", "unit_type": "kg", "price_1kg": 21.0, "image_url": "https://i.ibb.co/n83T0y04/70-white-Pearl-Onion-Kg21.png" },
+  { "id": 172, "sku": "MSH008", "name_ar": "فطر بوتون بني", "category_ar": "فطر", "description_ar": "فطر بوتون بني", "unit_type": "kg", "price_1kg": 25.0, "image_url": "https://i.ibb.co/GQw4ngg5/62-Brown-Button-Mushroom-Kg25.jpg" },
+  { "id": 173, "sku": "MSH009", "name_ar": "فطر بورشيني", "category_ar": "فطر", "description_ar": "فطر بورشيني", "unit_type": "kg", "price_1kg": 85.0, "image_url": "https://i.ibb.co/cSqBfJ4m/63-Porcini-Mushroom-Kg85.png" },
+  { "id": 174, "sku": "MSH010", "name_ar": "فطر كستناء", "category_ar": "فطر", "description_ar": "فطر كستناء", "unit_type": "kg", "price_1kg": 30.0, "image_url": "https://i.ibb.co/yFFysFwX/64-Chestnut-Mushroom-Kg30.jpg" },
+  { "id": 175, "sku": "MSH011", "name_ar": "فطر بورتوبيلو", "category_ar": "فطر", "description_ar": "فطر بورتوبيلو", "unit_type": "kg", "price_1kg": 35.0, "image_url": "https://i.ibb.co/n83T0y04/66-Portobello-Mushroom-Kg35.png" },
+  { "id": 176, "sku": "VEG041", "name_ar": "ذرة بيبي طازجة", "category_ar": "خضروات", "description_ar": "ذرة بيبي", "unit_type": "kg", "price_1kg": 80.0, "image_url": "https://i.ibb.co/WNJ6Mb1B/57-Fresh-Baby-Corn-Kg-80.png" },
+  { "id": 177, "sku": "VEG042", "name_ar": "خيار طويل مستورد", "category_ar": "خضروات", "description_ar": "خيار مستورد", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/bMyR0zQK/58-Imported-Long-Cucumber-Kg20.png" },
+  { "id": 178, "sku": "VEG043", "name_ar": "فول فافا طازج", "category_ar": "خضروات", "description_ar": "فول فافا طازج", "unit_type": "kg", "price_1kg": 39.0, "image_url": "https://i.ibb.co/3mmb6MSD/59-Fresh-Fava-Beans-Kg39.jpg" },
+  { "id": 179, "sku": "VEG044", "name_ar": "فينل بيبي شمر", "category_ar": "خضروات", "description_ar": "فينل بيبي شمر", "unit_type": "pack", "price_1kg": 21.0, "image_url": "https://i.ibb.co/dJ7xrVSf/60-Baby-Fennel-PC21.jpg" },
+  { "id": 180, "sku": "VEG045", "name_ar": "كولرابي مستورد", "category_ar": "خضروات", "description_ar": "كولرابي", "unit_type": "kg", "price_1kg": 18.0, "image_url": "https://i.ibb.co/Cs6X0Tq8/61-Imported-Kohlrabi-Kg18.png" },
+  { "id": 181, "sku": "VEG046", "name_ar": "فلفل جالابينو أخضر", "category_ar": "خضروات", "description_ar": "فلفل جالابينو أخضر", "unit_type": "kg", "price_1kg": 30.0, "image_url": "https://i.ibb.co/99Lm7PBP/52-Green-Jalapeno-Kg30.jpg" },
+  { "id": 182, "sku": "VEG047", "name_ar": "فلفل جالابينو أحمر", "category_ar": "خضروات", "description_ar": "فلفل جالابينو أحمر", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/Nd6ZdQGP/53-Red-Jalapeno-Kg-45.png" },
+  { "id": 183, "sku": "VEG048", "name_ar": "فلفل جالابينو أصفر", "category_ar": "خضروات", "description_ar": "فلفل جالابينو أصفر", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/q3zpydfX/54-Yellow-Jalapeno-Kg45.png" },
+  { "id": 184, "sku": "VEG049", "name_ar": "فلفل جالابينو برتقالي", "category_ar": "خضروات", "description_ar": "فلفل جالابينو برتقالي", "unit_type": "kg", "price_1kg": 45.0, "image_url": "https://i.ibb.co/zjwvSTL/55-Orange-Jalapeno-Kg-45.png" },
+  { "id": 185, "sku": "VEG050", "name_ar": "فلفل أصفر روماني", "category_ar": "خضروات", "description_ar": "فلفل أصفر روماني", "unit_type": "kg", "price_1kg": 22.0, "image_url": "https://i.ibb.co/C5nyVxVW/56-Roman-Yellow-Pepper-Kg22.png" },
+  { "id": 186, "sku": "VEG051", "name_ar": "كرنب أبيض مستورد", "category_ar": "خضروات", "description_ar": "كرنب أبيض مستورد", "unit_type": "kg", "price_1kg": 17.0, "image_url": "https://i.ibb.co/WNJ6Mb1B/47-Imported-White-Cabbage-Kg17.png" },
+  { "id": 187, "sku": "VEG052", "name_ar": "جزر بيبي أحمر", "category_ar": "خضروات", "description_ar": "جزر بيبي أحمر", "unit_type": "pack", "price_1kg": 8.0, "image_url": "https://i.ibb.co/C3cwZtvQ/48-Red-Baby-Carrot-PK-8.png" },
+  { "id": 188, "sku": "VEG053", "name_ar": "جزر بيبي أصفر", "category_ar": "خضروات", "description_ar": "جزر بيبي أصفر", "unit_type": "kg", "price_1kg": 36.0, "image_url": "https://i.ibb.co/jZPT3LYN/49-Yellow-Baby-Carrot-Kg36.png" },
+  { "id": 189, "sku": "VEG054", "name_ar": "جذور كرفس بيضاء", "category_ar": "خضروات", "description_ar": "جذور كرفس بيضاء", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/kgg1CRyN/50-Celeriac-White-Kg20.png" },
+  { "id": 190, "sku": "VEG055", "name_ar": "شايوت أخضر", "category_ar": "خضروات", "description_ar": "شايوت أخضر", "unit_type": "kg", "price_1kg": 30.0, "image_url": "https://i.ibb.co/Z6QDbbsB/51-Chayote-Green-Kg30.png" },
+  { "id": 191, "sku": "VEG056", "name_ar": "بنجر تشيوجيا", "category_ar": "خضروات", "description_ar": "بنجر تشيوجيا", "unit_type": "kg", "price_1kg": 37.0, "image_url": "https://i.ibb.co/HLSLZPt5/42-Chioggia-Beetroot-Kg37.png" },
+  { "id": 192, "sku": "VEG057", "name_ar": "بنجر ميني أصفر", "category_ar": "خضروات", "description_ar": "بنجر ميني أصفر", "unit_type": "pack", "price_1kg": 22.0, "image_url": "https://i.ibb.co/PZXGH1ts/43-Mini-Yellow-Beetroot-PC22.png" },
+  { "id": 193, "sku": "VEG058", "name_ar": "فلفل أخضر مستورد", "category_ar": "خضروات", "description_ar": "فلفل أخضر مستورد", "unit_type": "kg", "price_1kg": 27.0, "image_url": "https://i.ibb.co/XfLDBY00/44-Imported-green-pepper-Kg27.png" },
+  { "id": 194, "sku": "VEG059", "name_ar": "كرنب برسلز", "category_ar": "خضروات", "description_ar": "كرنب برسلز", "unit_type": "kg", "price_1kg": 25.0, "image_url": "https://i.ibb.co/zVD9T4s0/45-Brussels-Sprouts-Kg25.png" },
+  { "id": 195, "sku": "VEG060", "name_ar": "كرنب صيني", "category_ar": "خضروات", "description_ar": "كرنب صيني", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/tMjx8gF9/46-Chinese-Cabbage-Kg20.png" },
+  { "id": 196, "sku": "VEG061", "name_ar": "جزر بيبي هولندا", "category_ar": "خضروات", "description_ar": "جزر بيبي هولندا", "unit_type": "pack", "price_1kg": 20.0, "image_url": "https://i.ibb.co/XrdcxTGz/37-Baby-Carrot-Holland-PK20.png" },
+  { "id": 197, "sku": "VEG062", "name_ar": "ذرة بيبي", "category_ar": "خضروات", "description_ar": "ذرة بيبي", "unit_type": "pack", "price_1kg": 5.0, "image_url": "https://i.ibb.co/b5WX4g0k/38-Baby-Corn-Pkt-5.png" },
+  { "id": 198, "sku": "HER049", "name_ar": "سبانخ بيبي", "category_ar": "أعشاب", "description_ar": "سبانخ بيبي", "unit_type": "kg", "price_1kg": 60.0, "image_url": "https://i.ibb.co/4gJc18dt/39-Baby-Spinach-Kg60.png" },
+  { "id": 199, "sku": "VEG063", "name_ar": "براعم فاصوليا", "category_ar": "خضروات", "description_ar": "براعم فاصوليا", "unit_type": "pack", "price_1kg": 8.0, "image_url": "https://i.ibb.co/MJWfGSH/40-Bean-Sprouts-PK8.png" },
+  { "id": 200, "sku": "VEG064", "name_ar": "فاصوليا هاريكوت", "category_ar": "خضروات", "description_ar": "فاصوليا هاريكوت", "unit_type": "pack", "price_1kg": 9.0, "image_url": "https://i.ibb.co/mVsSYXTd/41-Haricot-Beans-PK9.png" },
+  { "id": 201, "sku": "VEG065", "name_ar": "هليون بيبي", "category_ar": "خضروات", "description_ar": "هليون بيبي", "unit_type": "pack", "price_1kg": 9.0, "image_url": "https://i.ibb.co/mVsSYXTd/32-Baby-Asparagus-PK-9.jpg" },
+  { "id": 202, "sku": "VEG066", "name_ar": "هليون جومبو أخضر", "category_ar": "خضروات", "description_ar": "هليون جومبو أخضر", "unit_type": "kg", "price_1kg": 55.0, "image_url": "https://i.ibb.co/Pv2f3sfC/33-Green-Jumbo-Asparagus-Kg55.png" },
+  { "id": 203, "sku": "VEG067", "name_ar": "هليون أخضر", "category_ar": "خضروات", "description_ar": "هليون أخضر", "unit_type": "kg", "price_1kg": 50.0, "image_url": "https://i.ibb.co/NnsQf6ny/34-Green-Asparagus-Kg50.png" },
+  { "id": 204, "sku": "VEG068", "name_ar": "هليون أبيض", "category_ar": "خضروات", "description_ar": "هليون أبيض", "unit_type": "kg", "price_1kg": 70.0, "image_url": "https://i.ibb.co/bRbWQf0c/35-white-Asparagus-Kg70.png" },
+  { "id": 205, "sku": "VEG069", "name_ar": "أفوكادو أمريكي", "category_ar": "خضروات", "description_ar": "أفوكادو أمريكي", "unit_type": "kg", "price_1kg": 30.0, "image_url": "https://i.ibb.co/bjKbNHLG/36-Avocado-USA-Kg-30.png" },
+  { "id": 206, "sku": "VEG070", "name_ar": "قلقاس", "category_ar": "خضروات", "description_ar": "قلقاس", "unit_type": "kg", "price_1kg": 12.0, "image_url": "https://i.ibb.co/s9MTsj7W/27-Taro-Kg12.png" },
+  { "id": 207, "sku": "VEG071", "name_ar": "بركلي محلي", "category_ar": "خضروات", "description_ar": "بركلي محلي", "unit_type": "kg", "price_1kg": 16.0, "image_url": "https://i.ibb.co/V08b03dF/28-Broccoli-Local-Kg16.jpg" },
+  { "id": 208, "sku": "VEG072", "name_ar": "ملفوف أبيض محلي", "category_ar": "خضروات", "description_ar": "ملفوف أبيض محلي", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/YB31t486/29-White-Cabbage-Local-Kg3-5.png" },
+  { "id": 209, "sku": "VEG073", "name_ar": "ملفوف أحمر محلي", "category_ar": "خضروات", "description_ar": "ملفوف أحمر محلي", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/Lzcr75wf/30-Red-Cabbage-Local-Kg4-5.png" },
+  { "id": 210, "sku": "VEG074", "name_ar": "ارتيشوك طازج", "category_ar": "خضروات", "description_ar": "ارتيشوك طازج", "unit_type": "kg", "price_1kg": 33.0, "image_url": "https://i.ibb.co/Lzcr75wf/31-fresh-Artichoke-Kg33.png" },
+  { "id": 211, "sku": "VEG075", "name_ar": "رومي أحمر محلي", "category_ar": "خضروات", "description_ar": "رومي أحمر محلي", "unit_type": "kg", "price_1kg": 8.0, "image_url": "https://i.ibb.co/Gf037QMW/22-Red-Capsicum-Local-Kg8.jpg" },
+  { "id": 212, "sku": "VEG076", "name_ar": "رومي أصفر محلي", "category_ar": "خضروات", "description_ar": "رومي أصفر محلي", "unit_type": "kg", "price_1kg": 8.0, "image_url": "https://i.ibb.co/x8rks4cb/23-Yellow-Capsicum-Local-Kg8.jpg" },
+  { "id": 213, "sku": "VEG077", "name_ar": "بامية صغير محلي", "category_ar": "خضروات", "description_ar": "بامية صغير محلي", "unit_type": "kg", "price_1kg": 12.0, "image_url": "https://i.ibb.co/nqw35zDd/24-Small-Okra-Local-Kg12.png" },
+  { "id": 214, "sku": "VEG078", "name_ar": "فلفل حار أحمر", "category_ar": "خضروات", "description_ar": "فلفل حار أحمر", "unit_type": "kg", "price_1kg": 8.0, "image_url": "https://i.ibb.co/KjQRMDFP/25-Red-Chili-Kg8.jpg" },
+  { "id": 215, "sku": "VEG079", "name_ar": "ذرة كوز", "category_ar": "خضروات", "description_ar": "ذرة كوز", "unit_type": "kg", "price_1kg": 12.0, "image_url": "https://i.ibb.co/twvTKhhp/26-Corn-Cob-Kg12.png" },
+  { "id": 216, "sku": "VEG080", "name_ar": "زنجبيل", "category_ar": "خضروات", "description_ar": "زنجبيل", "unit_type": "kg", "price_1kg": 9.0, "image_url": "https://i.ibb.co/YT2MWtcX/16-Ginger-Kg9.png" },
+  { "id": 217, "sku": "VEG081", "name_ar": "لفت محلي", "category_ar": "خضروات", "description_ar": "لفت محلي", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/0jmLsgf3/17-Turnip-Local-Kg3-5.jpg" },
+  { "id": 218, "sku": "VEG082", "name_ar": "بنجر محلي", "category_ar": "خضروات", "description_ar": "بنجر محلي", "unit_type": "kg", "price_1kg": 5.0, "image_url": "https://i.ibb.co/SX75KW3v/18-Beetroot-Local-Kg-5.png" },
+  { "id": 219, "sku": "VEG083", "name_ar": "باذنجان أبيض", "category_ar": "خضروات", "description_ar": "باذنجان أبيض", "unit_type": "kg", "price_1kg": 4.0, "image_url": "https://i.ibb.co/HD0x33nm/21-Eggplant-white-Kg4.png" },
+  { "id": 220, "sku": "VEG084", "name_ar": "قرنبيط", "category_ar": "خضروات", "description_ar": "قرنبيط", "unit_type": "kg", "price_1kg": 7.0, "image_url": "https://i.ibb.co/BVm0KvWG/11-Cauliflower-Kg7.jpg" },
+  { "id": 221, "sku": "VEG085", "name_ar": "بامية محلي", "category_ar": "خضروات", "description_ar": "بامية محلي", "unit_type": "kg", "price_1kg": 15.0, "image_url": "https://i.ibb.co/rRj1X5nS/13-Okra-Local-Kg15.png" },
+  { "id": 222, "sku": "MSH012", "name_ar": "فطر بوتن أبيض", "category_ar": "فطر", "description_ar": "فطر بوتن أبيض", "unit_type": "kg", "price_1kg": 23.0, "image_url": "https://i.ibb.co/yFdrR309/14-Button-Mushroom-White-Kg23.jpg" },
+  { "id": 223, "sku": "VEG086", "name_ar": "أفوكادو كينيا", "category_ar": "خضروات", "description_ar": "أفوكادو كينيا", "unit_type": "kg", "price_1kg": 20.0, "image_url": "https://i.ibb.co/yFdrR309/15-Avocado-Kenya-Kg20.jpg" },
+  { "id": 224, "sku": "VEG087", "name_ar": "كوسة محلي", "category_ar": "خضروات", "description_ar": "كوسة محلي", "unit_type": "kg", "price_1kg": 6.0, "image_url": "https://i.ibb.co/cchXHzNq/6-Kg-6-Zucchini-Local.jpg" },
+  { "id": 225, "sku": "VEG088", "name_ar": "باذنجان مدور", "category_ar": "خضروات", "description_ar": "باذنجان مدور", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/4Z5YrDXQ/7-Eggplant-Round-Kg-3-5.jpg" },
+  { "id": 226, "sku": "VEG089", "name_ar": "رومي أخضر محلي", "category_ar": "خضروات", "description_ar": "رومي أخضر محلي", "unit_type": "kg", "price_1kg": 6.0, "image_url": "https://i.ibb.co/XrMzKPWS/8-Green-Capsicum-Local-Kg-6.jpg" },
+  { "id": 227, "sku": "VEG090", "name_ar": "فلفل حار أخضر", "category_ar": "خضروات", "description_ar": "فلفل حار أخضر", "unit_type": "kg", "price_1kg": 9.0, "image_url": "https://i.ibb.co/Dg8Q3p7Z/9-Green-Chili-Kg9.jpg" },
+  { "id": 228, "sku": "VEG091", "name_ar": "ثوم محلي", "category_ar": "خضروات", "description_ar": "ثوم محلي", "unit_type": "kg", "price_1kg": 10.0, "image_url": "https://i.ibb.co/Dg8Q3p7Z/10-Garlic-Local-Kg-10.png" },
+  { "id": 229, "sku": "VEG092", "name_ar": "بطاطس محلي", "category_ar": "خضروات", "description_ar": "بطاطس محلي", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/3Y7QGw9w/1-Potato-Local-Kg-3-5.jpg" },
+  { "id": 230, "sku": "VEG093", "name_ar": "بصل أحمر محلي", "category_ar": "خضروات", "description_ar": "بصل أحمر محلي", "unit_type": "kg", "price_1kg": 3.5, "image_url": "https://i.ibb.co/Fkv06mnw/2-Red-Onion-Local-Kg-3-5.jpg" },
+  { "id": 231, "sku": "VEG094", "name_ar": "طماطم مدور محلي", "category_ar": "خضروات", "description_ar": "طماطم مدور محلي", "unit_type": "kg", "price_1kg": 5.0, "image_url": "https://i.ibb.co/yFv6htVk/3-Tomato-Round-Local-Kg-5.png" },
+  { "id": 232, "sku": "VEG095", "name_ar": "خيار محلي", "category_ar": "خضروات", "description_ar": "خيار محلي", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/nNZ88pJZ/4-Cucumber-Local-Kg-4-5.png" },
+  { "id": 233, "sku": "VEG096", "name_ar": "جزر محلي", "category_ar": "خضروات", "description_ar": "جزر محلي", "unit_type": "kg", "price_1kg": 4.5, "image_url": "https://i.ibb.co/XxFJFjQd/5-Carrot-Local-Kg4-5.png" },
+  { "id": 234, "sku": "HER050", "name_ar": "شيكوري أصفر", "category_ar": "أعشاب", "description_ar": "شيكوري أصفر إيطالي", "unit_type": "kg", "price_1kg": 38.0, "image_url": "https://i.ibb.co/84M4rXkW/176-Yellow-Chicory-Kg-38.png" },
+  { "id": 235, "sku": "FRU065", "name_ar": "أناناس بيبي", "category_ar": "فواكه", "description_ar": "أناناس بيبي صغير حلو", "unit_type": "kg", "price_1kg": 25.0, "image_url": "https://i.ibb.co/DDC0tTLy/154-Baby-Pineapple-Kg-25.png" }
+];
+
+    // تفعيل الأيقونات
+    lucide.createIcons();
+
+    // حقن الأقسام (الفلاتر)
+    const filterBar = document.getElementById('categories-filter-bar');
+    const catGridHome = document.getElementById('categories-grid-home');
+    
+    categoriesData.forEach(cat => {
+        // في الصفحة الرئيسية
+        if(cat.id !== 'all') {
+            catGridHome.innerHTML += `
+                <button onclick="renderProducts('${cat.id}'); switchView('shop');" class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/20 hover:-translate-y-2 transition-all flex flex-col items-center gap-3 shadow-lg">
+                    <img src="${cat.img}" class="w-16 h-16 object-contain" alt="${cat.name}">
+                    <span class="font-black text-sm text-white text-center tracking-tighter">${cat.name}</span>
+                </button>
+            `;
+        }
+        
+        // في السوق المركزي
+        filterBar.innerHTML += `
+            <button id="cat-btn-${cat.id}" onclick="renderProducts('${cat.id}')" class="cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-white text-gray-500 border-gray-200 hover:border-[#FF922B]">
+                <div class="w-8 h-8 bg-slate-50 rounded-full p-1"><img src="${cat.img}" class="w-full h-full object-contain" alt=""></div>
+                ${cat.name}
+            </button>
+        `;
+    });
+
+    let cartCount = 0;
+
+    // دالة الفلترة والرندر للمنتجات الحقيقية
+    function renderProducts(catId = 'all') {
+        // تحديث أزرار الفلتر
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.className = 'cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-white text-gray-500 border-gray-200 hover:border-[#FF922B]';
+        });
+        const activeBtn = document.getElementById('cat-btn-' + catId);
+        if(activeBtn) {
+            activeBtn.className = 'cat-btn flex-shrink-0 px-6 py-3 rounded-xl font-black text-sm flex items-center gap-3 transition-all shadow-sm border-2 bg-[#1a3a1a] text-[#FF922B] border-[#1a3a1a]';
         }
 
-        // تشغيل كل شيء
-        renderStore();
-        renderInventory();
-        renderOrders();
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = '';
+        
+        let filtered = rawProductsJSON;
+        if (catId !== 'all') {
+            filtered = rawProductsJSON.filter(p => {
+                if(catId === 'خضروات') return p.category_ar === 'خضروات' || p.category_ar === 'فطر';
+                if(catId === 'فواكه') return p.category_ar === 'فواكه';
+                if(catId === 'ورقيات') return p.category_ar === 'أعشاب';
+                if(catId === 'تمور') return p.category_ar === 'تمور';
+                if(catId === 'منتجات القصيم') return p.name_ar.includes('قصيم') || p.description_ar.includes('قصيم');
+                if(catId === 'مغلفات') return p.category_ar === 'سلال' || p.category_ar === 'بيض';
+                if(catId === 'ورود') return p.category_ar === 'ورود';
+                return false; // منتجات موسمية ومكسرات (فارغة حاليا بالداتا)
+            });
+        }
+
+        filtered.forEach(p => {
+            // استخراج المنشأ
+            let origin = 'مزارع وطنية';
+            const txt = (p.name_ar + " " + p.description_ar).toLowerCase();
+            if(txt.includes('مستورد') || txt.includes('امريكي') || txt.includes('تايلند') || txt.includes('هولند') || txt.includes('ايطال') || txt.includes('فرنس') || txt.includes('اسيوي') || txt.includes('هند')) {
+                origin = 'مستورد فاخر';
+            } else if (txt.includes('قصيم')) {
+                origin = 'مزارع القصيم';
+            }
+
+            // استخراج الوحدة
+            let unit = 'كجم';
+            if(p.unit_type === 'piece') unit = 'حبة';
+            if(p.unit_type === 'pack') unit = 'باكت';
+            if(p.unit_type === 'basket') unit = 'سلة';
+            if(p.unit_type === 'box') unit = 'كرتون';
+
+            grid.innerHTML += `
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col group hover:-translate-y-1 transition-all relative overflow-hidden">
+                    <div class="h-32 flex items-center justify-center mb-4 p-2">
+                        <img src="${p.image_url}" class="h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md flex items-center gap-1 w-fit"><i data-lucide="map-pin" class="w-3 h-3"></i> ${origin}</span>
+                            <span class="text-[9px] font-black text-gray-400 bg-slate-100 px-2 py-1 rounded-md">${p.category_ar}</span>
+                        </div>
+                        <h3 class="text-sm md:text-base font-black text-[#1a3a1a] leading-tight mb-2 tracking-tighter line-clamp-1" title="${p.name_ar}">${p.name_ar}</h3>
+                        <p class="text-lg md:text-xl font-black text-[#FF922B] font-mono mb-4 tracking-tighter">${p.price_1kg.toFixed(2)} <span class="text-[10px] font-bold text-gray-400">/ ${unit}</span></p>
+                        <button onclick="addToCart('${p.name_ar}')" class="w-full bg-slate-100 text-[#1a3a1a] py-2.5 rounded-lg font-black text-xs flex justify-center items-center gap-2 hover:bg-[#FF922B] hover:text-white transition-all tracking-tighter">
+                            <i data-lucide="shopping-cart" class="w-4 h-4"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
         lucide.createIcons();
-    </script>
+    }
+
+    // تهيئة المنتجات عند التحميل
+    window.onload = () => {
+        renderProducts('all');
+    }
+
+    // وظائف الواجهة
+    function switchView(target) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`view-${target}`).classList.remove('hidden');
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if(btn.dataset.target === target) {
+                btn.className = 'nav-btn bg-[#FF922B] text-white px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all shadow-sm';
+            } else {
+                btn.className = 'nav-btn text-gray-500 hover:text-black px-4 py-2 rounded-full text-xs font-black tracking-tighter transition-all';
+            }
+        });
+        window.scrollTo(0,0);
+        
+        if(target === 'shop') renderProducts('all');
+    }
+
+    function addToCart(itemName) {
+        cartCount++;
+        const badge = document.getElementById('cart-badge');
+        badge.innerText = cartCount;
+        badge.classList.remove('hidden');
+        showToast('تم إضافة ' + itemName + ' للسلة');
+    }
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'p-4 rounded-xl bg-white text-[#1a3a1a] shadow-lg flex items-center gap-3 border border-gray-100 toast-enter';
+        toast.innerHTML = `<i data-lucide="check-circle-2" class="text-emerald-500 w-5 h-5 shrink-0"></i><p class="font-bold text-sm tracking-tighter">${message}</p>`;
+        container.appendChild(toast);
+        lucide.createIcons();
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function toggleChat() {
+        document.getElementById('chat-modal').classList.toggle('hidden');
+    }
+
+    function openModal(url) {
+        document.getElementById('iframe-content').src = url;
+        document.getElementById('iframe-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('iframe-modal').classList.add('hidden');
+        document.getElementById('iframe-content').src = '';
+    }
+</script>
 </body>
 </html>
